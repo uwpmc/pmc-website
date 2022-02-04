@@ -10,12 +10,19 @@ body {
           box-sizing: border-box;
 }
 
+h1 {
+  color: #161616;
+}
+
 h2 {
-  font-size: 16pt;
+  font-size: 22pt;
+  font-weight: 500;
+  color: #161616;
 }
 
 p {
   margin: 0 0 30px 0;
+  color: #161616;
 }
 
 nav {
@@ -81,12 +88,9 @@ a {
   background-repeat: no-repeat;
   background-size: contain;
   padding: 0 5px 0 5px;
-  -webkit-filter: brightness(0);
-          filter: brightness(0);
 }
 
 .header {
-  width: 100%;
   height: 35%;
   background-image: url("img/desktop_background_01.png");
   background-size: cover;
@@ -135,26 +139,32 @@ a {
 
 .eventContainer {
   width: 100%;
+  position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -ms-flex-wrap: nowrap;
-      flex-wrap: nowrap;
+  -webkit-box-align: baseline;
+      -ms-flex-align: baseline;
+          align-items: baseline;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .eventItem {
-  width: 25%;
-  padding: 0;
+  min-width: 250px;
+  max-width: 350px;
+  margin: 10px;
   border-radius: 12px;
   overflow: hidden;
   -webkit-box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.5);
           box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.5);
+}
+
+.eventItem p {
+  font-size: 16pt;
 }
 
 .dateBox {
@@ -171,7 +181,32 @@ a {
   padding: 20px;
   color: #ffffff;
   font-weight: 700;
-  font-size: 16pt;
+  font-size: 18pt;
+}
+
+.button {
+  position: relative;
+  display: inline-block;
+  font-size: 18pt;
+  font-weight: 500;
+  background-color: #de4b7c;
+  border-radius: 12px;
+  padding: 10px 20px;
+  margin: 1em 0;
+  color: inherit;
+}
+
+#pastEvents {
+  font-size: 18pt;
+  background-color: #ccc;
+  color: #161616;
+}
+
+#subscribe {
+  font-size: 24pt;
+  padding-left: 3em;
+  padding-right: 3em;
+  background-color: #de4b7c;
 }
 
 #pmath {
