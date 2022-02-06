@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pure Math Club</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Roboto+Condensed:wght@300;400;700&amp;family=Roboto:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+</head>
+<body>
+  <script>
+    var prev = null;
+    document.addEventListener( 'DOMContentLoaded', function () {
+      var bruh = document.getElementsByClassName('description');
+      var coll = document.getElementsByClassName('title');
+      for (i = 0; i < bruh.length; ++i) {
+        bruh[i].style.maxHeight = 0;
+      }
+      var i;
+      for (i = 0; i < coll.length; ++i) {
+        coll[i].addEventListener('click', function() {
+          this.classList.toggle('active');
+          var content = this.nextElementSibling;
+          if (content.style.maxHeight && content.style.maxHeight != '0px') { // Hide it
+            content.style.maxHeight = '0px';
+            content.style.marginBottom = '0';
+            prev = null;
+          } else { // Show it
+            content.style.maxHeight = content.scrollHeight + 'px';
+            content.style.marginBottom = '0.5em';
+            if (prev) {
+              prev.classList.toggle('active');
+              prev.nextElementSibling.style.maxHeight = '0px';
+              prev.nextElementSibling.style.marginBottom = '0';
+            }
+            prev = this;
+          }
+        });
+      }
+    });
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  <nav><a class="navLogo" href="/"><img src="/pmamco_simple_free_nobg.png" style="height: 2em; width: 2em; position: relative;">
+      <div class="navItem" style="font-weight: 700; display: block; font-size: 20pt;">Pure Math Club</div></a><a class="navItem" href="/">Home</a><a class="navItem" href="/about">About</a><a class="navItem" href="/events">Events</a><a class="navItem" href="/potw">POTW</a><a class="navItem" href="/const">Constitution</a></nav>
+  <div class="header" style="filter: hue-rotate(320deg); background-position: bottom;">
+    <div class="textArea">
+      <h1 style="margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;">Events</h1>
+    </div>
+  </div>
+  <div class="textArea">
+    <div class="eventsTermsContainer"><a class="eventsTerm" href="/events/w22">Winter 2022</a><a class="eventsTerm" href="/events/f21">Fall 2021</a><a class="eventsTerm" href="/events/s21">Spring 2021</a><a class="eventsTerm" href="/events/archive">Archive</a></div>
+    <hr>
+    <div class="longEventContainer">
+      <div class="imgHolder"><img src="/img/desktop_background_01_gradient.png"></div>
+      <div class="longEventItem"><a class="title" href="javascript:void(0)">
+          <h2>Homomorphism-Homogeneous Graphs</h2>
+          <h3>Pure Math Prof Talk with Professor Nickolas Rollick</h3>
+          <h3 style="color: #e90a54;">November 18, 2021 @ 4:00 PM&ndash;5:00 PM</h3></a>
+        <div class="description">
+          <p>Dearest mathematics enjoyers,<br><br>The Pure Math Club is proud to announce The First In-Person Event 
+            Held By Any Club And/Or Organization Ever: we're hosting a Pure Math 
+            Prof Talk with the Professor William Slofstra. The title is "Negami's 
+            Planar Cover Conjecture and Quantum Games". Here's an abstract:
+          </p>
+          <p class="abstract"><span style="font-family: serif; font-size: 16pt; font-weight: 600;">Abstract. </span>A graph (vertices and edges, not functions) is planar if it 
+            can be drawn on a sheet of paper without the edges crossing each other. 
+            Not every graph is planar; \(K_{3,3}\) is a famous counterexample. Some 
+            nonplanar graphs, including \(K_{3,3}\), can be drawn in the plane without 
+            edges crossing by allowing multiple copies of each vertex. A 
+            representation of this form is called a planar cover. Surprisingly, 
+            every graph we know with a planar cover has a planar double cover 
+            (which means it uses exactly two copies of every vertex). Negami's 
+            planar cover conjecture, which is now 30 years old, is that this is 
+            always the case: if a graph has a planar cover, then it has a planar 
+            double cover. In this talk, I'll explain this conjecture, and then 
+            explain another open problem in group theory / quantum information 
+            inspired by this conjecture.
+          </p>
+          <p>
+            The talk will be in MC 2066 on Thursday, November 18th at 4:00pm. Very little background required. Come on by and feel smart for an hour!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div style="width: 60%; margin: auto; padding: 1em 0 1em 0;">
+      <p>&#169; 2022 The Pure Math, Applied Math, Combinatorics &amp; Optimization Club of the University of Waterloo <br><span style="font-size: 10pt;">MC 3033, 200 University Ave W, Waterloo, ON N2L 3G1 &mdash; 519-888-4567 x36139 &mdash; </span><a href="mailto:pmclub@gmail.com" style="color: #eaa239; font-size: 10pt;">Contact Us</a></p>
+    </div>
+  </div>
+</body>

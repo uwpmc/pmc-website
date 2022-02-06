@@ -1,0 +1,63 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  title Pure Math Club
+  link(rel='apple-touch-icon', sizes='180x180', href='/apple-touch-icon.png')
+  link(rel='icon', type='image/png', sizes='32x32', href='/favicon-32x32.png')
+  link(rel='icon', type='image/png', sizes='16x16', href='/favicon-16x16.png')
+  link(rel='manifest', href='/site.webmanifest')
+  link(rel='mask-icon', href='/safari-pinned-tab.svg', color='#5bbad5')
+  meta(name='msapplication-TileColor', content='#da532c')
+  meta(name='theme-color', content='#ffffff')
+  link(rel='stylesheet', href='/style.css')
+  link(rel='preconnect', href='https://fonts.gstatic.com')
+  link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap', rel='stylesheet')
+body
+  script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
+  script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
+  include ../header.pug
+  .header(style='background-position: center;')
+    .textArea
+      h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') About PMC
+  .textArea
+    .aboutContainer
+      img(src='/img/desktop_background_01_gradient.png')
+      .faq
+        h1 What events does the PMC organize?
+        p We organize various academic and social events. On the academic side, 
+          | we organize talks by professors and students. Have some interesting 
+          | math to share? Sign up for a slot at our termly SASMS (Short 
+          | Attention Span Math Seminars). We also organize math contests in 
+          | most terms!
+          br
+          br
+          | Contrary to the stereotype of mathematicians being too shy to 
+          | socialize, you can usually find some PMC members hanging out, 
+          | working or getting food together on campus.
+    .aboutContainer
+      .faq
+        h1 You guys sound like my kind of people! How do I get involved?
+        p To join, just show up to the club office and pay the $2 membership 
+          | fee! We hold a termly disorganizational meeting where we elect 
+          | execs and assign termly responsibilities. Show up and volunteer 
+          | (or sometimes get voluntold) for positions. You can run for 
+          | President, VP Finance, VP (PMATH|AMATH|CO), VP Propaganda, VP Pop, 
+          | or Secretary.
+      img(src='/img/desktop_background_01_gradient.png')
+    .aboutContainer
+      img(src='/img/office.63fe0583.jpeg')
+      .faq
+        h1 You guys have a sick blackboard in your office, can I work in there?
+        p We often work on our assignments together in our office. It's a nice 
+          | space with a blackboard, whiteboard, reference books and a 
+          | computer for music and WolframAlpha! Be warned though, it's hard 
+          | to be productive when your friends are around!
+    .aboutContainer
+      .faq
+        h1 Why the focus on PM in your short names?
+        p PMC and Pure Math Club somehow became our more popular short names 
+          | over the years, but we also use PMAMCO Club sometimes if that makes 
+          | you happier. But all short forms including AMC, COC and AMCOPM Club 
+          | are all valid according to our constitution!
+      img(src='/img/desktop_background_01_gradient.png')
+  include ../footer.pug
