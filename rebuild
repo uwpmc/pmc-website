@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# $1 = <type> = pmath|amath|co|sasms|over9k|other
+# $2 = <date> (format: YYYYMMDDhhmmhhmm)
+#      - hhmmhhmm is start time + end time concatenated, in 24-hour format
+# $3 = <filename>
+addEvent() {
+}
+
+DATE="$(date +%Y%m%d%H%M%S)"
+
+rebuild() {
+  echo "Creating new working directory BUILD-${DATE}"
+  mkdir "BUILD-${DATE}"
+}

@@ -1,3 +1,5 @@
+// Written by Evan Girardin, W22 PMC President 
+// Please direct all compliments and hate mail to evangirardin at gmail dot com 
 doctype html
 head
   meta(charset='UTF-8')
@@ -12,6 +14,64 @@ head
   link(rel='stylesheet', href='style.css')
   link(rel='preconnect', href='https://fonts.gstatic.com')
   link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap', rel='stylesheet')
+-
+  function readableDate(date) {
+    let day = (date.charAt(6) == '0') ? date.charAt(7) : date.substr(6,2);
+    let month = '';
+    switch ('' + date.substr(4,2)) {
+      case '01':
+        month = 'January';
+        break;
+      case '02':
+        month = 'February';
+        break;
+      case '03':
+        month = 'March';
+        break;
+      case '04':
+        month = 'April';
+        break;
+      case '05':
+        month = 'May';
+        break;
+      case '06':
+        month = 'June';
+        break;
+      case '07':
+        month = 'July';
+        break;
+      case '08':
+        month = 'August';
+        break;
+      case '09':
+        month = 'September';
+        break;
+      case '10':
+        month = 'October';
+        break;
+      case '11':
+        month = 'November';
+        break;
+      case '12':
+        month = 'December';
+        break;
+    }
+    return month + ' ' + day + ', ' + date.substr(0,4);
+  }
+
+mixin event(type, title, desc, date, begintime, endtime, loc)
+  a.eventItemHoverBuffer(href='events/w22#' + date)
+    .eventItem(id=type)
+      .info
+        h2 #{title}
+        p
+          i #{desc}
+      .dateBox
+        p #{readableDate(date)}
+          br
+          | #{begintime}&ndash;#{endtime}
+          br
+          span(style='color: #ffffff;') #{loc}
 body
   include header.pug
   .header
@@ -34,43 +94,14 @@ body
   .textArea
     h1 Events
     .eventContainer
-      a.eventItemHoverBuffer(href='events/w22#20210719')
-        .eventItem#pmath
-          div(style='padding: 0px 20px 0 20px;')
-            h2 Homomorphism-Homogeneous Graphs
-            p
-              i Pure Math Talk by Professor Nickolas Rollick!
-          .dateBox
-            p July 19, 2021
-              br
-              | 5:00 PM&ndash;6:00 PM
-              br
-              span(style='color: #ffffff;') MC 2066
-      a.eventItemHoverBuffer(href='events/w22#20220303')
-        .eventItem#sasms
-          div(style='padding: 0px 20px 0 20px;')
-            h2 Short Attention Span Math Seminars I
-            p
-              i Four students talking about math, so cool!
-          .dateBox
-            p February 28, 2022
-              br
-              | 7:00 PM&ndash;9:30 PM
-              br
-              span(style='color: #ffffff;') MC 2066
-      a.eventItemHoverBuffer(href='events/w22#20210401')
-        .eventItem#co
-          div(style='padding: 0px 20px 0 20px;')
-            h2 Crypto Gossip: Elliptic Curve Cryptography and the NSA
-            p
-              i C&amp;O Talk by Professor Alfred Menezes!
-          .dateBox
-            p April 1, 2021
-              br
-              | 4:30 PM&ndash;5:30 PM
-              br
-              span(style='color: #ffffff;') MC 2066
-    a.button#pastEvents(href='./events') Browse past events
+      +event("pmath", "Homomorphism-Homogeneous Graphs", "Pure Math Talk by Professor Nickolas Rollick!", "20210719", "5:00 PM", "6:00 PM", "MC 2066")
+      +event("sasms", "Short Attention Span Math Seminars I", "Four students talking about math, so cool!", "20220303", "7:00 PM", "9:30 PM", "MC 4021")
+      +event("co", "Crypto Gossip: Elliptic Curve Cryptography and the NSA", "C&O Talk by Professor Alfred Menezes!", "20210401", "4:30 PM", "5:30 PM", "MC 2066")
+    a.button#pastEvents(href='./events') Browse all events
+  //-
+    .textArea
+      h1 Problem of the Week
+      
   div(style='width: 100%; background-color: #e0e0e0;')
     .textArea(style='padding: 1em 0 1em 0;')
       div(style='width: 100%; display: flex; justify-content: start-flex; align-items: center; flex-wrap: nowrap;')
