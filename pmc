@@ -1,0 +1,80 @@
+#!/bin/bash
+shopt -s extglob
+
+# $1 = <type> = pmath|amath|co|sasms|over9k|other
+# $2 = <date> (format: YYYYMMDDhhmmhhmm)
+#      - hhmmhhmm is start time + end time concatenated, in 24-hour format
+# $3 = <filename>
+addEvent() {
+  return 3;
+}
+
+DATE="$(date +%Y%m%d%H%M%S)"
+DIR="BUILD-${DATE}"
+PUG_EXEC="pug"
+SASS_EXEC="sass --no-source-map"
+
+build() {
+  if [[ -z $2 ]]; then
+    echo WARNING: Root not provided, assuming current directory is root
+  else
+    cd $2
+  fi
+  echo "Copying files into build directory ${DIR}"
+  mkdir ${DIR}
+  cp -r $(ls | egrep -v "($(basename $1))|(BUILD)") ${DIR}
+  echo "Compiling pug files"
+  for srcfile in $(find ${DIR} -name '*.pug' | egrep -v 'footer|header'); do
+    ${PUG_EXEC} ${srcfile}
+    rm ${srcfile}
+  done
+  rm ${DIR}/{footer,header}.pug
+
+  echo "Compiling scss files"
+  for srcfile in $(find ${DIR} -name '*.scss'); do
+    ${SASS_EXEC} ${srcfile} ${srcfile%scss}css
+    rm ${srcfile}
+  done
+  echo "Creating symlink BUILD to latest build"
+  if [[ -e BUILD ]]; then
+    rm BUILD
+  fi
+  ln -s "${DIR}" "BUILD"
+  echo Build complete.
+}
+
+clean() {
+  dirs=$(ls | egrep BUILD)
+  for dir in $(ls | egrep BUILD | tail -n +2 | head -n -1); do
+    rm -r ${dir}
+  done
+}
+
+if [[ -z $1 ]]; then
+  echo "Usage: $0 COMMAND [OPTION]..."
+  echo 'Commands:'
+  echo '- clean'
+  echo '- build [root-dir]'
+  echo '- add-event type title desc date begintime endtime loc'
+  echo '  | ...where type = pmath|amath|co|sasms|over9k|other'
+  echo '  | ...where date = YYYYMMDD'
+  echo '  | ...where begintime, endtime = hhmm (24hr format)'
+  echo '- add-potw title date desc'
+  echo '  | ...where date = YYYYMMDD'
+  echo '- enable-potw'
+  echo '- disable-potw'
+  exit 1
+elif [[ $1 == 'build' ]]; then
+  build $0
+elif [[ $1 == 'clean' ]]; then
+  clean $0
+elif [[ $1 == 'add-event' ]]; then
+  add-event $2 $3 $4 $5 $6 $7 $8
+elif [[ $1 == 'add-potw' ]]; then
+  add-potw $2 $3 $4
+elif [[ $1 == 'enable-potw' ]]; then
+  enable-potw
+elif [[ $1 == 'disable-potw' ]]; then
+  disable-potw
+fi
+exit 0
