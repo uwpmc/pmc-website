@@ -435,15 +435,16 @@ a {
   margin-bottom: 0;
   -webkit-transition: max-height 0.2s ease, margin-bottom 0.2s ease;
   transition: max-height 0.2s ease, margin-bottom 0.2s ease;
+  margin-left: 2em;
 }
 .longEventContainer .imgHolder {
   position: relative;
-  width: 20%;
+  width: 10%;
   height: auto;
   min-height: 0;
   -o-object-fit: cover;
      object-fit: cover;
-  margin: 1em;
+  margin: 1em 0 1em 1em;
   overflow: hidden;
 }
 .longEventContainer img {
@@ -453,14 +454,13 @@ a {
      object-fit: cover;
   height: 100%;
   width: 100%;
-  border-radius: 2em;
+  border-radius: 1.5em;
 }
 
 .longEventItem {
   position: relative;
   width: 67%;
   padding: 1em;
-  margin: auto;
 }
 .longEventItem h2 {
   margin: 0.25em 0;
@@ -468,10 +468,13 @@ a {
 .longEventItem h3 {
   margin: 0.25em 0;
 }
-.longEventItem p {
-  padding: 1em;
-  font-family: "Roboto";
+.longEventItem .description p {
+  padding: 1em 0;
   font-size: 13pt;
+  margin: 0;
+}
+.longEventItem .description h1, .longEventItem .description h2, .longEventItem .description h3 {
+  padding: 1em 0 0 0;
   margin: 0;
 }
 .longEventItem .abstract {
@@ -479,7 +482,7 @@ a {
   line-height: 1.5em;
   color: #fff;
   background-color: #444;
-  padding: 1em;
+  padding: 1em !important;
   margin: 1em;
 }
 
@@ -494,8 +497,8 @@ a {
 
 #co {
   background-size: cover;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#34eb71ff), to(#2e8f4e00)), url("/img/desktop_background_01_gradient.png");
-  background-image: linear-gradient(#34eb71ff, #2e8f4e00), url("/img/desktop_background_01_gradient.png");
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#34eb71ff), to(#5bd4beff)), url("/img/desktop_background_01_gradient.png");
+  background-image: linear-gradient(#34eb71ff, #5bd4beff), url("/img/desktop_background_01_gradient.png");
 }
 #co .dateBox p {
   color: #a3e3b9;
@@ -503,8 +506,8 @@ a {
 
 #amath {
   background-size: cover;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f2be4bff), to(#8a6b2900)), url("/img/desktop_background_01_gradient.png");
-  background-image: linear-gradient(#f2be4bff, #8a6b2900), url("/img/desktop_background_01_gradient.png");
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f2be4bff), to(#fc6e5bff)), url("/img/desktop_background_01_gradient.png");
+  background-image: linear-gradient(#f2be4bff, #fc6e5bff), url("/img/desktop_background_01_gradient.png");
 }
 #amath .dateBox p {
   color: #f5deab;
@@ -512,8 +515,8 @@ a {
 
 #sasms {
   background-size: cover;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#eb635eff), to(#8a322f00)), url("/img/desktop_background_01_gradient.png");
-  background-image: linear-gradient(#eb635eff, #8a322f00), url("/img/desktop_background_01_gradient.png");
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#eb635eff), to(#ed925cff)), url("/img/desktop_background_01_gradient.png");
+  background-image: linear-gradient(#eb635eff, #ed925cff), url("/img/desktop_background_01_gradient.png");
 }
 #sasms .dateBox p {
   color: #f5aeab;
@@ -521,6 +524,11 @@ a {
 
 #over9k {
   background-size: cover;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ba50ebff), to(#411c5200)), url("/img/desktop_background_01_gradient.png");
-  background-image: linear-gradient(#ba50ebff, #411c5200), url("/img/desktop_background_01_gradient.png");
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#506ef2ff), to(#ba77eddd)), url("/img/over9000.jpg");
+  background-image: linear-gradient(#506ef2ff, #ba77eddd), url("/img/over9000.jpg");
+  background-size: cover;
+  background-position: center;
+}
+#over9k .dateBox p {
+  color: #a8b2f0;
 }

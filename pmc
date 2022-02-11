@@ -5,14 +5,13 @@ shopt -s extglob
 # $2 = <date> (format: YYYYMMDDhhmmhhmm)
 #      - hhmmhhmm is start time + end time concatenated, in 24-hour format
 # $3 = <filename>
-addEvent() {
-  return 3;
-}
 
 DATE="$(date +%Y%m%d%H%M%S)"
 DIR="BUILD-${DATE}"
 PUG_EXEC="pug"
 SASS_EXEC="sass --no-source-map"
+HTML2PUG_EXEC="html2pug"
+MARKDOWN_EXEC="perl Markdown.pl"
 
 build() {
   if [[ -z $2 ]]; then
@@ -40,7 +39,8 @@ build() {
     rm BUILD
   fi
   ln -s "${DIR}" "BUILD"
-  echo Build complete.
+  echo 'Build complete!'
+  echo "To make changes live, use the \`live' command."
 }
 
 clean() {
@@ -48,6 +48,74 @@ clean() {
   for dir in $(ls | egrep BUILD | tail -n +2 | head -n -1); do
     rm -r ${dir}
   done
+  echo "Removed all old BUILD directories."
+}
+
+add-event() {
+  # - Events page work
+  ACADTERM=''
+  YEAR=$(($4/10000))
+  MONTH=$(($(($4/100))%100))
+  if [[ $MONTH -ge 1 && $MONTH -le 4 ]]; then
+    ACADTERM=w
+  elif [[ $MONTH -ge 5 && $MONTH -le 8 ]]; then
+    ACADTERM=s
+  else
+    ACADTERM=f
+  fi
+  ACADTERM=${ACADTERM}$(($4/1000000))
+  if [[ ! -e event.md ]]; then
+    echo "FATAL: A long-form Markdown description named \`event.md' is expected at root"
+    echo "Failed to create event."
+    exit 1
+  fi
+  if [[ ! -e events/${ACADTERM} ]]; then
+    mkdir events/${ACADTERM}
+  fi
+  cp event.md events/${ACADTERM}/$4.md
+  if [[ ! -e events/${ACADTERM}/index.pug ]]; then
+    cp template/event_index.pug events/${ACADTERM}/index.pug
+
+    # this is so god damn stupid haha
+    # worst possible way to generate a static page
+    if [[ ${ACADTERM::-2} == 'f' ]]; then
+      sed -i "1s/^/- const term1 = \"Fall ${YEAR}\";\n- const term2 = \"Spring ${YEAR}\";\n- const term3 = \"Winter ${YEAR}\";/" events/${ACADTERM}/index.pug
+    elif [[ ${ACADTERM::-2} == 'w' ]]; then
+      sed -i "1s/^/- const term1 = \"Winter ${YEAR}\";\n- const term2 = \"Fall $((${YEAR}-1))\";\n- const term3 = \"Spring $((${YEAR}-1))\";/" events/${ACADTERM}/index.pug
+    else
+      sed -i "1s/^/- const term1 = \"Spring ${YEAR}\";\n- const term2 = \"Winter ${YEAR}\";\n- const term3 = \"Fall $((${YEAR}-1))\";/" events/${ACADTERM}/index.pug
+    fi
+  fi
+
+  CONTENT=$(mktemp)
+  echo "    +event(\"$1\", \"$2\", \"$3\", \"$4\", \"$5\", \"$6\", \"$7\")" > ${CONTENT}
+  ${MARKDOWN_EXEC} events/${ACADTERM}/$4.md | ${HTML2PUG_EXEC} | tail -n +4 | sed -e 's/^/  /' >> ${CONTENT}
+  sed -i "/\/\/EVENTGOESHERE/ r ${CONTENT}" events/${ACADTERM}/index.pug
+  rm ${CONTENT}
+ 
+  # - Home page work -
+  # Remove oldest event
+  gawk -i inplace '/\+event\(.*\)/{++count;}{if(!(count==3)) print; else count=0;}' index.pug
+  # Insert new event
+  sed -i "s/.eventContainer/.eventContainer\n      +event(\"$1\", \"$2\", \"$3\", \"$4\", \"$5\", \"$6\", \"$7\")/" index.pug
+
+  echo "New event added! Rebuild the site using the \`build' command."
+}
+
+enable-potw() {
+  # Uncomment POTW in header.pug
+  sed -i "s/\/\/POTW disabled/a\.navItem(href='\/potw') POTW/g" header.pug
+  echo "POTW enabled! Rebuild the site using the \`build' command."
+}
+disable-potw() {
+  # Comment POTW in header.pug
+  sed -i "s/a\.navItem(href='\/potw') POTW/\/\/POTW disabled/g" header.pug
+  echo "POTW disabled! Rebuild the site using the \`build' command."
+}
+
+add-potw() {
+  echo "TODO: Implement POTW"
+  exit 1
 }
 
 if [[ -z $1 ]]; then
@@ -69,7 +137,7 @@ elif [[ $1 == 'build' ]]; then
 elif [[ $1 == 'clean' ]]; then
   clean $0
 elif [[ $1 == 'add-event' ]]; then
-  add-event $2 $3 $4 $5 $6 $7 $8
+  add-event "$2" "$3" "$4" "$5" "$6" "$7" "$8"
 elif [[ $1 == 'add-potw' ]]; then
   add-potw $2 $3 $4
 elif [[ $1 == 'enable-potw' ]]; then

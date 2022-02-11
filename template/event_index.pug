@@ -1,0 +1,126 @@
+
+doctype html
+head
+  meta(charset='UTF-8')
+  title Pure Math Club
+  link(rel='apple-touch-icon', sizes='180x180', href='/apple-touch-icon.png')
+  link(rel='icon', type='image/png', sizes='32x32', href='/favicon-32x32.png')
+  link(rel='icon', type='image/png', sizes='16x16', href='/favicon-16x16.png')
+  link(rel='manifest', href='/site.webmanifest')
+  link(rel='mask-icon', href='/safari-pinned-tab.svg', color='#5bbad5')
+  meta(name='msapplication-TileColor', content='#da532c')
+  meta(name='theme-color', content='#ffffff')
+  link(rel='stylesheet', href='/style.css')
+  link(rel='preconnect', href='https://fonts.gstatic.com')
+  link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap', rel='stylesheet')
+-
+  function readableDate(date) {
+    let day = (date.charAt(6) == '0') ? date.charAt(7) : date.substr(6,2);
+    let month = '';
+    switch ('' + date.substr(4,2)) {
+      case '01':
+        month = 'January';
+        break;
+      case '02':
+        month = 'February';
+        break;
+      case '03':
+        month = 'March';
+        break;
+      case '04':
+        month = 'April';
+        break;
+      case '05':
+        month = 'May';
+        break;
+      case '06':
+        month = 'June';
+        break;
+      case '07':
+        month = 'July';
+        break;
+      case '08':
+        month = 'August';
+        break;
+      case '09':
+        month = 'September';
+        break;
+      case '10':
+        month = 'October';
+        break;
+      case '11':
+        month = 'November';
+        break;
+      case '12':
+        month = 'December';
+        break;
+    }
+    return month + ' ' + day + ', ' + date.substr(0,4);
+  }
+  function readableTime(time) {
+    // time given as hhmm 24hr
+    let intTime = parseInt(time);
+    let hr = Math.floor(time/100);
+    let ampm = (hr >= 12 ? 'PM' : 'AM');
+    if (hr == 0) hr = 12;
+    else if (hr > 12) hr -= 12;
+    
+    return hr + ':' + time.substr(2,2) + ' ' + ampm;
+  }
+mixin event(type, title, desc, date, begintime, endtime, loc)
+  .longEventContainer
+    .imgHolder
+      img(src='/img/desktop_background_01_gradient.png')
+    .longEventItem
+      a.title(href='javascript:void(0)', id=date)
+        h2 #{title}
+        h3 #{desc}
+        h3(style='color: #e90a54;') #{readableDate(date)} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
+      .description
+        block
+body
+  script.
+    var prev = null;
+    document.addEventListener( 'DOMContentLoaded', function () {
+      var bruh = document.getElementsByClassName('description');
+      var coll = document.getElementsByClassName('title');
+      for (i = 0; i < bruh.length; ++i) {
+        bruh[i].style.maxHeight = 0;
+      }
+      var i;
+      for (i = 0; i < coll.length; ++i) {
+        coll[i].addEventListener('click', function() {
+          this.classList.toggle('active');
+          var content = this.nextElementSibling;
+          if (content.style.maxHeight && content.style.maxHeight != '0px') { // Hide it
+            content.style.maxHeight = '0px';
+            content.style.marginBottom = '0';
+            prev = null;
+          } else { // Show it
+            content.style.maxHeight = content.scrollHeight + 'px';
+            content.style.marginBottom = '0.5em';
+            if (prev) {
+              prev.classList.toggle('active');
+              prev.nextElementSibling.style.maxHeight = '0px';
+              prev.nextElementSibling.style.marginBottom = '0';
+            }
+            prev = this;
+          }
+        });
+      }
+    });
+  script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
+  script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
+  include ../../header.pug
+  .header(style='filter: hue-rotate(320deg); background-position: bottom;')
+    .textArea
+      h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
+  .textArea
+    .eventsTermsContainer
+      a.eventsTerm(href='/events/w22', title=term1) #{term1}
+      a.eventsTerm(href='/events/f21', title=term2) #{term2}
+      a.eventsTerm(href='/events/s21', title=term3) #{term3}
+      a.eventsTerm(href='/events/archive', title='Archive') Archive
+    hr
+    //EVENTGOESHERE
+  include ../../footer.pug

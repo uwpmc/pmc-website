@@ -58,6 +58,16 @@ head
     }
     return month + ' ' + day + ', ' + date.substr(0,4);
   }
+  function readableTime(time) {
+    // time given as hhmm 24hr
+    let intTime = parseInt(time);
+    let hr = Math.floor(time/100);
+    let ampm = (hr >= 12 ? 'PM' : 'AM');
+    if (hr == 0) hr = 12;
+    else if (hr > 12) hr -= 12;
+    
+    return hr + ':' + time.substr(2,2) + ' ' + ampm;
+  }
 
 mixin event(type, title, desc, date, begintime, endtime, loc)
   a.eventItemHoverBuffer(href='events/w22#' + date)
@@ -69,7 +79,7 @@ mixin event(type, title, desc, date, begintime, endtime, loc)
       .dateBox
         p #{readableDate(date)}
           br
-          | #{begintime}&ndash;#{endtime}
+          | #{readableTime(begintime)}&ndash;#{readableTime(endtime)}
           br
           span(style='color: #ffffff;') #{loc}
 body
@@ -94,9 +104,9 @@ body
   .textArea
     h1 Events
     .eventContainer
-      +event("pmath", "Homomorphism-Homogeneous Graphs", "Pure Math Talk by Professor Nickolas Rollick!", "20210719", "5:00 PM", "6:00 PM", "MC 2066")
-      +event("sasms", "Short Attention Span Math Seminars I", "Four students talking about math, so cool!", "20220303", "7:00 PM", "9:30 PM", "MC 4021")
-      +event("co", "Crypto Gossip: Elliptic Curve Cryptography and the NSA", "C&O Talk by Professor Alfred Menezes!", "20210401", "4:30 PM", "5:30 PM", "MC 2066")
+      +event("over9k", "Homomorphism-Homogeneous Graphs", "Pure Math Talk by Professor Nickolas Rollick!", "20210719", "1700", "1800", "MC 2066")
+      +event("sasms", "Short Attention Span Math Seminars I", "Four students talking about math, so cool!", "20220303", "1900", "2130", "MC 4021")
+      +event("co", "Crypto Gossip: Elliptic Curve Cryptography and the NSA", "C&O Talk by Professor Alfred Menezes!", "20210401", "1630", "1730", "MC 2066")
     a.button#pastEvents(href='./events') Browse all events
   //-
     .textArea

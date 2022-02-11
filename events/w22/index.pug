@@ -1,3 +1,6 @@
+- const term1 = 'Winter 2022';
+- const term2 = 'Fall 2021';
+- const term3 = 'Spring 2021';
 doctype html
 head
   meta(charset='UTF-8')
@@ -12,8 +15,78 @@ head
   link(rel='stylesheet', href='/style.css')
   link(rel='preconnect', href='https://fonts.gstatic.com')
   link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap', rel='stylesheet')
+-
+  function readableDate(date) {
+    let day = (date.charAt(6) == '0') ? date.charAt(7) : date.substr(6,2);
+    let month = '';
+    switch ('' + date.substr(4,2)) {
+      case '01':
+        month = 'January';
+        break;
+      case '02':
+        month = 'February';
+        break;
+      case '03':
+        month = 'March';
+        break;
+      case '04':
+        month = 'April';
+        break;
+      case '05':
+        month = 'May';
+        break;
+      case '06':
+        month = 'June';
+        break;
+      case '07':
+        month = 'July';
+        break;
+      case '08':
+        month = 'August';
+        break;
+      case '09':
+        month = 'September';
+        break;
+      case '10':
+        month = 'October';
+        break;
+      case '11':
+        month = 'November';
+        break;
+      case '12':
+        month = 'December';
+        break;
+    }
+    return month + ' ' + day + ', ' + date.substr(0,4);
+  }
+  function readableTime(time) {
+    // time given as hhmm 24hr
+    let intTime = parseInt(time);
+    let hr = Math.floor(time/100);
+    let ampm = (hr >= 12 ? 'PM' : 'AM');
+    if (hr == 0) hr = 12;
+    else if (hr > 12) hr -= 12;
+    
+    return hr + ':' + time.substr(2,2) + ' ' + ampm;
+  }
+mixin event(type, title, desc, date, begintime, endtime, loc)
+  .longEventContainer
+    .imgHolder
+      img(src='/img/desktop_background_01_gradient.png')
+    .longEventItem
+      a.title(href='javascript:void(0)', id=date)
+        h2 #{title}
+        h3 #{desc}
+        h3(style='color: #e90a54;') #{readableDate(date)} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
+      .description
+        block
 body
   script.
+    function getAnchor() {
+      var cururl = document.URL;
+      var urlcomponents = cururl.split('#');
+      return (urlcomponents.length > 1) ? urlcomponents[1] : null;
+    }
     var prev = null;
     document.addEventListener( 'DOMContentLoaded', function () {
       var bruh = document.getElementsByClassName('description');
@@ -42,6 +115,7 @@ body
           }
         });
       }
+      document.getElementById(getAnchor()).click();
     });
   script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
   script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
@@ -51,42 +125,35 @@ body
       h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
   .textArea
     .eventsTermsContainer
-      a.eventsTerm(href='/events/w22', title='Winter 2022') Winter 2022
-      a.eventsTerm(href='/events/f21', title='Fall 2021') Fall 2021
-      a.eventsTerm(href='/events/s21', title='Spring 2021') Spring 2021
+      a.eventsTerm(href='/events/w22', title=term1) #{term1}
+      a.eventsTerm(href='/events/f21', title=term2) #{term2}
+      a.eventsTerm(href='/events/s21', title=term3) #{term3}
       a.eventsTerm(href='/events/archive', title='Archive') Archive
     hr
-    .longEventContainer
-      .imgHolder
-        img(src='/img/desktop_background_01_gradient.png')
-      .longEventItem
-        a.title(href='javascript:void(0)')
-          h2 Homomorphism-Homogeneous Graphs
-          h3 Pure Math Prof Talk with Professor Nickolas Rollick
-          h3(style='color: #e90a54;') November 18, 2021 @ 4:00 PM&ndash;5:00 PM
-        .description
-          p Dearest mathematics enjoyers,
-            br
-            br
-            | The Pure Math Club is proud to announce The First In-Person Event 
-            | Held By Any Club And/Or Organization Ever: we're hosting a Pure Math 
-            | Prof Talk with the Professor William Slofstra. The title is "Negami's 
-            | Planar Cover Conjecture and Quantum Games". Here's an abstract:
-          p.abstract
-            span(style='font-family: serif; font-weight: 600;') Abstract. 
-            | A graph (vertices and edges, not functions) is planar if it 
-            | can be drawn on a sheet of paper without the edges crossing each other. 
-            | Not every graph is planar; \(K_{3,3}\) is a famous counterexample. Some 
-            | nonplanar graphs, including \(K_{3,3}\), can be drawn in the plane without 
-            | edges crossing by allowing multiple copies of each vertex. A 
-            | representation of this form is called a planar cover. Surprisingly, 
-            | every graph we know with a planar cover has a planar double cover 
-            | (which means it uses exactly two copies of every vertex). Negami's 
-            | planar cover conjecture, which is now 30 years old, is that this is 
-            | always the case: if a graph has a planar cover, then it has a planar 
-            | double cover. In this talk, I'll explain this conjecture, and then 
-            | explain another open problem in group theory / quantum information 
-            | inspired by this conjecture.
-          p The talk will be in MC 2066 on Thursday, November 18th at 4:00pm. 
-            | Very little background required. Come on by and feel smart for an hour!
+    //EVENTGOESHERE
+    +event("pmath", "Homomorphism-Homogeneous Graphs", "Pure Math Talk by Professor Nickolas Rollick!", "20210719", "1700", "1800", "MC 2066")
+      p Dearest mathematics enjoyers,
+        br
+        br
+        | The Pure Math Club is proud to announce The First In-Person Event 
+        | Held By Any Club And/Or Organization Ever: we're hosting a Pure Math 
+        | Prof Talk with the Professor William Slofstra. The title is "Negami's 
+        | Planar Cover Conjecture and Quantum Games". Here's an abstract:
+      p.abstract
+        span(style='font-family: serif; font-weight: 600;') Abstract. 
+        | A graph (vertices and edges, not functions) is planar if it 
+        | can be drawn on a sheet of paper without the edges crossing each other. 
+        | Not every graph is planar; \(K_{3,3}\) is a famous counterexample. Some 
+        | nonplanar graphs, including \(K_{3,3}\), can be drawn in the plane without 
+        | edges crossing by allowing multiple copies of each vertex. A 
+        | representation of this form is called a planar cover. Surprisingly, 
+        | every graph we know with a planar cover has a planar double cover 
+        | (which means it uses exactly two copies of every vertex). Negami's 
+        | planar cover conjecture, which is now 30 years old, is that this is 
+        | always the case: if a graph has a planar cover, then it has a planar 
+        | double cover. In this talk, I'll explain this conjecture, and then 
+        | explain another open problem in group theory / quantum information 
+        | inspired by this conjecture.
+      p The talk will be in MC 2066 on Thursday, November 18th at 4:00pm. 
+        | Very little background required. Come on by and feel smart for an hour!
   include ../../footer.pug
