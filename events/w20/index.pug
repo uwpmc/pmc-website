@@ -2,19 +2,7 @@
 - const term2 = "Fall 2019";
 - const term3 = "Spring 2019";
 doctype html
-head
-  meta(charset='UTF-8')
-  title Pure Math Club
-  link(rel='apple-touch-icon', sizes='180x180', href='/apple-touch-icon.png')
-  link(rel='icon', type='image/png', sizes='32x32', href='/favicon-32x32.png')
-  link(rel='icon', type='image/png', sizes='16x16', href='/favicon-16x16.png')
-  link(rel='manifest', href='/site.webmanifest')
-  link(rel='mask-icon', href='/safari-pinned-tab.svg', color='#5bbad5')
-  meta(name='msapplication-TileColor', content='#da532c')
-  meta(name='theme-color', content='#ffffff')
-  link(rel='stylesheet', href='/style.css')
-  link(rel='preconnect', href='https://fonts.gstatic.com')
-  link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap', rel='stylesheet')
+include ../../template/head.pug
 -
   function readableDate(date) {
     let day = (date.charAt(6) == '0') ? date.charAt(7) : date.substr(6,2);
@@ -113,11 +101,11 @@ body
     });
   script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
   script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
-  include ../../header.pug
+  include ../../template/header.pug
   .header(style='filter: hue-rotate(320deg); background-position: bottom;')
     .textArea
       h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
-  .textArea
+  .textArea(style='width: 30% !important;')
     .eventsTermsContainer
       a.eventsTerm(href='/events/w22', title=term1) #{term1}
       a.eventsTerm(href='/events/f21', title=term2) #{term2}
@@ -140,4 +128,4 @@ body
       h3 this is a test
       p dklfjsljfslkfdk
       p sdjfsflk
-  include ../../footer.pug
+  include ../../template/footer.pug

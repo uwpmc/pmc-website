@@ -1,20 +1,9 @@
 
 doctype html
-head
-  meta(charset='UTF-8')
-  title Pure Math Club
-  link(rel='apple-touch-icon', sizes='180x180', href='/apple-touch-icon.png')
-  link(rel='icon', type='image/png', sizes='32x32', href='/favicon-32x32.png')
-  link(rel='icon', type='image/png', sizes='16x16', href='/favicon-16x16.png')
-  link(rel='manifest', href='/site.webmanifest')
-  link(rel='mask-icon', href='/safari-pinned-tab.svg', color='#5bbad5')
-  meta(name='msapplication-TileColor', content='#da532c')
-  meta(name='theme-color', content='#ffffff')
-  link(rel='stylesheet', href='/style.css')
-  link(rel='preconnect', href='https://fonts.gstatic.com')
-  link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap', rel='stylesheet')
+include ../../template/head.pug
 -
   function readableDate(date) {
+    // date given as yyyymmdd
     let day = (date.charAt(6) == '0') ? date.charAt(7) : date.substr(6,2);
     let month = '';
     switch ('' + date.substr(4,2)) {
@@ -58,7 +47,7 @@ head
     return month + ' ' + day + ', ' + date.substr(0,4);
   }
   function readableTime(time) {
-    // time given as hhmm 24hr
+    // time given as hhmm (24hr)
     let intTime = parseInt(time);
     let hr = Math.floor(time/100);
     let ampm = (hr >= 12 ? 'PM' : 'AM');
@@ -69,8 +58,6 @@ head
   }
 mixin event(type, title, desc, date, begintime, endtime, loc)
   .longEventContainer
-    .imgHolder
-      img(src='/img/desktop_background_01_gradient.png')
     .longEventItem
       a.title(href='javascript:void(0)', id=date)
         h2 #{title}
@@ -80,6 +67,11 @@ mixin event(type, title, desc, date, begintime, endtime, loc)
         block
 body
   script.
+    function getAnchor() {
+      var cururl = document.URL;
+      var urlcomponents = cururl.split('#');
+      return (urlcomponents.length > 1) ? urlcomponents[1] : null;
+    }
     var prev = null;
     document.addEventListener( 'DOMContentLoaded', function () {
       var bruh = document.getElementsByClassName('description');
@@ -108,19 +100,20 @@ body
           }
         });
       }
+      document.getElementById(getAnchor()).click();
     });
   script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
   script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
-  include ../../header.pug
+  include ../../template/header.pug
   .header(style='filter: hue-rotate(320deg); background-position: bottom;')
     .textArea
-      h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
-  .textArea
+      h1(style='margin: 0; padding: 0.3em 0 0.3em 0; font-size: 72pt;') Events
+  .textArea(style='width: 50%;')
     .eventsTermsContainer
-      a.eventsTerm(href='/events/w22', title=term1) #{term1}
-      a.eventsTerm(href='/events/f21', title=term2) #{term2}
-      a.eventsTerm(href='/events/s21', title=term3) #{term3}
-      a.eventsTerm(href='/events/archive', title='Archive') Archive
+      a.eventsTerm(href='/events/'+prevTerm, title='Previous Term') Previous Term
+      .eventsTerm(title=term) #{term}
+      a.eventsTerm(href='/events/'+nextTerm, title='Next Term') Next Term
+      a.eventsTerm#archive(href='/events/archive', title='Archive') Archive
     hr
     //EVENTGOESHERE
-  include ../../footer.pug
+  include ../../template/footer.pug

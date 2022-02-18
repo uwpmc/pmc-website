@@ -1,19 +1,7 @@
 // Written by Evan Girardin, W22 PMC President 
 // Please direct all compliments and hate mail to evangirardin at gmail dot com 
 doctype html
-head
-  meta(charset='UTF-8')
-  title Pure Math Club
-  link(rel='apple-touch-icon', sizes='180x180', href='apple-touch-icon.png')
-  link(rel='icon', type='image/png', sizes='32x32', href='favicon-32x32.png')
-  link(rel='icon', type='image/png', sizes='16x16', href='favicon-16x16.png')
-  link(rel='manifest', href='site.webmanifest')
-  link(rel='mask-icon', href='safari-pinned-tab.svg', color='#5bbad5')
-  meta(name='msapplication-TileColor', content='#da532c')
-  meta(name='theme-color', content='#ffffff')
-  link(rel='stylesheet', href='style.css')
-  link(rel='preconnect', href='https://fonts.gstatic.com')
-  link(href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap', rel='stylesheet')
+include template/head.pug
 -
   function readableDate(date) {
     let day = (date.charAt(6) == '0') ? date.charAt(7) : date.substr(6,2);
@@ -68,25 +56,29 @@ head
     
     return hr + ':' + time.substr(2,2) + ' ' + ampm;
   }
+  function getTerm(date) {
+    // date given as yyyymmdd
+    let month = parseInt(date.substr(4,2));
+    return (month < 5 ? 'w' : (month < 9 ? 's' : 'f')) + date.substr(2,2);
+  }
 
 mixin event(type, title, desc, date, begintime, endtime, loc)
-  a.eventItemHoverBuffer(href='events/w22#' + date)
+  a.eventItemHoverBuffer(href='events/' + getTerm(date) + '#' + date)
     .eventItem(id=type)
       .info
         h2 #{title}
-        p
-          i #{desc}
+        p(style='font-size: 14pt;') #{desc}
       .dateBox
         p #{readableDate(date)}
           br
           | #{readableTime(begintime)}&ndash;#{readableTime(endtime)}
           br
-          span(style='color: #ffffff;') #{loc}
+          span(style='color: #ffffff; font-family: inherit;') #{loc}
 body
-  include header.pug
+  include template/header.pug
   .header
     .headerLogo
-      img(src='pmamco_simple_free_nobg.png', style='height: 15em; padding: 15px;')
+      img(src='/img/pmamco_simple_free_nobg.png', style='height: 15em; padding: 15px;')
       div
         h1(style='padding: 15px 15px 15px 15px; position: relative;')
           | The 
@@ -97,10 +89,10 @@ body
           strong C&amp;O} 
           | Club
         .socials
-          a(href='https://discord.gg/6m9Jw9UCVF', style='background-image: url(img/discord.png);', target='_blank')
-          a(href='https://instagram.com/uwpmclub', style='background-image: url(img/instagram.png);', target='_blank')
-          a(href='https://facebook.com/groups/uwpmc', style='background-image: url(img/facebook.png);', target='_blank')
-          a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(img/youtube.png);', target='_blank')
+          a(href='https://discord.gg/6m9Jw9UCVF', style='background-image: url(/img/discord.png);', target='_blank')
+          a(href='https://instagram.com/uwpmclub', style='background-image: url(/img/instagram.png);', target='_blank')
+          a(href='https://facebook.com/groups/uwpmc', style='background-image: url(/img/facebook.png);', target='_blank')
+          a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(/img/youtube.png);', target='_blank')
   .textArea
     h1 Events
     .eventContainer
@@ -117,6 +109,6 @@ body
       div(style='width: 100%; display: flex; justify-content: start-flex; align-items: center; flex-wrap: nowrap;')
         div
           h1 Join our mailing list!
-          p(style='font-family: "Roboto";') Get notified about events and opportunities first :)
+          p(style='font-family: "PT Serif";') Get notified about events and opportunities first :)
         a.button#subscribe(href='http://eepurl.com/hJPG7b', style='margin-left: 4em;', target='_blank') Subscribe
-  include footer.pug
+  include template/footer.pug

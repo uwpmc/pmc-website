@@ -53,17 +53,23 @@ clean() {
 
 add-event() {
   # - Events page work
-  ACADTERM=''
-  YEAR=$(($4/10000))
+  # I hope this website isn't being used in Fall 2099
+  YEAR=$(($(($4/10000))%100))
   MONTH=$(($(($4/100))%100))
   if [[ $MONTH -ge 1 && $MONTH -le 4 ]]; then
+    PREV_ACADTERM=f$(($YEAR-1))
     ACADTERM=w
+    NEXT_ACADTERM=s$YEAR
   elif [[ $MONTH -ge 5 && $MONTH -le 8 ]]; then
+    PREV_ACADTERM=w$YEAR
     ACADTERM=s
+    NEXT_ACADTERM=f$YEAR
   else
+    PREV_ACADTERM=s$YEAR
     ACADTERM=f
+    NEXT_ACADTERM=w$((YEAR+1))
   fi
-  ACADTERM=${ACADTERM}$(($4/1000000))
+  ACADTERM=${ACADTERM}$YEAR
   if [[ ! -e event.md ]]; then
     echo "FATAL: A long-form Markdown description named \`event.md' is expected at root"
     echo "Failed to create event."
@@ -76,14 +82,13 @@ add-event() {
   if [[ ! -e events/${ACADTERM}/index.pug ]]; then
     cp template/event_index.pug events/${ACADTERM}/index.pug
 
-    # this is so god damn stupid haha
-    # worst possible way to generate a static page
+    sed -i "1s/^/- const prevTerm = \"${PREV_ACADTERM}\";\n- const nextTerm = \"${NEXT_ACADTERM}\";\n/" events/${ACADTERM}/index.pug
     if [[ ${ACADTERM::-2} == 'f' ]]; then
-      sed -i "1s/^/- const term1 = \"Fall ${YEAR}\";\n- const term2 = \"Spring ${YEAR}\";\n- const term3 = \"Winter ${YEAR}\";/" events/${ACADTERM}/index.pug
+      sed -i "1s/^/- const term = \"Fall 20${YEAR}\";\n/" events/${ACADTERM}/index.pug
     elif [[ ${ACADTERM::-2} == 'w' ]]; then
-      sed -i "1s/^/- const term1 = \"Winter ${YEAR}\";\n- const term2 = \"Fall $((${YEAR}-1))\";\n- const term3 = \"Spring $((${YEAR}-1))\";/" events/${ACADTERM}/index.pug
+      sed -i "1s/^/- const term = \"Winter 20${YEAR}\";\n/" events/${ACADTERM}/index.pug
     else
-      sed -i "1s/^/- const term1 = \"Spring ${YEAR}\";\n- const term2 = \"Winter ${YEAR}\";\n- const term3 = \"Fall $((${YEAR}-1))\";/" events/${ACADTERM}/index.pug
+      sed -i "1s/^/- const term = \"Spring 20${YEAR}\";\n/" events/${ACADTERM}/index.pug
     fi
   fi
 
@@ -98,6 +103,9 @@ add-event() {
   gawk -i inplace '/\+event\(.*\)/{++count;}{if(!(count==3)) print; else count=0;}' index.pug
   # Insert new event
   sed -i "s/.eventContainer/.eventContainer\n      +event(\"$1\", \"$2\", \"$3\", \"$4\", \"$5\", \"$6\", \"$7\")/" index.pug
+
+  # Update Events redirect
+  sed -i "s/URL=.../URL=${ACADTERM}/" events/index.pug
 
   echo "New event added! Rebuild the site using the \`build' command."
 }
