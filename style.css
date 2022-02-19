@@ -1,9 +1,20 @@
+html, body {
+  min-height: 100vh;
+}
+
 body {
   margin: 0;
   padding: 0;
   background-color: #fff;
   min-width: 700px;
   overflow-y: scroll;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 * {
@@ -157,14 +168,20 @@ a {
   text-decoration: none;
   font-size: 16pt;
   color: #161616;
+  -webkit-transition: color 0.15s ease;
+  transition: color 0.15s ease;
+}
+.navItem:hover, .navItem:focus-within {
+  color: #db2323;
 }
 
 .textArea {
   width: 60%;
   margin: auto;
+  margin-top: 0;
 }
 
-.eventContainer {
+.eventContainer, .potwContainer {
   width: 100%;
   position: relative;
   display: -webkit-box;
@@ -178,6 +195,56 @@ a {
           align-items: baseline;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
+}
+
+.potwContainer {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+      -ms-flex-flow: row-reverse wrap-reverse;
+          flex-flow: row-reverse wrap-reverse;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  padding-bottom: 2em;
+}
+
+.potwItem {
+  position: relative;
+  padding: 0.3em 1em;
+  width: 30%;
+  min-width: 20em;
+  margin: 10px;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  -ms-flex-negative: 3;
+      flex-shrink: 3;
+  height: 10em;
+  background-size: cover;
+  -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+          box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#eb635eff), to(#ed925cff));
+  background-image: linear-gradient(#eb635eff, #ed925cff);
+}
+.potwItem * {
+  padding: inherit;
+  position: absolute;
+}
+.potwItem .number {
+  left: 0;
+  top: 0;
+}
+.potwItem .date {
+  right: 0;
+  top: 0;
+}
+.potwItem .title {
+  left: 0;
+  bottom: 0;
+}
+.potwItem .arrow {
+  right: 0;
+  bottom: 0;
 }
 
 .eventItemHoverBuffer {
@@ -202,8 +269,8 @@ a {
   margin: 10px;
   border-radius: 12px;
   overflow: hidden;
-  -webkit-box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.5);
-          box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.5);
+          box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.5);
   top: 0;
   min-height: 30em;
   -webkit-transition: top ease 0.2s, margin ease 0.2s;
@@ -412,11 +479,11 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
 .longEventContainer .title {
   display: block;
   color: inherit;
-  border-radius: 1em;
-  background-color: none;
+  background-color: #eee;
   -webkit-transition: background-color 0.2s ease;
   transition: background-color 0.2s ease;
   padding: 0.5em 1em;
+  border-left: 3px solid #e90a54;
 }
 .longEventContainer .title:hover, .longEventContainer.title:focus-within {
   background-color: #ddd;
@@ -427,8 +494,8 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   -webkit-transition: max-height 0.2s ease, margin-bottom 0.2s ease;
   transition: max-height 0.2s ease, margin-bottom 0.2s ease;
   padding-left: 2em;
-  margin-left: 1em;
-  border-left: 2px solid #e90a54;
+  border-left: 3px solid #e90a54;
+  background-color: #f8f8f8;
 }
 .longEventContainer .imgHolder {
   position: relative;
@@ -456,10 +523,21 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   padding: 1em;
 }
 .longEventItem h2 {
+  color: #e90a54;
   margin: 0.25em 0;
+}
+.longEventItem .description h2 {
+  color: #000;
 }
 .longEventItem h3 {
   margin: 0.25em 0;
+  color: #000;
+}
+.longEventItem .description h3 {
+  color: #000;
+}
+.longEventItem p {
+  margin: 0;
 }
 .longEventItem .description p {
   padding: 1em 0;

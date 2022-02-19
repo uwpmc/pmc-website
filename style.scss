@@ -1,9 +1,14 @@
+html, body {
+  min-height: 100vh;
+}
 body {
   margin: 0;
   padding: 0;
   background-color: #fff;
   min-width: 700px;
   overflow-y: scroll;
+  display:flex;
+  flex-direction:column;
 }
 * {
   font-family: "PT Serif", "Times New Roman", serif;
@@ -111,6 +116,10 @@ a {
   text-decoration: none;
   font-size: 16pt;
   color: #161616;
+  transition: color 0.15s ease;
+  &:hover, &:focus-within {
+    color: #db2323;
+  }
 }
 .header {
 
@@ -118,6 +127,7 @@ a {
 .textArea {
   width: 60%;
   margin: auto;
+  margin-top: 0;
 }
 .eventContainer {
   width: 100%;
@@ -126,6 +136,49 @@ a {
   justify-content: space-between;
   align-items: baseline;
   flex-wrap: wrap;
+}
+.potwContainer {
+  @extend .eventContainer;
+  flex-flow: row-reverse wrap-reverse;
+  //flex-wrap: wrap-reverse;
+  //flex-direction: row-reverse;
+  justify-content: flex-end;
+  padding-bottom: 2em;
+}
+.potwItem {
+  position: relative;
+  padding: 0.3em 1em;
+  //min-width: 30%;
+  width: 30%;
+  min-width: 20em;
+  //max-width: 100%;
+  margin: 10px;
+  flex-grow: 1;
+  flex-shrink: 3;
+  height: 10em;
+  background-size: cover;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+  background-image: linear-gradient(#eb635eff, #ed925cff);
+  & * {
+    padding: inherit;
+    position: absolute;
+  }
+  & .number {
+    left: 0;
+    top: 0;
+  }
+  & .date {
+    right: 0;
+    top: 0;
+  }
+  & .title {
+    left: 0;
+    bottom: 0;
+  }
+  & .arrow {
+    right: 0;
+    bottom: 0;
+  }
 }
 .eventItemHoverBuffer {
   width: 30%;
@@ -148,7 +201,7 @@ a {
   margin: 10px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0 25px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 15px 0 rgba(0,0,0,0.5);
   top: 0;
   min-height: 30em;
   transition: top ease 0.2s, margin ease 0.2s;
@@ -302,10 +355,11 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   & .title {
     display:block;
     color: inherit;
-    border-radius: 1em;
-    background-color: none;
+    //border-radius: 1em;
+    background-color: #eee;
     transition: background-color 0.2s ease;
     padding: 0.5em 1em;
+    border-left: 3px solid #e90a54;
   }
   & .title:hover, &.title:focus-within {
     background-color: #ddd;
@@ -315,8 +369,9 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
     margin-bottom: 0;
     transition: max-height 0.2s ease, margin-bottom 0.2s ease;
     padding-left: 2em;
-    margin-left: 1em;
-    border-left: 2px solid #e90a54;
+    //margin-left: 1em;
+    border-left: 3px solid #e90a54;
+    background-color: #f8f8f8;
   }
   & .imgHolder {
     position: relative;
@@ -343,10 +398,21 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   padding: 1em;
   //margin: auto;
   & h2 {
+    color: #e90a54;
     margin: 0.25em 0;
+  }
+  & .description h2 {
+    color: #000;
   }
   & h3 {
     margin: 0.25em 0;
+    color: #000;
+  }
+  & .description h3 {
+    color: #000;
+  }
+  & p {
+    margin: 0;
   }
   & .description p {
     padding: 1em 0;

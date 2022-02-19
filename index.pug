@@ -1,5 +1,6 @@
 // Written by Evan Girardin, W22 PMC President 
-// Please direct all compliments and hate mail to evangirardin at gmail dot com 
+// Please direct all compliments and hate mail to evangirardin at gmail dot com
+- const potw = true;
 doctype html
 include template/head.pug
 -
@@ -94,15 +95,43 @@ body
           a(href='https://facebook.com/groups/uwpmc', style='background-image: url(/img/facebook.png);', target='_blank')
           a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(/img/youtube.png);', target='_blank')
   .textArea
-    h1 Events
+    h1(style='padding-top: 0.3em;') Events
     .eventContainer
-      +event("over9k", "Homomorphism-Homogeneous Graphs", "Pure Math Talk by Professor Nickolas Rollick!", "20210719", "1700", "1800", "MC 2066")
+      +event("pmath", "Homomorphism-Homogeneous Graphs", "Pure Math Talk by Professor Nickolas Rollick!", "20210719", "1700", "1800", "MC 2066")
       +event("sasms", "Short Attention Span Math Seminars I", "Four students talking about math, so cool!", "20220303", "1900", "2130", "MC 4021")
       +event("co", "Crypto Gossip: Elliptic Curve Cryptography and the NSA", "C&O Talk by Professor Alfred Menezes!", "20210401", "1630", "1730", "MC 2066")
     a.button#pastEvents(href='./events') Browse all events
-  //-
+  
+  if potw
     .textArea
       h1 Problem of the Week
+      //- N.B. Order has to be REVERSED here to make it wrap the way we want
+      .potwContainer
+        .potwItem
+          h1.number #4
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
+        .potwItem
+          h1.number #4
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
+        .potwItem
+          h1.number #4
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
+        .potwItem
+          h1.number #4
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
+        .potwItem
+          h1.number #4
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
       
   div(style='width: 100%; background-color: #e0e0e0;')
     .textArea(style='padding: 1em 0 1em 0;')

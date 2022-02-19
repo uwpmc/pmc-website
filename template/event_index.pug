@@ -61,8 +61,8 @@ mixin event(type, title, desc, date, begintime, endtime, loc)
     .longEventItem
       a.title(href='javascript:void(0)', id=date)
         h2 #{title}
-        h3 #{desc}
-        h3(style='color: #e90a54;') #{readableDate(date)} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
+        h3 #{readableDate(date)} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
+        p #{desc}
       .description
         block
 body
@@ -107,7 +107,7 @@ body
   include ../../template/header.pug
   .header(style='filter: hue-rotate(320deg); background-position: bottom;')
     .textArea
-      h1(style='margin: 0; padding: 0.3em 0 0.3em 0; font-size: 72pt;') Events
+      h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
   .textArea(style='width: 50%;')
     .eventsTermsContainer
       a.eventsTerm(href='/events/'+prevTerm, title='Previous Term') Previous Term

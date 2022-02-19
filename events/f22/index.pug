@@ -1,6 +1,6 @@
-- const term = "Spring 2022";
-- const prevTerm = "w22";
-- const nextTerm = "f22";
+- const term = "Fall 2022";
+- const prevTerm = "s22";
+- const nextTerm = "w23";
 
 doctype html
 include ../../template/head.pug
@@ -64,8 +64,8 @@ mixin event(type, title, desc, date, begintime, endtime, loc)
     .longEventItem
       a.title(href='javascript:void(0)', id=date)
         h2 #{title}
-        h3 #{desc}
-        h3(style='color: #e90a54;') #{readableDate(date)} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
+        h3 #{readableDate(date)} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
+        p #{desc}
       .description
         block
 body
@@ -119,12 +119,7 @@ body
       a.eventsTerm#archive(href='/events/archive', title='Archive') Archive
     hr
     //EVENTGOESHERE
-    +event("pmath", "hello", "desc", "20220515", "1745", "1900", "DC 1350")
-      h2 hello
-      h3 this is a test
-      p dklfjsljfslkfdk
-      p sdjfsflk
-    +event("pmath", "hello", "desc", "20220515", "1745", "1900", "DC 1350")
+    +event("sasms", "Short Attention Span Math Seminars II", "Four students. Four talks. Thirty minutes per talk. You will learn.", "20220916", "1900", "2130", "MC 2065")
       h2 hello
       h3 this is a test
       p dklfjsljfslkfdk
