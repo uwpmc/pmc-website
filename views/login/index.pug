@@ -1,0 +1,18 @@
+doctype html
+include ../template/head.pug
+  meta(name="google-signin-client_id", content="407152582406-ad0u942n6550ctlh4852hm26qss44t4r.apps.googleusercontent.com")
+script(src="https://apis.google.com/js/platform.js", async, defer)
+body
+  script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
+  script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
+  include ../template/header.pug
+  .textArea
+    h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Administrator login
+    p You 
+      i must 
+      | log in with the pmclub email. Other accounts will be rejected.
+      br
+      | If you're not a PMC exec, this page isn't for you!
+    form(action='/auth/google' method='GET')
+      button.button#subscribe(type='submit') login
+  include ../template/footer.pug

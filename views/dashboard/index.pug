@@ -1,0 +1,117 @@
+doctype html
+include ../template/head.pug
+meta(name="google-signin-client_id", content="407152582406-ad0u942n6550ctlh4852hm26qss44t4r.apps.googleusercontent.com")
+script(src="https://apis.google.com/js/platform.js", async, defer)
+link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
+script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
+body
+  script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
+  script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
+  include ../template/header.pug
+  .textArea
+    h1(style='margin: 0; padding: 0.8em 0 0 0; font-size: 48pt;') Admin Dashboard
+    form(action='/logout', method='POST')
+      button.button#pastEvents(type='submit') logout
+    h2 Create Event
+    // I am so terribly lazy
+    form(action='/new_event', method='POST')
+      label(for='eventtype') Event type: 
+      select(name='eventtype', id='eventtype', required='')
+        option(value='pmath') PMath
+        option(value='amath') AMath
+        option(value='co') C&O
+        option(value='over9k') Contest (Over 9000)
+        option(value='sasms') SASMS
+        option(value='other') Other
+      br
+      br
+      label(for='date') Date: 
+      input(type='date', id='date', name='date', required='')
+      br
+      br
+      label(for='loc') Location: 
+      input(type='text', id='loc', name='loc', required='')
+      br
+      br
+      label(for='begin') Begin time: 
+      input(type='time', id='begin', name='begin', required='')
+      br
+      br
+      label(for='end') End time: 
+      input(type='time', id='end', name='end', required='')
+      br
+      br
+      label(for='title') Title (max 255 chararacters): 
+      input(type='text', id='title', name='title', required='')
+      br
+      br
+      label(for='descr') Short description (max 255 characters, for preview):
+      br
+      textarea(name='descr', id='descr', required='')
+      br
+      br
+      label(for='body') Long description (max 32768 characters, for event body):
+      br
+      textarea(name='body', id='body')
+      script.
+        var easymde = new EasyMDE({element: document.getElementById('body')});
+      br
+      button.button(type='submit') Publish Event
+    h2 Delete Event
+    label(for='del_date') Search for events on date: 
+    input(type='date', id='del_date', name='del_date', required='')
+    br
+    p Search results:
+    ul#results_box
+      li lol
+      li Hello
+    br
+    script.
+      const deleteSearchInput = document.querySelector('#del_date');
+      const resultsBox = document.querySelector('#results_box');
+      deleteSearchInput.addEventListener('change' , (e) => {
+        const j = resultsBox.childElementCount;
+        for (var i = 0; i < j; i++) {
+          resultsBox.removeChild(resultsBox.firstChild);
+        }
+        let search = e.target.value.trim();
+        fetch('/query_events', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({search})
+          }).then(res =>
+            res.json()
+            ).then(data => {
+              if (data.length > 0) {
+                for (var i = 0; i < data.length; i++) {
+                  console.log(data[0]); // <-- success!
+                  const d = document.createElement('div')
+                  const f = document.createElement('form')
+                  f.action = '/delete_event'
+                  f.method = 'POST'
+                  d.appendChild(f);
+                  const b = document.createElement('button')
+                  const t = document.createElement('label')
+                  const bnode = document.createTextNode('PERMANENTLY DELETE!')
+                  const tnode = document.createTextNode('Article ' + data[i].id + ': ' + data[i].title + ' ')
+                  f.appendChild(t);
+                  f.appendChild(b);
+                  t.appendChild(tnode);
+                  b.appendChild(bnode);
+                  b.type = 'submit';
+                  b.name = data[i].id;
+                  b.id = data[i].id;
+                  t.htmlFor = data[i].id;
+                  console.log(b);
+                  resultsBox.appendChild(d);
+                }
+              }
+            }).catch(err => {
+              alert('error!');
+              console.error(err);
+            });
+        });
+  include ../template/footer.pug

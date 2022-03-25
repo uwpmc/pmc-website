@@ -2,7 +2,7 @@
 // Please direct all compliments and hate mail to evangirardin at gmail dot com
 - const potw = true;
 doctype html
-include template/head.pug
+include ../template/head.pug
 -
   function readableDate(date) {
     let day = (date.charAt(6) == '0') ? date.charAt(7) : date.substr(6,2);
@@ -76,7 +76,7 @@ mixin event(type, title, desc, date, begintime, endtime, loc)
           br
           span(style='color: #ffffff; font-family: inherit;') #{loc}
 body
-  include template/header.pug
+  include ../template/header.pug
   .header
     .headerLogo
       img(src='/img/pmamco_simple_free_nobg.png', style='height: 15em; padding: 15px;')
@@ -105,30 +105,30 @@ body
   if potw
     .textArea
       h1 Problem of the Week
-      //- N.B. Order has to be REVERSED here to make it wrap the way we want
+      //- N.B. Order has to be REVERSED here to make it wrap correctly
       .potwContainer
-        .potwItem
+        a.potwItem(href='/potw#01')
+          h1.number #1
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
+        a.potwItem(href='/potw#02')
+          h1.number #2
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
+        a.potwItem(href='/potw#03')
+          h1.number #3
+          h3.date June 19, 2021
+          h3.title DIY Collatz Conjecture
+          h3.arrow >
+        a.potwItem(href='/potw#04')
           h1.number #4
           h3.date June 19, 2021
           h3.title DIY Collatz Conjecture
           h3.arrow >
-        .potwItem
-          h1.number #4
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
-        .potwItem
-          h1.number #4
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
-        .potwItem
-          h1.number #4
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
-        .potwItem
-          h1.number #4
+        a.potwItem(href='/potw#05')
+          h1.number #5
           h3.date June 19, 2021
           h3.title DIY Collatz Conjecture
           h3.arrow >
@@ -140,4 +140,4 @@ body
           h1 Join our mailing list!
           p(style='font-family: "PT Serif";') Get notified about events and opportunities first :)
         a.button#subscribe(href='http://eepurl.com/hJPG7b', style='margin-left: 4em;', target='_blank') Subscribe
-  include template/footer.pug
+  include ../template/footer.pug
