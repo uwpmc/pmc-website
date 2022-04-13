@@ -479,7 +479,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
 
 #amath {
   background-size: cover;
-  background-image: linear-gradient(#f2be4bff, #fc6e5bff);
+  background-image: linear-gradient(#fc6e5bff, #f2be4bff);
 }
 #amath .dateBox p {
   color: #f5deab;

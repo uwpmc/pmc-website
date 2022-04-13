@@ -114,4 +114,10 @@ body
               console.error(err);
             });
         });
+    h2 Enable/Disable POTW
+    p If you aren't running Problem of the Week this term, you should disable POTW here so old problems don't show up on the home page.
+    form(action='/disable_potw', method='POST')
+    button.button(type='submit') Disable POTW
+    form(action='/enable_potw', method='POST')
+    button.button(type='submit') Enable POTW
   include ../template/footer.pug
