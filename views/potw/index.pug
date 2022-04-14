@@ -1,0 +1,150 @@
+
+doctype html
+include ../template/head.pug
+-
+  function readableDate(date) {
+    // date given as yyyy-mm-dd
+    let day = (date.charAt(6) == '0') ? date.charAt(7) : date.slice(6,8);
+    let month = '';
+    switch ('' + date.slice(4,6)) {
+      case '01':
+        month = 'January';
+        break;
+      case '02':
+        month = 'February';
+        break;
+      case '03':
+        month = 'March';
+        break;
+      case '04':
+        month = 'April';
+        break;
+      case '05':
+        month = 'May';
+        break;
+      case '06':
+        month = 'June';
+        break;
+      case '07':
+        month = 'July';
+        break;
+      case '08':
+        month = 'August';
+        break;
+      case '09':
+        month = 'September';
+        break;
+      case '10':
+        month = 'October';
+        break;
+      case '11':
+        month = 'November';
+        break;
+      case '12':
+        month = 'December';
+        break;
+    }
+    return month + ' ' + day + ', ' + date.slice(0,4);
+  }
+  function readableTime(time) {
+    // time given as hh:mm:ss
+    const parts = time.split(':');
+    time = parts[0] + parts[1];
+    let intTime = parseInt(time);
+    let hr = Math.floor(time/100);
+    let ampm = (hr >= 12 ? 'PM' : 'AM');
+    if (hr == 0) hr = 12;
+    else if (hr > 12) hr -= 12;
+    
+    return hr + ':' + time.slice(2,4) + ' ' + ampm;
+  }
+  function getTerm(date) {
+    // date given as yyyymmdd
+    let month = parseInt(date.slice(4,6));
+    return (month < 5 ? 'w' : (month < 9 ? 's' : 'f')) + date.slice(2,4);
+  }
+  Date.prototype.yyyymmdd = function() {
+    var mm = this.getMonth() + 1; // getMonth() is zero-based
+    var dd = this.getDate();
+    
+    return [this.getFullYear(),
+            (mm>9 ? '' : '0') + mm,
+            (dd>9 ? '' : '0') + dd
+            ].join('');
+          };
+
+mixin potw(id, title, date, imgpath)
+  .longPotwContainer
+    .longPotwItem
+      a.title(href='javascript:void(0)', id=id, style=(Date.now() > date ? 'border-left: 3px solid #444;' : ''))
+        h2(style=(Date.now() > date ? 'color: #444' : '')) POTW ##{id}: #{title}
+        h3 #{readableDate(date.yyyymmdd())}
+      .description(style=(Date.now() > date ? 'border-left: 3px solid #444;' : ''))
+        div(style=(imgpath === null ? '' : 'content: ""; padding: 1em 1em 0 1em; width: 100%'))
+          img(id='img'+id, src="/img/potw/"+imgpath)
+        .descBody
+          block
+body
+  script.
+    var clickQueue = [];
+    function getAnchor() {
+      var cururl = document.URL;
+      var urlcomponents = cururl.split('#');
+      return (urlcomponents.length > 1) ? urlcomponents[1] : null;
+    }
+    var prev = null;
+    document.addEventListener( 'DOMContentLoaded', function () {
+      var bruh = document.getElementsByClassName('description');
+      var coll = document.getElementsByClassName('title');
+      for (var i = 0; i < bruh.length; ++i) {
+        bruh[i].style.maxHeight = 0;
+      }
+      for (var i = 0; i < coll.length; ++i) {
+        coll[i].addEventListener('click', function() {
+          // sucks sucks really bad!!!! holy shit
+          if (!(this.nextElementSibling.children[0].children[0].complete)) {
+            // enqueue the open until image is loaded
+            // this is necessary to know image height
+            // when opening the drawers
+            clickQueue.push(this.nextElementSibling.children[0].children[0]);
+            return;
+          }
+          this.classList.toggle('active');
+          var content = this.nextElementSibling;
+          if (content.style.maxHeight && content.style.maxHeight != '0px') { // Hide it
+            content.style.maxHeight = '0px';
+            content.style.marginBottom = '0';
+            prev = null;
+          } else { // Show it
+            content.style.maxHeight = content.scrollHeight + 'px';
+            content.style.marginBottom = '0.5em';
+            if (prev) {
+              prev.classList.toggle('active');
+              prev.nextElementSibling.style.maxHeight = '0px';
+              prev.nextElementSibling.style.marginBottom = '0';
+            }
+            prev = this;
+          }
+        });
+        // click deferral
+        // only needed for potw topmost image, not for body images or events
+        // this is because those images all live inside fixed-height divs
+        bruh[i].children[0].children[0].addEventListener('load', function() {
+          if (clickQueue.includes(this)) {
+            this.parentElement.parentElement.previousElementSibling.click();
+          }
+        });
+      }
+      document.getElementById(getAnchor()).click();
+    });
+  include ../template/header.pug
+  .header(style='filter: hue-rotate(320deg); background-position: bottom;')
+    .textArea
+      h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Problem of the Week
+  .textArea(style='width: 50%; max-width: 80rem; min-width: 35rem;')
+    - var n = 0;
+    while n < potws.length
+      +potw(potws.length-n, potws[n].title, potws[n].date, potws[n].imgpath)
+        | !{potws[n].body}
+      - ++n;
+  include ../template/footer.pug

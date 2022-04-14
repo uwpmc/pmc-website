@@ -89,16 +89,35 @@ include ../template/head.pug
     if (term[0] == 's') { return 'w' + term[1] + term[2]; }
     if (term[0] == 'f') { return 's' + term[1] + term[2]; }
   }
+  function eventBGColor(type) {
+    switch(type) {
+      case 'pmath':
+        return 'linear-gradient(to right, #ba50ebcc, #ff70a488)'
+      case 'co':
+        return 'linear-gradient(to right, #34eb71cc, #5bd4be88)'
+      case 'amath':
+        return 'linear-gradient(to right, #fc6e5bcc, #f2be4b88)'
+      case 'sasms':
+        return 'linear-gradient(to right, #eb635ecc, #ed925c88)'
+      case 'over9k':
+        return 'linear-gradient(to right, #4560f7cc, #ba77ed88)'
+      case 'other':
+        return 'linear-gradient(to right, #222222cc, #55555588)'
+    }    
+  }
 
-mixin event(type, title, desc, date, begintime, endtime, loc)
+mixin event(type, title, desc, date, begintime, endtime, loc, imgpath)
   .longEventContainer
     .longEventItem
-      a.title(href='javascript:void(0)', id=date)
-        h2 #{title}
-        h3 #{readableDate(date)} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
+      a.title(href='javascript:void(0)', id=date, style=(Date.now() > date ? 'border-left: 3px solid #444;' : ''))
+        h2(style=(Date.now() > date ? 'color: #444;' : '')) #{title}
+        h3 #{readableDate(date.yyyymmdd())} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
         p #{desc}
-      .description
-        block
+      .description(style=(Date.now() > date ? 'border-left: 3px solid #444;' : ''))
+        div(style=(imgpath === null ? '' : 'content: ""; padding: 1em 1em 0 1em;'))
+          div(class=(imgpath === null ? '' : 'descImgHolder'), style="background-image:" + eventBGColor(type) + ", url('/img/events/"+imgpath+"')")
+        .descBody
+          block
 body
   script.
     function getAnchor() {
@@ -136,13 +155,11 @@ body
       }
       document.getElementById(getAnchor()).click();
     });
-  script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
-  script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
   include ../template/header.pug
   .header(style='filter: hue-rotate(320deg); background-position: bottom;')
     .textArea
       h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
-  .textArea(style='width: 50%;')
+  .textArea(style='width: 50%; max-width: 80rem; min-width: 35rem;')
     .eventsTermsContainer
       - var fst = '/events/' + prevTerm(reqTerm);
       - var snd = '/events/' + nextTerm(reqTerm);
@@ -152,6 +169,6 @@ body
       //a.eventsTerm#archive(href='/events/archive', title='Archive') Archive
     hr
     each val in posts
-      +event(val.eventtype, val.title, val.descr, val.date.yyyymmdd(), val.begin, val.end, val.loc)
+      +event(val.type, val.title, val.descr, val.date, val.begin, val.end, val.loc, val.imgpath)
         | !{val.body}
   include ../template/footer.pug

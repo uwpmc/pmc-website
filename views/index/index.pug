@@ -1,6 +1,6 @@
-// Written by Evan Girardin, W22 PMC President 
-// Please direct all compliments and hate mail to evangirardin at gmail dot com
-- const potw = true;
+// Written with love by Evan Girardin, W22 PMC President 
+// Please direct all compliments and hate mail to evangirardin at gmail dot com 
+
 doctype html
 include ../template/head.pug
 -
@@ -74,10 +74,26 @@ include ../template/head.pug
             (dd>9 ? '' : '0') + dd
             ].join('');
           };
+  function eventBGColor(type) {
+    switch(type) {
+      case 'pmath':
+        return 'linear-gradient(#ba50ebff, #ff70a4ce)'
+      case 'co':
+        return 'linear-gradient(#34eb71ff, #5bd4bece)'
+      case 'amath':
+        return 'linear-gradient(#fc6e5bff, #f2be4bce)'
+      case 'sasms':
+        return 'linear-gradient(#eb635eff, #ed925cce)'
+      case 'over9k':
+        return 'linear-gradient(#4560f7ff, #ba77edce)'
+      case 'other':
+        return 'linear-gradient(#222222ff, #555555ce)'
+    }    
+  }
 
-mixin event(type, title, desc, date, begintime, endtime, loc)
+mixin event(type, title, desc, date, begintime, endtime, loc, imgpath)
   a.eventItemHoverBuffer(href='events/' + getTerm(date) + '#' + date)
-    .eventItem(id=type)
+    .eventItem(id=type, style=(imgpath === null ? '' : 'background-image: '+eventBGColor(type)+", url('img/events/"+imgpath+"')"))
       .info
         h2 #{title}
         p(style='font-size: 14pt;') #{desc}
@@ -87,13 +103,20 @@ mixin event(type, title, desc, date, begintime, endtime, loc)
           | #{readableTime(begintime)}&ndash;#{readableTime(endtime)}
           br
           span(style='color: #ffffff; font-family: inherit;') #{loc}
+mixin potw(id, title, date, imgpath)
+  a.potwItem(href='/potw#'+id)
+    h1.number ##{id}
+    h3.date #{readableDate(date)}
+    h3.title #{title}
+    h3.arrow >
+    .potwImg(style=(imgpath === null ? '' : 'background-image: url("img/potw/'+imgpath+'")'))
 body
   include ../template/header.pug
-  .header
+  .header(style='background-image: url("img/desktop_background_01_gradient_graph.png");')
     .headerLogo
       img(src='/img/pmamco_simple_free_nobg.png', style='height: 15em; padding: 15px;')
       div
-        h1(style='padding: 15px 15px 15px 15px; position: relative;')
+        h1(style='padding: 15px 15px 15px 15px; position: relative; min-width: 30rem;')
           | The 
           strong {Pure Math,
           br
@@ -109,47 +132,27 @@ body
   .textArea
     h1(style='padding-top: 0.3em;') Events
     .eventContainer
-      +event(posts[0].type, posts[0].title, posts[0].descr, posts[0].date.yyyymmdd(), posts[0].begin, posts[0].end, posts[0].loc)
-      +event(posts[1].type, posts[1].title, posts[1].descr, posts[1].date.yyyymmdd(), posts[1].begin, posts[1].end, posts[1].loc)
-      +event(posts[2].type, posts[2].title, posts[2].descr, posts[2].date.yyyymmdd(), posts[2].begin, posts[2].end, posts[2].loc)
+      - var n = posts.length - 1;
+      while n >= 0
+        +event(posts[n].type, posts[n].title, posts[n].descr, posts[n].date.yyyymmdd(), posts[n].begin, posts[n].end, posts[n].loc, posts[n].imgpath)
+        - n--
     a.button#pastEvents(href='./events') Browse all events
   
-  if potw
+  if isPOTW
     .textArea
       h1 Problem of the Week
       //- N.B. Order has to be REVERSED here to make it wrap correctly
       .potwContainer
-        a.potwItem(href='/potw#01')
-          h1.number #1
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
-        a.potwItem(href='/potw#02')
-          h1.number #2
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
-        a.potwItem(href='/potw#03')
-          h1.number #3
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
-        a.potwItem(href='/potw#04')
-          h1.number #4
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
-        a.potwItem(href='/potw#05')
-          h1.number #5
-          h3.date June 19, 2021
-          h3.title DIY Collatz Conjecture
-          h3.arrow >
+        - var m = potws.length - 1;
+        while m >= 0
+          +potw(potws.length-m, potws[m].title, potws[m].date.yyyymmdd(), potws[m].imgpath)
+          - m--;
       
   div(style='width: 100%; background-color: #e0e0e0;')
     .textArea(style='padding: 1em 0 1em 0;')
-      div(style='width: 100%; display: flex; justify-content: start-flex; align-items: center; flex-wrap: nowrap;')
-        div
+      div(style='width: 100%; display: flex; justify-content: start-flex; align-items: center; flex-wrap: wrap; column-gap: 4em;')
+        div(style='min-width: 15rem;')
           h1 Join our mailing list!
-          p(style='font-family: "PT Serif";') Get notified about events and opportunities first :)
-        a.button#subscribe(href='http://eepurl.com/hJPG7b', style='margin-left: 4em;', target='_blank') Subscribe
+          p(style='font-family: "Roboto Slab";') Get notified about events and opportunities first :)
+        a.button#subscribe(href='http://eepurl.com/hJPG7b', target='_blank') Subscribe
   include ../template/footer.pug

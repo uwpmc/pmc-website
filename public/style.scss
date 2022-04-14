@@ -5,51 +5,65 @@ body {
   margin: 0;
   padding: 0;
   background-color: #fff;
-  min-width: 700px;
+  min-width: 750px;
   overflow-y: scroll;
   display:flex;
   flex-direction:column;
 }
 * {
-  font-family: "PT Serif", "Times New Roman", serif;
+  font-family: "Roboto Slab", "Times New Roman", sans-serif;
   box-sizing: border-box;
 }
 h1 {
   color: #161616;
-  font-family: "Inter", "Helvetica", serif;
+  font-family: "Inter", "Helvetica", sans-serif;
   & strong {
-    font-family: "Inter", "Helvetica", serif;
+    font-family: "Inter", "Helvetica", sans-serif;
   }
 }
 h2 {
   font-size: 22pt;
   font-weight: 500;
   color: #161616;
-  font-family: "Inter", "Helvetica", serif;
+  font-family: "Inter", "Helvetica", sans-serif;
+  & em {
+    font-family: "Inter", "Helvetica", sans-serif;
+    font-weight: 600;
+    font-style: oblique;
+  }
 }
 h3 {
-  font-family: "Inter", "Helvetica", serif;
+  font-family: "Inter", "Helvetica", sans-serif;
+  font-size: 14pt;
 }
 p {
   margin: 0 0 30px 0;
   color: #161616;
-  font-family: "PT Serif", "Times New Roman", serif;
+  font-family: "Roboto Slab", "Times New Roman", sans-serif;
   //padding: 0;
+}
+ul {
+  margin-bottom: 0;
 }
 
 nav {
   width: 100%;
-  min-width: 700px;
+  min-width: 750px;
   height: 50px;
   position: relative;
   top: 0;
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: flex-end;
   background-color: #ededed;
-  align-items: center;
   box-shadow: 0 8px rgba(0,0,0,0.4);
   z-index: 10;
+}
+.navStuff {
+  display: flex;
+  position: relative;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0;
+  padding: 0;
 }
 .navLogo {
   display: flex;
@@ -89,7 +103,7 @@ a {
   //width: 100%;
   height: 35%;
   background-blend-mode: multiply;
-  background-image: url('img/desktop_background_01_gradient.png');
+  background-image: url('img/desktop_background_01_gradient_graph_alt.png');
   background-size: cover;
   box-shadow: inset 0 -8px rgba(0,0,0,0.4);
 }
@@ -111,7 +125,7 @@ a {
 }
 .navItem {
   padding: 10px 15px 10px 15px;
-  font-family: "Inter", "Helvetica", sans-serif;
+  font-family: "Inter", "Helvetica", sans-sans-serif;
   font-weight: 500;
   text-decoration: none;
   font-size: 16pt;
@@ -126,6 +140,7 @@ a {
 }
 .textArea {
   width: 60%;
+  max-width: 1500px;
   margin: auto;
   margin-top: 0;
 }
@@ -135,7 +150,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  flex-wrap: wrap;
+  flex-flow: row-reverse wrap-reverse;
 }
 .potwContainer {
   @extend .eventContainer;
@@ -157,9 +172,26 @@ a {
   flex-grow: 1;
   flex-shrink: 3;
   height: 10em;
+  overflow: hidden;
   background-size: cover;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
-  background-image: linear-gradient(#eb635eff, #ed925cff);
+  background-image: linear-gradient(#eb635eee, #ed925cce);
+  transition: background-image 0.2s ease;
+  &:hover .potwImg, &:focus-within .potwImg {
+    transform: scale(1.07);
+  }
+  & .potwImg {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+    transition: transform 0.25s ease;
+  }
   & * {
     padding: inherit;
     position: absolute;
@@ -186,7 +218,7 @@ a {
 .eventItemHoverBuffer {
   width: 30%;
   min-width: 250px;
-  max-width: 650px;
+  //max-width: 650px;
   flex-grow: 1;
   // Prevents CSS jitter
   &:hover, &:focus-within {
@@ -199,8 +231,8 @@ a {
 .eventItem {
   //width: 30%;
   position: relative;
-  min-width: 10em;
-  max-width: 25em;
+  min-width: 250px;
+  //max-width: 650px;
   margin: 10px;
   border-radius: 12px;
   overflow: hidden;
@@ -209,7 +241,7 @@ a {
   min-height: 30em;
   transition: top ease 0.2s, margin ease 0.2s;
   & h2 {
-    font-family: "Inter", "Helvetica", serif;
+    font-family: "Inter", "Helvetica", sans-serif;
     font-weight: 600;
   }
   & p {
@@ -235,7 +267,7 @@ a {
       color: #ffffff;
       font-weight: 700;
       font-size: 18pt;
-      font-family: "Inter", "Helvetica", serif;
+      font-family: "Inter", "Helvetica", sans-serif;
     }
   }
 }
@@ -253,7 +285,7 @@ a {
 .button {
   position: relative;
   display: inline-block; // Prevents collapsing margins
-  font-family: "Inter", "Helvetica", serif;
+  font-family: "Inter", "Helvetica", sans-serif;
   font-size: 18pt;
   font-weight: 600;
   background-color: #de4b7c;
@@ -314,7 +346,7 @@ a {
   padding-top: 1em;
 }
 .eventsTerm {
-  //font-family: "Inter", "Helvetica", sans-serif;
+  //font-family: "Inter", "Helvetica", sans-sans-serif;
   font-size: 14pt;
   font-weight: 600;
   margin: 1em;
@@ -357,7 +389,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
     padding-left: 1em;
   }
 }
-.longEventContainer {
+.longEventContainer, .longPotwContainer {
   position: relative;
   width: 100%;
   display: flex;
@@ -378,41 +410,44 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
     background-color: #ddd;
   }
   & .description {
+    display: block;
+    position: relative;
     max-height: auto;
     margin-bottom: 0;
     transition: max-height 0.2s ease, margin-bottom 0.2s ease;
-    padding-left: 2em;
-    padding-right: 2em;
-    //margin-left: 1em;
     border-left: 3px solid #e90a54;
     background-color: #f8f8f8;
-  }
-  & .imgHolder {
-    position: relative;
-    width: 10%;
-    height: auto;
-    min-height: 0;
-    object-fit: cover;
-    margin: 1em 0 1em 1em;
-    //border-radius: 2em;
-    overflow: hidden;
-  }
-  & img {
-    position: absolute;
-    top: 0;
-    object-fit: cover;
-    height: 100%;
-    width: 100%;
-    border-radius: 1.5em;
+    & .descBody {
+      padding-left: 2em;
+      padding-right: 2em;
+      padding-bottom: 2em;
+      & img {
+        width: 100%;
+      }
+    }
+    //margin-left: 1em;
+    & .descImgHolder {
+      content: "";
+      display: block;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      padding-left: 0;
+      padding-right: 0;
+      box-shadow: inset 0 0 20px #666;
+      height: 8em;
+      width: 100%;
+    }
   }
 }
-.longEventItem {
+.longEventItem, .longPotwItem {
   position: relative;
   width: 100%;
-  padding: 1em;
+  margin: 1em;
   //margin: auto;
   & h2 {
     color: #e90a54;
+    font-weight: 600;
     margin: 0.25em 0;
   }
   & .description h2 {
@@ -429,7 +464,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
     margin: 0;
   }
   & .description p {
-    padding: 1em 0;
+    padding: 1em 0 0 0;
     font-size: 13pt;
     margin: 0;
   }
@@ -437,20 +472,28 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
     padding: 1em 0 0 0;
     margin: 0;
   }
-  & .abstract {
-    font-family: "PT Serif", "Times New Roman", serif;
-    font-weight: 400;
-    line-height: 1.5em;
-    color: #fff;
-    background-color: #444;
-    padding: 1em !important;
-    margin: 1em;
+}
+.longPotwContainer {
+  & .description img {
+    width: 100%;
   }
 }
+.longPotwItem {
+  & a.title {
+    & h2 {
+      font-size: 28pt;
+    }
+    & h3 {
+      font-size: 16pt;
+    }
+  }
+}
+
 #pmath {
   // purple
   background-size: cover;
   background-image: linear-gradient(#ba50ebff, #ff70a4ff);
+  background-position: center;
   & .dateBox p {
     color: #e6c1f7;
   }
@@ -459,6 +502,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   // green
   background-size: cover;
   background-image: linear-gradient(#34eb71ff, #5bd4beff);
+  background-position: center;
   & .dateBox p {
     color: #a3e3b9;
   }
@@ -467,6 +511,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   // yellow
   background-size: cover;
   background-image: linear-gradient(#fc6e5bff, #f2be4bff);
+  background-position: center;
   & .dateBox p {
     color: #f5deab;
   }
@@ -475,6 +520,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   // red
   background-size: cover;
   background-image: linear-gradient(#eb635eff, #ed925cff);
+  background-position: center;
   & .dateBox p {
     color: #f5aeab;
   }
@@ -483,9 +529,19 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   // blue
   background-size: cover;
   background-image: linear-gradient(#506ef2ff, #ba77edff);
-  background-size: cover;
   background-position: center;
   & .dateBox p {
     color: #a8b2f0;
+  }
+}
+#other {
+  background-size: cover;
+  background-image: linear-gradient(#222, #555);
+  background-position: center;
+  & .dateBox p {
+    color: #ccc;
+  }
+  & .info * {
+    color: #eee;
   }
 }

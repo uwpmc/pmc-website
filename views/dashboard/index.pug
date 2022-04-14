@@ -5,8 +5,6 @@ script(src="https://apis.google.com/js/platform.js", async, defer)
 link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
 script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
 body
-  script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
-  script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
   include ../template/header.pug
   .textArea
     h1(style='margin: 0; padding: 0.8em 0 0 0; font-size: 48pt;') Admin Dashboard
@@ -14,7 +12,7 @@ body
       button.button#pastEvents(type='submit') logout
     h2 Create Event
     // I am so terribly lazy
-    form(action='/new_event', method='POST')
+    form(action='/new_event', enctype='multipart/form-data', method='POST')
       label(for='eventtype') Event type: 
       select(name='eventtype', id='eventtype', required='')
         option(value='pmath') PMath
@@ -45,6 +43,10 @@ body
       input(type='text', id='title', name='title', required='')
       br
       br
+      label(for='image') Image (optional but encouraged, PNG/JPG only): 
+      input(type='file', id='image', name='image')
+      br
+      br
       label(for='descr') Short description (max 255 characters, for preview):
       br
       textarea(name='descr', id='descr', required='')
@@ -63,8 +65,6 @@ body
     br
     p Search results:
     ul#results_box
-      li lol
-      li Hello
     br
     script.
       const deleteSearchInput = document.querySelector('#del_date');
@@ -117,7 +117,41 @@ body
     h2 Enable/Disable POTW
     p If you aren't running Problem of the Week this term, you should disable POTW here so old problems don't show up on the home page.
     form(action='/disable_potw', method='POST')
-    button.button(type='submit') Disable POTW
+      button.button(type='submit') Disable POTW
     form(action='/enable_potw', method='POST')
-    button.button(type='submit') Enable POTW
+      button.button(type='submit') Enable POTW
+    // POTW Creation
+    h2 Create POTW
+    form(action='/new_potw', enctype='multipart/form-data', method='POST')
+      label(for='title') Title (max 255 chararacters): 
+      input(type='text', id='potwtitle', name='title', required='')
+      br
+      br
+      label(for='date') Due date: 
+      input(type='date', id='potwdate', name='date', required='')
+      br
+      br
+      label(for='image') Image (optional but encouraged, PNG/JPG only): 
+      input(type='file', id='potwimage', name='image')
+      br
+      br
+      label(for='body') Problem, submission rules, prizes, etc. (max 32768 characters):
+      br
+      textarea(name='body', id='potwbody')
+      script.
+        var easymde = new EasyMDE({element: document.getElementById('potwbody')});
+      br
+      button.button(type='submit') Publish POTW
+    h2 Delete POTW
+    p You should delete all POTW's at end-of-term. Deletion is not automatic!
+      br
+      b Please select all POTW's to delete.
+    form(action='/delete_potw', method='POST')
+      - var n = 0;
+      while n < potws.length
+        input(type='checkbox', id=potws[n].id, name=potws[n].id)
+        label(for=potws[n].id) POTW #{n+1}: #{potws[n].title}
+        br
+        - n++;
+      button.button(type='submit') Delete selected POTW's
   include ../template/footer.pug
