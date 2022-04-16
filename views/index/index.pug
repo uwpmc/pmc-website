@@ -91,8 +91,8 @@ include ../template/head.pug
     }    
   }
 
-mixin event(type, title, desc, date, begintime, endtime, loc, imgpath)
-  a.eventItemHoverBuffer(href='events/' + getTerm(date) + '#' + date)
+mixin event(id, type, title, desc, date, begintime, endtime, loc, imgpath)
+  a.eventItemHoverBuffer(href='events/' + getTerm(date) + '#' + id)
     .eventItem(id=type, style=(imgpath === null ? '' : 'background-image: '+eventBGColor(type)+", url('img/events/"+imgpath+"')"))
       .info
         h2 #{title}
@@ -134,7 +134,7 @@ body
     .eventContainer
       - var n = posts.length - 1;
       while n >= 0
-        +event(posts[n].type, posts[n].title, posts[n].descr, posts[n].date.yyyymmdd(), posts[n].begin, posts[n].end, posts[n].loc, posts[n].imgpath)
+        +event(posts[n].id, posts[n].type, posts[n].title, posts[n].descr, posts[n].date.yyyymmdd(), posts[n].begin, posts[n].end, posts[n].loc, posts[n].imgpath)
         - n--
     a.button#pastEvents(href='./events') Browse all events
   

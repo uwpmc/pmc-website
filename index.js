@@ -8,6 +8,17 @@ const fs = require('fs')
 var bodyParser = require('body-parser')
 var showdown  = require('showdown')
 
+var imgWrapper = function(converter) {
+  return [
+    {
+      type: 'output',
+      regex: '<img (.*)/>',
+      replace: '<div class="imgContainer"><img $1></div>'
+    }
+  ];
+}
+showdown.extension('imgWrapper', imgWrapper)
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -128,7 +139,7 @@ checkAuthenticated = (req, res, next) => {/*
 app.get("/dashboard", checkAuthenticated, (req, res) => {
   connection.query("SELECT * FROM pmc.potw ORDER BY date", (err, rows, fields) => {
     if (err) throw err;
-    res.render("dashboard", {name: /*req.user.displayName*/ 'PMC', potws: rows, isPOTW: isPOTW});
+    res.render("dashboard", {name: /*req.user.displayName*/ 'PMC', potws: rows, isPOTW: isPOTW, result: req.query.res});
   })
 })
 
@@ -144,7 +155,7 @@ app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) =>
       if (err) throw err;
       console.log('New event added (no image)')
     })
-    res.redirect('/dashboard')
+    res.redirect('/dashboard?res=eventsuccess')
     return
   }
   const tempPath = req.file.path;
@@ -160,15 +171,12 @@ app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) =>
         if (err) throw err;
         console.log('New event added (with image)')
       })
-      res.redirect('/dashboard')
+      res.redirect('/dashboard?res=eventsuccess')
     });
   } else {
     fs.unlink(tempPath, err => {
       if (err) return handleError(err, res);
-      res
-        .status(403)
-        .contentType("text/plain")
-        .end("Only .png and .jpg files are allowed!");
+      res.redirect(403, '/dashboard?res=badfile')
     });
   }
 })
@@ -178,7 +186,7 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
       if (err) throw err;
       console.log('New POTW added (no image)')
     })
-    res.redirect('/dashboard')
+    res.redirect('/dashboard?res=potwsuccess')
     return
   }
   const tempPath = req.file.path;
@@ -194,15 +202,12 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
         if (err) throw err;
         console.log('New POTW added (with image)')
       })
-      res.redirect('/dashboard')
+      res.redirect('/dashboard?res=potwsuccess')
     });
   } else {
     fs.unlink(tempPath, err => {
       if (err) return handleError(err, res);
-      res
-        .status(403)
-        .contentType("text/plain")
-        .end("Only .png and .jpg files are allowed!");
+      res.redirect(403, '/dashboard?res=badfile')
     });
   }
 })
@@ -224,7 +229,7 @@ app.post("/delete_event", checkAuthenticated, (req, res) => {
   connection.query("DELETE FROM pmc.events WHERE id = '" + del_id + "'", (err, rows, fields) => {
     if (err) throw err;
   })
-  res.redirect("/dashboard")
+  res.redirect("/dashboard?res=eventdeleted")
 })
 
 app.post("/delete_potw", checkAuthenticated, (req, res) => {
@@ -247,7 +252,20 @@ app.post("/delete_potw", checkAuthenticated, (req, res) => {
       if (err) throw err;
     })
   }
-  res.redirect("/dashboard")
+  res.redirect("/dashboard?res=potwdeleted")
+})
+
+app.post("/update_const", checkAuthenticated, (req, res) => {
+  const date = Date.now();
+  fs.copyFile('public/pmc.const.md', 'public/pmc-'+date+'.const.md', (err) => {
+    if (err) throw err;
+    console.log(date + ': Backed up the current constitution')
+  })
+  fs.writeFile('public/pmc.const.md', req.body.constitution, (err) => {
+    if (err) throw err;
+    console.log(date + ': Updated the constitution')
+  })
+  res.redirect("/dashboard?res=constupd")
 })
 
 app.post("/query_events", checkAuthenticated, (req, res) => {
@@ -264,26 +282,26 @@ app.post("/query_events", checkAuthenticated, (req, res) => {
 app.post("/enable_potw", checkAuthenticated, (req, res) => {
   isPOTW = true;
   fs.writeFileSync('potw.json', JSON.stringify({potw: true}))
-  res.redirect("/dashboard")
+  res.redirect("/dashboard?res=potwenabled")
 })
 
 app.post("/disable_potw", checkAuthenticated, (req, res) => {
   isPOTW = false;
   fs.writeFileSync('potw.json', JSON.stringify({potw: false}))
-  res.redirect("/dashboard")
+  res.redirect("/dashboard?res=potwdisabled")
 })
 
 app.get("/logout", (req,res) => {
     req.logOut()
     res.redirect("/login")
-    console.log(`-------> User Logged out`)
+    console.log(Date.now() + ': Admin logged out')
 })
-//Define the Logout
+/*//Define the Logout
 app.post("/logout", (req,res) => {
     req.logOut()
     res.redirect("/login")
-    console.log(`-------> User Logged out`)
-})
+    console.log(': Admin logged out')
+})*/
 
 /* /OAUTH WORK */
 
@@ -334,7 +352,11 @@ app.get('/events', (req, res) => {
   //res.render('events')
 });
 app.get('/const', (req, res) => {
-  res.render('const', { isPOTW: isPOTW })
+  fs.readFile("public/pmc.const.md", "utf-8", (err, buf) => {
+    var converter = new showdown.Converter();
+    converter.setOption('simpleLineBreaks', true);
+    res.render('const', { isPOTW: isPOTW, constitution: converter.makeHtml(buf) })
+  })
 });
 
 function getIneq(term) {
@@ -361,7 +383,7 @@ app.get('/events/:term', (req, res) => {
     //console.log("SELECT * FROM pmc.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date")
     for (var i = 0; i < rows.length; ++i) {
       //console.log(rows)
-      var converter = new showdown.Converter();
+      var converter = new showdown.Converter({extensions: [imgWrapper]});
       rows[i].body = converter.makeHtml(rows[i].body);
     }
     res.render('event', { posts: rows, reqTerm: req.params.term, isPOTW: isPOTW })
@@ -376,7 +398,7 @@ app.get('/potw', (req, res) => {
   }
   connection.query("SELECT * FROM pmc.potw ORDER BY date DESC", (err, rows, fields) => {
     for (var i = 0; i < rows.length; ++i) {
-      var converter = new showdown.Converter();
+      var converter = new showdown.Converter({extensions: [imgWrapper]});
       rows[i].body = converter.makeHtml(rows[i].body);
     }
     res.render('potw', { potws: rows, isPOTW: isPOTW })

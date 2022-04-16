@@ -4,154 +4,238 @@ meta(name="google-signin-client_id", content="407152582406-ad0u942n6550ctlh4852h
 script(src="https://apis.google.com/js/platform.js", async, defer)
 link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
 script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
+- var sections = ['create-event', 'delete-event', 'toggle-potw', 'create-potw', 'delete-potw', 'update-const'];
+each val in sections
+  style(type='text/css').
+    a[id="#{val}"]:target ~ .textArea ##{val}-body {
+      max-height: 999999px !important;
+      opacity: 1 !important;
+      transition: max-height 0.25s ease 0.25s, opacity 0.25s ease 0.25s;
+    }
+    a[id="#{val}"]:target ~ .textArea ##{val}-btn {
+      color: #fff;
+    }
+    a[id="#{val}"]:target ~ .textArea ##{val}-btn .active {
+      transform: skew(15deg, 0) translateX(-20%);
+    }
+-
+  function resReason(res) {
+    switch (res) {
+      case 'potwenabled':
+        return ['POTW has been enabled.', 'good'];
+      case 'potwdisabled':
+        return ['POTW has been disabled.', 'good'];
+      case 'eventsuccess':
+        return ['Event successfully created.', 'good'];
+      case 'potwsuccess':
+        return ['POTW successfully created.', 'good'];
+      case 'eventupdated':
+        return ['Event successfully updated.', 'good'];
+      case 'potwupdated':
+        return ['POTW successfully updated.', 'good'];
+      case 'constupd':
+        return ['Constitution successfully updated.', 'good'];
+      case 'badfile':
+        return ['FAILURE: Only PNG/JPG file types are allowed.', 'bad'];
+      default:
+        return ['what', 'bad'];
+    }
+  }
 body
+  each val in sections
+    a(id=val)
   include ../template/header.pug
   .textArea
-    h1(style='margin: 0; padding: 0.8em 0 0 0; font-size: 48pt;') Admin Dashboard
-    form(action='/logout', method='POST')
-      button.button#pastEvents(type='submit') logout
-    h2 Create Event
-    // I am so terribly lazy
-    form(action='/new_event', enctype='multipart/form-data', method='POST')
-      label(for='eventtype') Event type: 
-      select(name='eventtype', id='eventtype', required='')
-        option(value='pmath') PMath
-        option(value='amath') AMath
-        option(value='co') C&O
-        option(value='over9k') Contest (Over 9000)
-        option(value='sasms') SASMS
-        option(value='other') Other
-      br
-      br
-      label(for='date') Date: 
-      input(type='date', id='date', name='date', required='')
-      br
-      br
-      label(for='loc') Location: 
-      input(type='text', id='loc', name='loc', required='')
-      br
-      br
-      label(for='begin') Begin time: 
-      input(type='time', id='begin', name='begin', required='')
-      br
-      br
-      label(for='end') End time: 
-      input(type='time', id='end', name='end', required='')
-      br
-      br
-      label(for='title') Title (max 255 chararacters): 
-      input(type='text', id='title', name='title', required='')
-      br
-      br
-      label(for='image') Image (optional but encouraged, PNG/JPG only): 
-      input(type='file', id='image', name='image')
-      br
-      br
-      label(for='descr') Short description (max 255 characters, for preview):
-      br
-      textarea(name='descr', id='descr', required='')
-      br
-      br
-      label(for='body') Long description (max 32768 characters, for event body):
-      br
-      textarea(name='body', id='body')
-      script.
-        var easymde = new EasyMDE({element: document.getElementById('body')});
-      br
-      button.button(type='submit') Publish Event
-    h2 Delete Event
-    label(for='del_date') Search for events on date: 
-    input(type='date', id='del_date', name='del_date', required='')
-    br
-    p Search results:
-    ul#results_box
-    br
-    script.
-      const deleteSearchInput = document.querySelector('#del_date');
-      const resultsBox = document.querySelector('#results_box');
-      deleteSearchInput.addEventListener('change' , (e) => {
-        const j = resultsBox.childElementCount;
-        for (var i = 0; i < j; i++) {
-          resultsBox.removeChild(resultsBox.firstChild);
-        }
-        let search = e.target.value.trim();
-        fetch('/query_events', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({search})
-          }).then(res =>
-            res.json()
-            ).then(data => {
-              if (data.length > 0) {
-                for (var i = 0; i < data.length; i++) {
-                  console.log(data[0]); // <-- success!
-                  const d = document.createElement('div')
-                  const f = document.createElement('form')
-                  f.action = '/delete_event'
-                  f.method = 'POST'
-                  d.appendChild(f);
-                  const b = document.createElement('button')
-                  const t = document.createElement('label')
-                  const bnode = document.createTextNode('PERMANENTLY DELETE!')
-                  const tnode = document.createTextNode('Article ' + data[i].id + ': ' + data[i].title + ' ')
-                  f.appendChild(t);
-                  f.appendChild(b);
-                  t.appendChild(tnode);
-                  b.appendChild(bnode);
-                  b.type = 'submit';
-                  b.name = data[i].id;
-                  b.id = data[i].id;
-                  t.htmlFor = data[i].id;
-                  console.log(b);
-                  resultsBox.appendChild(d);
-                }
-              }
-            }).catch(err => {
-              alert('error!');
-              console.error(err);
-            });
-        });
-    h2 Enable/Disable POTW
-    p If you aren't running Problem of the Week this term, you should disable POTW here so old problems don't show up on the home page.
-    form(action='/disable_potw', method='POST')
-      button.button(type='submit') Disable POTW
-    form(action='/enable_potw', method='POST')
-      button.button(type='submit') Enable POTW
-    // POTW Creation
-    h2 Create POTW
-    form(action='/new_potw', enctype='multipart/form-data', method='POST')
-      label(for='title') Title (max 255 chararacters): 
-      input(type='text', id='potwtitle', name='title', required='')
-      br
-      br
-      label(for='date') Due date: 
-      input(type='date', id='potwdate', name='date', required='')
-      br
-      br
-      label(for='image') Image (optional but encouraged, PNG/JPG only): 
-      input(type='file', id='potwimage', name='image')
-      br
-      br
-      label(for='body') Problem, submission rules, prizes, etc. (max 32768 characters):
-      br
-      textarea(name='body', id='potwbody')
-      script.
-        var easymde = new EasyMDE({element: document.getElementById('potwbody')});
-      br
-      button.button(type='submit') Publish POTW
-    h2 Delete POTW
-    p You should delete all POTW's at end-of-term. Deletion is not automatic!
-      br
-      b Please select all POTW's to delete.
-    form(action='/delete_potw', method='POST')
-      - var n = 0;
-      while n < potws.length
-        input(type='checkbox', id=potws[n].id, name=potws[n].id)
-        label(for=potws[n].id) POTW #{n+1}: #{potws[n].title}
+    .dashMenu
+      a.item#create-event-btn(href='#create-event') Create Event
+        .active
+      a.item#delete-event-btn(href='#delete-event') Delete Event
+        .active
+      a.item#toggle-potw-btn(href='#toggle-potw') Toggle POTW
+        .active
+      a.item#create-potw-btn(href='#create-potw') Create POTW
+        .active
+      a.item#delete-potw-btn(href='#delete-potw') Delete POTW
+        .active
+      a.item#update-const-btn(href='#update-const') Constitution
+        .active
+      a.item#logout(href='/logout') Log out
+    h1(style='margin: 0; padding: 3rem 0 0 0; font-size: 48pt;') Admin Dashboard
+    if typeof result !== 'undefined'
+      - var reason = resReason(result);
+      div(class='dashResult '+reason[1])
+        p #{reason[0]}
+      div(class='dashResult '+reason[1])
+        p #{reason[0]}
+    .dashSwapper
+      .dashSwapItem#create-event-body
+        h2 Create Event
+        form(action='/new_event', enctype='multipart/form-data', method='POST')
+          label(for='eventtype') Event type: 
+          select(name='eventtype', id='eventtype', required='')
+            option(value='pmath') PMath
+            option(value='amath') AMath
+            option(value='co') C&O
+            option(value='over9k') Contest (Over 9000)
+            option(value='sasms') SASMS
+            option(value='other') Other
+          br
+          br
+          label(for='date') Date: 
+          input(type='date', id='date', name='date', required='')
+          br
+          br
+          label(for='loc') Location: 
+          input(type='text', id='loc', name='loc', required='')
+          br
+          br
+          label(for='begin') Begin time: 
+          input(type='time', id='begin', name='begin', required='')
+          br
+          br
+          label(for='end') End time: 
+          input(type='time', id='end', name='end', required='')
+          br
+          br
+          label(for='title') Title (max 255 chararacters): 
+          input(type='text', id='title', name='title', required='')
+          br
+          br
+          label(for='image') Image (optional but encouraged, PNG/JPG only): 
+          input(type='file', id='image', name='image')
+          br
+          br
+          label(for='descr') Short description (max 255 characters, for preview):
+          br
+          textarea(name='descr', id='descr', required='')
+          br
+          br
+          label(for='body') Long description (max 32768 characters, for event body):
+          br
+          textarea(name='body', id='body')
+          script.
+            var easymde1 = new EasyMDE({element: document.getElementById('body')});
+          br
+          button.button.good(type='submit') Publish Event
+      .dashSwapItem#delete-event-body
+        h2 Delete Event
+        label(for='del_date') Search for events on date: 
+        input(type='date', id='del_date', name='del_date', required='')
         br
-        - n++;
-      button.button(type='submit') Delete selected POTW's
+        p Search results:
+        ul#results_box
+        br
+        script.
+          const deleteSearchInput = document.querySelector('#del_date');
+          const resultsBox = document.querySelector('#results_box');
+          deleteSearchInput.addEventListener('change' , (e) => {
+            const j = resultsBox.childElementCount;
+            for (var i = 0; i < j; i++) {
+              resultsBox.removeChild(resultsBox.firstChild);
+            }
+            let search = e.target.value.trim();
+            fetch('/query_events', {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({search})
+              }).then(res =>
+                res.json()
+                ).then(data => {
+                  if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                      console.log(data[0]); // <-- success!
+                      const d = document.createElement('div')
+                      const f = document.createElement('form')
+                      f.action = '/delete_event'
+                      f.method = 'POST'
+                      d.appendChild(f);
+                      const b = document.createElement('button')
+                      const t = document.createElement('label')
+                      const bnode = document.createTextNode('PERMANENTLY DELETE!')
+                      const tnode = document.createTextNode('Event ' + data[i].id + ': ' + data[i].title + ' ')
+                      f.appendChild(t);
+                      f.appendChild(b);
+                      t.appendChild(tnode);
+                      b.appendChild(bnode);
+                      b.type = 'submit';
+                      b.className = 'bad';
+                      b.name = data[i].id;
+                      b.id = data[i].id;
+                      t.htmlFor = data[i].id;
+                      console.log(b);
+                      resultsBox.appendChild(d);
+                    }
+                  }
+                }).catch(err => {
+                  alert('error!');
+                  console.error(err);
+                });
+            });
+      .dashSwapItem#toggle-potw-body
+        h2 Enable/Disable POTW
+        p If you aren't running Problem of the Week this term, you should disable POTW here so that old problems don't show up on the home page.
+        div(style='display: flex; gap: 1em;')
+          form(action='/disable_potw', method='POST')
+            button.button.bad(type='submit') Disable POTW
+          form(action='/enable_potw', method='POST')
+            button.button.good(type='submit') Enable POTW
+      .dashSwapItem#create-potw-body
+        // POTW Creation
+        h2 Create POTW
+        form(action='/new_potw', enctype='multipart/form-data', method='POST')
+          label(for='title') Title (max 255 chararacters): 
+          input(type='text', id='potwtitle', name='title', required='')
+          br
+          br
+          label(for='date') Due date: 
+          input(type='date', id='potwdate', name='date', required='')
+          br
+          br
+          label(for='image') Image (optional but encouraged, PNG/JPG only): 
+          input(type='file', id='potwimage', name='image')
+          br
+          br
+          label(for='body') Problem, submission rules, prizes, etc. (max 32768 characters):
+          br
+          textarea(name='body', id='potwbody')
+          script.
+            var easymde2 = new EasyMDE({element: document.getElementById('potwbody')});
+          br
+          button.button.good(type='submit') Publish POTW
+      .dashSwapItem#delete-potw-body
+        h2 Delete POTW
+        p You should delete all POTW's at end-of-term. Deletion is not automatic!
+          br
+          b Please select all POTW's you want to delete.
+        form(action='/delete_potw', method='POST')
+          - var n = 0;
+          while n < potws.length
+            input(type='checkbox', id=potws[n].id, name=potws[n].id)
+            label(for=potws[n].id) POTW #{n+1}: #{potws[n].title}
+            br
+            - n++;
+          button.button.bad(type='submit') Delete selected POTW's
+      .dashSwapItem#update-const-body
+        h2 Constitution
+        p You can edit the content of the constitution page here.
+          br
+          | Make sure a majority of exec votes is attained before changing this.
+          | Remember to submit an updated pmc.const to the MathSoc VPI.
+        form(action='/update_const', method='POST')
+          textarea(name='constitution', id='constitution')
+          script.
+            var easymde3 = new EasyMDE({element: document.getElementById('constitution')})
+            fetch('/pmc.const.md').then(function(res) {
+              if (res.status !== 200) {
+                easymde3.value('WARNING: The constitution file pmc.const.md could not be found.');
+                return;
+              }
+              res.text().then(function(data) {
+                easymde3.value(data);
+              });
+            })
+          button.button.good(type='submit') Update Constitution
   include ../template/footer.pug

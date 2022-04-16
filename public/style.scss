@@ -45,10 +45,15 @@ p {
 ul {
   margin-bottom: 0;
 }
+textarea {
+  width: 100%;
+  height: 8em;
+  resize: none;
+}
 
 nav {
   width: 100%;
-  min-width: 750px;
+  min-width: 850px;
   height: 50px;
   position: relative;
   top: 0;
@@ -76,6 +81,9 @@ nav {
 a {
   color: #db2323;
   text-decoration: none;
+}
+.hidden {
+  display: none;
 }
 .socials {
   display: flex;
@@ -138,11 +146,91 @@ a {
 .header {
 
 }
+.switcheroo {
+  width: 100%;
+  margin: auto;
+  margin-top: 0;
+  display: block;
+  overflow: hidden;
+  & .table {
+    width: 200%;
+    display: table;
+    transform: translateX(0);
+    transition: all 0.5s ease;
+    & .row {
+      width: 50%;
+      display: table-row;
+      & .textArea .subText {
+        position: relative;
+        margin: 0;
+        padding: 0;
+        overflow-y: clip; // hidden breaks things
+        display: flow-root; // ! very important; starts a new formatting context
+
+        transition: max-height 0.2s ease, opacity 0.2s ease;
+        max-height: 0;
+        opacity: 0;
+        & > .back {
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform: translate(-120%, 1rem);
+          & svg {
+            transition: transform 0.2s ease;
+          }
+          &:hover svg, &:focus-within svg {
+            transform: translateX(-0.5rem);
+          }
+        }
+        & .title {
+          margin: 1rem 0;
+          height: 20rem;
+          position: relative;
+          width: 100%;
+          padding: 1rem;
+          background-position: center;
+          background-size: cover;
+          box-shadow: inset 0 0 20px #444;
+          & h1, & h2, & h3 {
+            text-shadow: 0 0 20px #333;
+            margin: 0.5rem !important;
+          }
+          & .back {
+            top: 0;
+            left: 0;
+            background-color: #161616;
+            position: absolute;
+            width: 6rem;
+            height: 100%;
+            transform: translateX(-6rem);
+          }
+        }
+        & .imgContainer {
+          content: "";
+          width: 100%;
+          text-align: center;
+          background-color: #eee;
+          margin: 1em 0;
+          & img {
+            max-width: 100%;
+            max-height: 30rem;
+            height: auto;
+            padding: 1em;
+            margin: auto;
+            object-fit: contain;
+          }
+        }
+      }
+    }
+  }
+}
+
 .textArea {
   width: 60%;
   max-width: 1500px;
   margin: auto;
   margin-top: 0;
+  position: relative;
 }
 .eventContainer {
   width: 100%;
@@ -304,6 +392,7 @@ a {
   width: 100%;
   padding: 0;
   margin: 0;
+  transition: all 0.2s ease;
   & p {
     font-size: 12pt;
     font-weight: 400;
@@ -354,7 +443,7 @@ a {
     margin-left: auto;
   }
 }
-a.eventsTerm:hover, a.eventsTerm:focus-within {
+a.eventsTerm:posts, a.eventsTerm:focus-within {
   filter: brightness(1.5);
   text-decoration: underline;
 }
@@ -373,6 +462,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   }
 }
 #constitution {
+  padding: 2rem 0;
   & h1 {
     color: #e90a54;
   }
@@ -387,6 +477,7 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   & p {
     font-size: 13pt;
     padding-left: 1em;
+    margin: 0;
   }
 }
 .longEventContainer, .longPotwContainer {
@@ -397,18 +488,6 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
   justify-content: center;
   align-items: stretch;
   overflow: hidden;
-  & .title {
-    display:block;
-    color: inherit;
-    //border-radius: 1em;
-    background-color: #eee;
-    transition: background-color 0.2s ease;
-    padding: 0.5em 1em;
-    border-left: 3px solid #e90a54;
-  }
-  & .title:hover, &.title:focus-within {
-    background-color: #ddd;
-  }
   & .description {
     display: block;
     position: relative;
@@ -443,19 +522,45 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
 .longEventItem, .longPotwItem {
   position: relative;
   width: 100%;
-  margin: 1em;
-  //margin: auto;
+  margin: 1em 0;
+  display:block;
+  color: inherit;
+  //border-radius: 1em;
+  background-color: #eee;
+  transition: background-color 0.2s ease, border-left 0.1s linear;
+  padding: 0.5em 1em;
+  &.dead {
+    border-left: 3px solid #444;
+    &:hover, &:focus-within {
+      background-color: #ddd;
+      border-left: 8px solid #444;
+    }
+    & h2 {
+      color: #444;
+    }
+  }
+  &.alive {
+    border-left: 3px solid #e90a54;
+    &:hover, &:focus-within {
+      background-color: #ddd;
+      border-left: 8px solid #e90a54;
+    }
+    & h2 {
+      color: #e90a54;
+    }
+  }
   & h2 {
-    color: #e90a54;
     font-weight: 600;
-    margin: 0.25em 0;
+    font-size: 28pt;
+    margin: 0.25rem 0;
   }
   & .description h2 {
     color: #000;
   }
   & h3 {
-    margin: 0.25em 0;
+    margin: 0.25rem 0;
     color: #000;
+    font-size: 16pt;
   }
   & .description h3 {
     color: #000;
@@ -473,20 +578,106 @@ a.eventsTerm:hover, a.eventsTerm:focus-within {
     margin: 0;
   }
 }
-.longPotwContainer {
-  & .description img {
+
+.dashSwapper {
+  width: 100%;
+  margin: auto;
+  display: block;
+  & .dashSwapItem {
+    position: relative;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.25s ease, opacity 0.25s ease;
+  }
+}
+.dashMenu {
+  position: absolute;
+  transform: translateX(-120%);
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 3em 0 0 0;
+  background-color: #ededed;
+  box-shadow: -6px 0 0 #aaa;
+  overflow: hidden;
+  & .item {
+    position: relative;
+    font-family: 'Roboto', 'Arial', sans-serif;
+    font-weight: 600;
+    font-size: 16pt;
+    padding: 1rem;
+    background-color: transparent;
+    transition: color 0.3s ease;
+    overflow: hidden;
+    z-index: 25;
+    &::before, & .active {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 150%;
+      height: 100%;
+      background-color: #edb2b2;
+      transform: skew(15deg, 0) translateX(-120%);
+      transition: transform 0.3s ease-out;
+      z-index: -50;
+    }
+    & .active {
+      z-index: -25;
+      background-color: #db2323;
+    }
+    &:hover::before {
+      transform: skew(15deg, 0) translateX(-20%);
+      z-index: -50;
+    }
+    &#logout {
+      background-color: #ccc;
+      color: #161616;
+    }
+  }
+}
+
+.dashResult {
+  position: relative;
+  overflow: hidden;
+  max-height: 5rem;
+  height: auto;
+  animation: notifFade 1s ease-out 5.5s forwards;
+  padding-bottom: 6px;
+  margin-top: 1rem;
+  & p {
+    padding: 1em;
+    font-weight: 600;
+    margin: 0;
+  }
+  &::after {
+    position: absolute;
+    content: "";
+    background-color: #5c94e0;
+    bottom: 0;
+    width: 0%;
+    height: 6px;
+    animation: barAnim 5s linear 0.5s forwards;
+    z-index: 100;
+  }
+}
+@keyframes barAnim {
+  to {
     width: 100%;
   }
 }
-.longPotwItem {
-  & a.title {
-    & h2 {
-      font-size: 28pt;
-    }
-    & h3 {
-      font-size: 16pt;
-    }
+@keyframes notifFade {
+  to {
+    margin-top: 0;
+    max-height: 0;
+    padding-bottom: 0;
   }
+}
+.good {
+  background-color: #90b5e8;
+}
+.bad {
+  background-color: #e89090;
 }
 
 #pmath {
