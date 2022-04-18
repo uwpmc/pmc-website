@@ -1,3 +1,7 @@
+// THE PURE MATH, APPLIED MATH, COMBINATORICS & OPTIMIZAITON CLUB WEBSITE
+// Written with love by Evan Girardin, W22 PMC President
+// Please direct all compliments and hate mail to evangirardin at gmail dot com
+
 const express = require('express')
 const app = express()
 const port = 80
@@ -8,6 +12,7 @@ const fs = require('fs')
 var bodyParser = require('body-parser')
 var showdown  = require('showdown')
 
+// Showdown extension to wrap images in containers
 var imgWrapper = function(converter) {
   return [
     {
@@ -18,6 +23,44 @@ var imgWrapper = function(converter) {
   ];
 }
 showdown.extension('imgWrapper', imgWrapper)
+
+/*
+  Showdown extension for doing HTML details/summary
+  This is probably fragile, so don't get too cute with it :P
+  SYNTAX:
+    :> (summary)
+    (details -- this can span many lines)
+    <:
+*/
+var hidden = function(converter) {
+  return [
+    {
+      type: 'lang',
+      filter: function (text, converter, options) {
+        var mainRegex = new RegExp("(^:>(.*\n)*?(<:\n))", "gm");
+        text = text.replace(mainRegex, function(match, content) {
+          var summary = content.split('\n')[0].replace(/^([ \t]*):>([ \t])?/gm, ""); // only first line
+          var details = content.replace(/^([ \t]*):>([ \t])?.*\n/gm, "").replace(/^<:\n/gm, ""); // remove first line, <:
+          var foo = converter.makeHtml(summary);
+          var bar = converter.makeHtml(details);
+          return '\n<details><summary>' + foo.slice(3).slice(0,-4) + '</summary>\n' + bar + '</details>\n';
+          // Note: I do the slice stuff to get rid of the <p> and </p> which
+          //   I am assuming wrap it. Don't do anything funny here or it'll break.
+        });
+        return text;
+      }
+    }
+  ];
+}
+showdown.extension('hidden', hidden)
+
+showdown.setOption('extensions', [hidden, imgWrapper]);
+showdown.setOption('tables', true);
+showdown.setOption('simpleLineBreaks', true);
+showdown.setOption('emoji', true);
+showdown.setOption('tasklists', true)
+showdown.setOption('simplifiedAutoLink', true)
+showdown.setOption('strikethrough', true)
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -124,22 +167,21 @@ app.get("/login", (req, res) => {
 
 
 //Use the req.isAuthenticated() function to check if user is Authenticated
-checkAuthenticated = (req, res, next) => {/*
+checkAuthenticated = (req, res, next) => {
   if (req.isAuthenticated() && req.user.email=='pmclub@gmail.com') { return next() }
   if (req.isAuthenticated()) {
     req.logOut();
     res.redirect("/login")
     console.log('------> Logged out bad user')
   }
-  else { res.redirect("login") }*/
-  return next()
+  else { res.redirect("login") }
 }
 
 //Define the Protected Route, by using the "checkAuthenticated" function defined above as middleware
 app.get("/dashboard", checkAuthenticated, (req, res) => {
   connection.query("SELECT * FROM pmc.potw ORDER BY date", (err, rows, fields) => {
     if (err) throw err;
-    res.render("dashboard", {name: /*req.user.displayName*/ 'PMC', potws: rows, isPOTW: isPOTW, result: req.query.res});
+    res.render("dashboard", {name: req.user.displayName, potws: rows, isPOTW: isPOTW, result: req.query.res});
   })
 })
 
@@ -151,42 +193,75 @@ const handleError = (err, res) => {
 
 app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) => {
   if (typeof req.file === 'undefined') {
-    connection.query("INSERT INTO pmc.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, 'NULL'], (err, rows, fields) => {
-      if (err) throw err;
-      console.log('New event added (no image)')
-    })
-    res.redirect('/dashboard?res=eventsuccess')
+    if (req.body.id === '') { // new event
+      connection.query("INSERT INTO pmc.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, 'NULL'], (err, rows, fields) => {
+        if (err) throw err;
+        console.log('New event added (no image)')
+      })
+    } else {
+      connection.query("SELECT imgpath FROM pmc.events WHERE id="+req.body.id, (err, rows, fields) => {
+        if (err) throw err;
+        connection.query("REPLACE INTO pmc.events(id,type,title,descr,date,begin,end,loc,body,imgpath) VALUES (?,?,?,?,?,?,?,?,?,?)", [req.body.id, req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, rows[0].imgpath], (err, rows, fields) => {
+          if (err) throw err;
+          console.log('Event has been edited (no image change)')
+        })
+      })
+    }
+    res.redirect('/dashboard?res=eventsuccess#create-event')
     return
   }
   const tempPath = req.file.path;
-  const rand = Math.floor(Math.random()*999999);
+  const rand = Math.floor(Math.random()*999999); // better cross your fingers! ;)
   const ext = path.extname(req.file.originalname).toLowerCase();
   const targetPath = path.join(__dirname, "./public/img/events/"+req.body.date+'-'+rand+ext);
   console.log(tempPath)
   console.log(targetPath)
+  const isNew = (req.body.id === '');
   if (ext === ".png" || ext === ".jpg") {
     fs.rename(tempPath, targetPath, err => {
       if (err) return handleError(err, res);
-      connection.query("INSERT INTO pmc.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, req.body.date+'-'+rand+ext], (err, rows, fields) => {
+      if (!isNew) {
+        // delete existing image; we're replacing it
+        connection.query("SELECT imgpath FROM pmc.events WHERE id="+req.body.id, (err, rows, fields) => {
+          if (err) throw err;
+          fs.unlink(path.join(__dirname, "./public/img/events/"+rows[0].imgpath), err => {
+            if (err) return handleError(err, res);
+          });
+          console.log("Deleted old event image" + rows[0].imgpath)
+        });
+      }
+      // looooooong!
+      connection.query("REPLACE INTO pmc.events ( "+(isNew ? "" : "id, ")+"type, title, descr, date, begin, end, loc, body, imgpath ) VALUES ("+(isNew ? "" : "?, ")+"?, ?, ?, ?, ?, ?, ?, ?, ?)", (isNew ? [] : [req.body.id]).concat([req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, req.body.date+'-'+rand+ext]), (err, rows, fields) => {
         if (err) throw err;
-        console.log('New event added (with image)')
+        if (isNew) console.log('New event added (with image)')
+        else console.log('Event has been edited (with image change)')
       })
-      res.redirect('/dashboard?res=eventsuccess')
+      res.redirect('/dashboard?res=eventsuccess#create-event')
     });
   } else {
     fs.unlink(tempPath, err => {
       if (err) return handleError(err, res);
-      res.redirect(403, '/dashboard?res=badfile')
+      res.redirect(403, '/dashboard?res=badfile#create-event')
     });
   }
 })
 app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => {
   if (typeof req.file === 'undefined') {
-    connection.query("INSERT INTO pmc.potw ( title, date, body, imgpath ) VALUES (?, ?, ?, ?)", [req.body.title, req.body.date, req.body.body, 'NULL'], (err, rows, fields) => {
-      if (err) throw err;
-      console.log('New POTW added (no image)')
-    })
-    res.redirect('/dashboard?res=potwsuccess')
+    if (req.body.id == '') {
+      connection.query("INSERT INTO pmc.potw ( title, date, body, imgpath ) VALUES (?, ?, ?, ?)", [req.body.title, req.body.date, req.body.body, 'NULL'], (err, rows, fields) => {
+        if (err) throw err;
+        console.log('New POTW added (no image)')
+      })
+    } else {
+      connection.query("SELECT imgpath FROM pmc.potw WHERE id="+req.body.id, (err, rows, fields) => {
+        if (err) throw err;
+        connection.query("REPLACE INTO pmc.potw(id,title,date,body,imgpath) VALUES (?,?,?,?,?)", [req.body.id, req.body.title, req.body.date, req.body.body, rows[0].imgpath], (err, rows, fields) => {
+          if (err) throw err;
+          console.log('POTW has been edited (no image change)')
+        })
+      })
+    }
+    res.redirect('/dashboard?res=potwsuccess#create-potw')
     return
   }
   const tempPath = req.file.path;
@@ -195,19 +270,31 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
   const targetPath = path.join(__dirname, "./public/img/potw/"+req.body.date+'-'+rand+ext);
   console.log(tempPath)
   console.log(targetPath)
+  const isNew = (req.body.id === '');
   if (ext === ".png" || ext === ".jpg") {
     fs.rename(tempPath, targetPath, err => {
       if (err) return handleError(err, res);
-      connection.query("INSERT INTO pmc.potw ( title, date, body, imgpath ) VALUES (?, ?, ?, ?)", [req.body.title, req.body.date, req.body.body, req.body.date+'-'+rand+ext], (err, rows, fields) => {
+      if (!isNew) {
+        // delete existing image; we're replacing it
+        connection.query("SELECT imgpath FROM pmc.potw WHERE id="+req.body.id, (err, rows, fields) => {
+          if (err) throw err;
+          fs.unlink(path.join(__dirname, "./public/img/potw/"+rows[0].imgpath), err => {
+            if (err) return handleError(err, res);
+          });
+          console.log("Deleted old POTW image" + rows[0].imgpath)
+        });
+      }
+      connection.query("REPLACE INTO pmc.potw ("+(isNew ? "" : "id, ")+" title, date, body, imgpath ) VALUES ("+(isNew ? "" : "?, ")+"?, ?, ?, ?)", (isNew ? [] : [req.body.id]).concat([req.body.title, req.body.date, req.body.body, req.body.date+'-'+rand+ext]), (err, rows, fields) => {
         if (err) throw err;
-        console.log('New POTW added (with image)')
+        if (isNew) console.log('New POTW added (with image)');
+        else console.log('POTW has been edited (with image change)');
       })
-      res.redirect('/dashboard?res=potwsuccess')
+      res.redirect('/dashboard?res=potwsuccess#create-potw')
     });
   } else {
     fs.unlink(tempPath, err => {
       if (err) return handleError(err, res);
-      res.redirect(403, '/dashboard?res=badfile')
+      res.redirect(403, '/dashboard?res=badfile#create-potw')
     });
   }
 })
@@ -229,7 +316,7 @@ app.post("/delete_event", checkAuthenticated, (req, res) => {
   connection.query("DELETE FROM pmc.events WHERE id = '" + del_id + "'", (err, rows, fields) => {
     if (err) throw err;
   })
-  res.redirect("/dashboard?res=eventdeleted")
+  res.redirect("/dashboard?res=eventdeleted#create-event")
 })
 
 app.post("/delete_potw", checkAuthenticated, (req, res) => {
@@ -251,8 +338,10 @@ app.post("/delete_potw", checkAuthenticated, (req, res) => {
     connection.query("DELETE FROM pmc.potw WHERE id IN (" + del_ids.toString() + ")", (err, rows, fields) => {
       if (err) throw err;
     })
+    res.redirect("/dashboard?res=potwdeleted#create-potw")
+  } else {
+    res.redirect("/dashboard?res=noselect#create-potw")
   }
-  res.redirect("/dashboard?res=potwdeleted")
 })
 
 app.post("/update_const", checkAuthenticated, (req, res) => {
@@ -265,12 +354,13 @@ app.post("/update_const", checkAuthenticated, (req, res) => {
     if (err) throw err;
     console.log(date + ': Updated the constitution')
   })
-  res.redirect("/dashboard?res=constupd")
+  res.redirect("/dashboard?res=constupd#update-const")
 })
 
 app.post("/query_events", checkAuthenticated, (req, res) => {
   const { search } = req.body;
   console.log(search);
+  console.log(req);
   connection.query("SELECT * FROM pmc.events WHERE date = '" + search + "'", (err, rows, fields) => {
     if (err) throw err;
     console.log(search);
@@ -282,13 +372,13 @@ app.post("/query_events", checkAuthenticated, (req, res) => {
 app.post("/enable_potw", checkAuthenticated, (req, res) => {
   isPOTW = true;
   fs.writeFileSync('potw.json', JSON.stringify({potw: true}))
-  res.redirect("/dashboard?res=potwenabled")
+  res.redirect("/dashboard?res=potwenabled#create-potw")
 })
 
 app.post("/disable_potw", checkAuthenticated, (req, res) => {
   isPOTW = false;
   fs.writeFileSync('potw.json', JSON.stringify({potw: false}))
-  res.redirect("/dashboard?res=potwdisabled")
+  res.redirect("/dashboard?res=potwdisabled#create-potw")
 })
 
 app.get("/logout", (req,res) => {
@@ -354,7 +444,6 @@ app.get('/events', (req, res) => {
 app.get('/const', (req, res) => {
   fs.readFile("public/pmc.const.md", "utf-8", (err, buf) => {
     var converter = new showdown.Converter();
-    converter.setOption('simpleLineBreaks', true);
     res.render('const', { isPOTW: isPOTW, constitution: converter.makeHtml(buf) })
   })
 });
@@ -383,7 +472,7 @@ app.get('/events/:term', (req, res) => {
     //console.log("SELECT * FROM pmc.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date")
     for (var i = 0; i < rows.length; ++i) {
       //console.log(rows)
-      var converter = new showdown.Converter({extensions: [imgWrapper]});
+      var converter = new showdown.Converter();
       rows[i].body = converter.makeHtml(rows[i].body);
     }
     res.render('event', { posts: rows, reqTerm: req.params.term, isPOTW: isPOTW })
@@ -398,7 +487,7 @@ app.get('/potw', (req, res) => {
   }
   connection.query("SELECT * FROM pmc.potw ORDER BY date DESC", (err, rows, fields) => {
     for (var i = 0; i < rows.length; ++i) {
-      var converter = new showdown.Converter({extensions: [imgWrapper]});
+      var converter = new showdown.Converter();
       rows[i].body = converter.makeHtml(rows[i].body);
     }
     res.render('potw', { potws: rows, isPOTW: isPOTW })

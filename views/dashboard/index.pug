@@ -4,13 +4,18 @@ meta(name="google-signin-client_id", content="407152582406-ad0u942n6550ctlh4852h
 script(src="https://apis.google.com/js/platform.js", async, defer)
 link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
 script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
-- var sections = ['create-event', 'delete-event', 'toggle-potw', 'create-potw', 'delete-potw', 'update-const'];
+- var sections = ['create-event', 'create-potw', 'update-const', 'help'];
 each val in sections
   style(type='text/css').
     a[id="#{val}"]:target ~ .textArea ##{val}-body {
       max-height: 999999px !important;
       opacity: 1 !important;
       transition: max-height 0.25s ease 0.25s, opacity 0.25s ease 0.25s;
+    }
+    a[id="#{val}"]:target ~ .textArea #frontmatter-body {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      transition: max-height 0.25s ease, opacity 0.25s ease;
     }
     a[id="#{val}"]:target ~ .textArea ##{val}-btn {
       color: #fff;
@@ -33,44 +38,121 @@ each val in sections
         return ['Event successfully updated.', 'good'];
       case 'potwupdated':
         return ['POTW successfully updated.', 'good'];
+      case 'eventdeleted':
+        return ['Event successfully deleted.', 'good'];
+      case 'potwdeleted':
+        return ['POTW successfully deleted.', 'good'];
       case 'constupd':
         return ['Constitution successfully updated.', 'good'];
+      case 'noselect':
+        return ['Your selection must be non-empty.', 'bad'];
       case 'badfile':
-        return ['FAILURE: Only PNG/JPG file types are allowed.', 'bad'];
+        return ['Only PNG/JPG file types are allowed.', 'bad'];
       default:
         return ['what', 'bad'];
     }
   }
+script.
+  // Get rid of query string so page reloads aren't annoying
+  const bruh = window.location.href.split('?');
+  if (bruh.length > 1) {
+    const hash = bruh[1].split('#');
+    if (hash.length > 1) {
+      bruh[0] += ('#' + hash[1])
+    }
+  }
+  window.history.replaceState({}, '', bruh[0]);
 body
   each val in sections
     a(id=val)
   include ../template/header.pug
   .textArea
     .dashMenu
-      a.item#create-event-btn(href='#create-event') Create Event
+      a.item#create-event-btn(href='#create-event') Manage Events
         .active
-      a.item#delete-event-btn(href='#delete-event') Delete Event
-        .active
-      a.item#toggle-potw-btn(href='#toggle-potw') Toggle POTW
-        .active
-      a.item#create-potw-btn(href='#create-potw') Create POTW
-        .active
-      a.item#delete-potw-btn(href='#delete-potw') Delete POTW
+      a.item#create-potw-btn(href='#create-potw') Manage POTW
         .active
       a.item#update-const-btn(href='#update-const') Constitution
         .active
+      a.item#help-btn(href='#help') Help
+        .active
       a.item#logout(href='/logout') Log out
+        .active
     h1(style='margin: 0; padding: 3rem 0 0 0; font-size: 48pt;') Admin Dashboard
     if typeof result !== 'undefined'
       - var reason = resReason(result);
       div(class='dashResult '+reason[1])
         p #{reason[0]}
-      div(class='dashResult '+reason[1])
-        p #{reason[0]}
     .dashSwapper
+      .dashSwapItem#frontmatter-body
+        p Select an option on the left to get started.
       .dashSwapItem#create-event-body
-        h2 Create Event
-        form(action='/new_event', enctype='multipart/form-data', method='POST')
+        h2 Manage Events
+        details
+          summary Event Search (for edits and deletion)
+          label(for='edit_date') Search for events on date: 
+          input(type='date', id='edit_date', name='edit_date')
+          table(style='width: 100%;')
+            thead
+              tr
+                th(colspan='3') Search Results
+            tbody#edit_results_box
+          button(onclick='(function() {document.getElementById("eventform").reset(); easymde1.value(""); let theTable = document.querySelector("#edit_results_box"); for (let z = 0; z < theTable.children.length; ++z) { theTable.children[z].classList.remove("good"); }})()') Clear Selection
+          script.
+            const editSearchInput = document.querySelector('#edit_date');
+            const editResultsBox = document.querySelector('#edit_results_box');
+            editSearchInput.addEventListener('change' , (e) => {
+              const j = editResultsBox.childElementCount;
+              for (var i = 0; i < j; i++) {
+                editResultsBox.removeChild(editResultsBox.firstChild);
+              }
+              let search = e.target.value.trim();
+              fetch('/query_events', {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({search})
+                }).then(res =>
+                  res.json()
+                  ).then(data => {
+                    console.log(data)
+                    if (data.length > 0) {
+                      for (let i = 0; i < data.length; i++) {
+                        console.log(data[0]); // <-- success!
+                        const row = '<tr><td>'+data[i].title+'</td><td style="width: 1%;"><button>Edit</button></td><td style="width: 1%;"><form action="/delete_event" method="POST"><button type="submit">Delete</button></td></tr>';
+                        
+                        editResultsBox.innerHTML += row;
+                        editResultsBox.lastChild.children[1].onclick = function() {
+                          for (let q = 0; q < data.length; ++q) {
+                            document.getElementById('edit_results_box').children[q].classList.remove('good');
+                          }
+                          editResultsBox.children[i].classList.add('good');
+                          document.getElementById('id').value = data[i].id;
+                          document.getElementById('eventtype').value = data[i].type;
+                          document.getElementById('date').value = data[i].date.toString().slice(0,10);
+                          document.getElementById('loc').value = data[i].loc;
+                          document.getElementById('begin').value = data[i].begin;
+                          document.getElementById('end').value = data[i].end;
+                          document.getElementById('title').value = data[i].title;
+                          document.getElementById('descr').value = data[i].descr;
+                          easymde1.value(data[i].body);
+                        }
+                      }
+                      editResultsBox.lastChild.children[2].children[0].children[0].id = data[i].id;
+                      editResultsBox.lastChild.children[2].children[0].children[0].name = data[i].id;
+                    }
+                  }).catch(err => {
+                    alert('error!');
+                    console.error(err);
+                  });
+              });
+        form#eventform(action='/new_event', enctype='multipart/form-data', method='POST')
+          label(for='id') Internal ID (automatic): 
+          input(type='text', id='id', name='id', readonly='', style='background-color: #ccc; cursor: default;')
+          br
+          br
           label(for='eventtype') Event type: 
           select(name='eventtype', id='eventtype', required='')
             option(value='pmath') PMath
@@ -117,75 +199,46 @@ body
             var easymde1 = new EasyMDE({element: document.getElementById('body')});
           br
           button.button.good(type='submit') Publish Event
-      .dashSwapItem#delete-event-body
-        h2 Delete Event
-        label(for='del_date') Search for events on date: 
-        input(type='date', id='del_date', name='del_date', required='')
-        br
-        p Search results:
-        ul#results_box
-        br
-        script.
-          const deleteSearchInput = document.querySelector('#del_date');
-          const resultsBox = document.querySelector('#results_box');
-          deleteSearchInput.addEventListener('change' , (e) => {
-            const j = resultsBox.childElementCount;
-            for (var i = 0; i < j; i++) {
-              resultsBox.removeChild(resultsBox.firstChild);
-            }
-            let search = e.target.value.trim();
-            fetch('/query_events', {
-              method: 'POST',
-              headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({search})
-              }).then(res =>
-                res.json()
-                ).then(data => {
-                  if (data.length > 0) {
-                    for (var i = 0; i < data.length; i++) {
-                      console.log(data[0]); // <-- success!
-                      const d = document.createElement('div')
-                      const f = document.createElement('form')
-                      f.action = '/delete_event'
-                      f.method = 'POST'
-                      d.appendChild(f);
-                      const b = document.createElement('button')
-                      const t = document.createElement('label')
-                      const bnode = document.createTextNode('PERMANENTLY DELETE!')
-                      const tnode = document.createTextNode('Event ' + data[i].id + ': ' + data[i].title + ' ')
-                      f.appendChild(t);
-                      f.appendChild(b);
-                      t.appendChild(tnode);
-                      b.appendChild(bnode);
-                      b.type = 'submit';
-                      b.className = 'bad';
-                      b.name = data[i].id;
-                      b.id = data[i].id;
-                      t.htmlFor = data[i].id;
-                      console.log(b);
-                      resultsBox.appendChild(d);
-                    }
-                  }
-                }).catch(err => {
-                  alert('error!');
-                  console.error(err);
-                });
-            });
-      .dashSwapItem#toggle-potw-body
-        h2 Enable/Disable POTW
-        p If you aren't running Problem of the Week this term, you should disable POTW here so that old problems don't show up on the home page.
-        div(style='display: flex; gap: 1em;')
-          form(action='/disable_potw', method='POST')
-            button.button.bad(type='submit') Disable POTW
-          form(action='/enable_potw', method='POST')
-            button.button.good(type='submit') Enable POTW
       .dashSwapItem#create-potw-body
         // POTW Creation
-        h2 Create POTW
-        form(action='/new_potw', enctype='multipart/form-data', method='POST')
+        h2 Manage POTW
+        details
+          summary POTW Search (for edits and deletion)
+          table(style='width: 100%;')
+            thead
+              tr
+                th(colspan='3') Search Results
+            tbody#edit_results_box-potw
+              - var p = 0;
+              while p < potws.length
+                tr
+                  td POTW #{p+1}: #{potws[p].title}
+                  td(style='width: 1%;')
+                    button(id=potws[p].id+'-potw') Edit
+                  td(style='width: 1%;')
+                    form(action='/delete_potw', method='POST')
+                      button(type='submit', id=potws[p].id, name=potws[p].id) Delete
+                - p++;
+          button(onclick='(function() {document.getElementById("potwform").reset(); easymde2.value(""); let theTable = document.querySelector("#edit_results_box-potw"); for (let z = 0; z < theTable.children.length; ++z) { theTable.children[z].classList.remove("good"); }})()') Clear Selection
+          script.
+            let ugh = !{JSON.stringify(potws)};
+            for (let l = 0; l < ugh.length; ++l) {
+              document.getElementById(ugh[l].id+'-potw').onclick = function() {
+                for (let q = 0; q < ugh.length; ++q) {
+                  document.getElementById('edit_results_box-potw').children[q].classList.remove('good');
+                }
+                document.getElementById('edit_results_box-potw').children[l].classList.add('good');
+                document.getElementById('potwid').value = ugh[l].id;
+                document.getElementById('potwdate').value = ugh[l].date.toString().slice(0,10);
+                document.getElementById('potwtitle').value = ugh[l].title;
+                easymde2.value(ugh[l].body);
+              }
+            }
+        form#potwform(action='/new_potw', enctype='multipart/form-data', method='POST')
+          label(for='id') Internal ID (automatic): 
+          input(type='text', id='potwid', name='id', readonly='', style='background-color: #ccc; cursor: default;')
+          br
+          br
           label(for='title') Title (max 255 chararacters): 
           input(type='text', id='potwtitle', name='title', required='')
           br
@@ -205,19 +258,13 @@ body
             var easymde2 = new EasyMDE({element: document.getElementById('potwbody')});
           br
           button.button.good(type='submit') Publish POTW
-      .dashSwapItem#delete-potw-body
-        h2 Delete POTW
-        p You should delete all POTW's at end-of-term. Deletion is not automatic!
-          br
-          b Please select all POTW's you want to delete.
-        form(action='/delete_potw', method='POST')
-          - var n = 0;
-          while n < potws.length
-            input(type='checkbox', id=potws[n].id, name=potws[n].id)
-            label(for=potws[n].id) POTW #{n+1}: #{potws[n].title}
-            br
-            - n++;
-          button.button.bad(type='submit') Delete selected POTW's
+        h2 Enable/Disable POTW
+        p(style='margin-bottom: 0;') If you aren't running Problem of the Week this term, you should disable POTW here so that old problems don't show up on the home page.
+        div(style='display: flex; gap: 1em;')
+          form(action='/disable_potw', method='POST')
+            button.button.bad(type='submit') Disable POTW
+          form(action='/enable_potw', method='POST')
+            button.button.good(type='submit') Enable POTW
       .dashSwapItem#update-const-body
         h2 Constitution
         p You can edit the content of the constitution page here.
@@ -238,4 +285,134 @@ body
               });
             })
           button.button.good(type='submit') Update Constitution
+      .dashSwapItem#help-body
+        h2 Help
+        h3 Markdown
+        p The event/POTW/constitution editors in this dashboard all support Markdown, 
+          | a simple language to control formatting (e.g. headers, boldface/italics, lists, etc). 
+          | You can find a list of standard Markdown features and syntax 
+          a(href='https://www.markdownguide.org/cheat-sheet/', target='_blank') here. 
+          | Beware that the Markdown editor uses a different rendering engine than the rest 
+          | of the website, so it won't preview everything correctly.
+          br
+          br
+          strong List of Markdown features which this website supports rendering:
+          br
+          br
+        ul
+          li Headings (up to 3 levels)
+          li Boldface, italics
+          li Blockquotes (with nesting)
+          li Ordered and unordered lists
+          li Inline code, fenced code blocks
+          li Horizontal rules
+          li Hyperlinks (automatic and explicit)
+          li Images
+          li Tables
+          li Strikethrough
+          li Emoji shortcodes (e.g. 
+            code :smile:
+            | )
+          li Task lists
+          li 
+            strong CUSTOM: 
+            | Spoiler sections (e.g. for problem solutions, misc. dropdowns). See example:
+            table
+              thead
+                tr
+                  th Syntax
+                  th Result
+              tbody
+                tr
+                  td
+                    pre
+                      code
+                        | :> Summary *(one line)*
+                        | Body content...
+                        | **Anything** can go in here
+                        | * Even lists with
+                        | multi-line items!
+                        | * Another list item!
+                        | 
+                        | ...and so on.
+                        | <:
+                  td#sample
+                    details
+                      summary Summary
+                        em (one line)
+                      p() Body content...
+                        br
+                        strong Anything 
+                        | can go in here.
+                      ul
+                        li Even lists with
+                          br
+                          | multi-line items!
+                        li And another list item!
+                      p ...and so on.
+        h3 Event/POTW Management
+        p Events and POTWs can be added/edited from this dashboard. The "internal ID" 
+          | field isn't something you need to worry about; it's only used for 
+          | editing events, and it's determined automatically when you click the 
+          | "edit" button. 
+          | If you're editing an existing event/POTW and don't want to update the 
+          | cover image, just don't upload a new image and it won't change.
+        h3 Modifying This Website
+        h4 Tech Stack
+        p The PMC website runs on Node with the Express framework and uses Pug/Jade 
+          | as a templating language in which all the pages are written. Events and
+          | POTWs are stored as entries in a MySQL database, and are served by the
+          | Node server upon request. The stylesheet is written in Sass, and is
+          | pre-compiled (i.e., you must do so yourself).
+        h4 Philosophy
+        p While content is dynamically served by the Node server, all user-facing 
+          | pages are static and run on pure HTML/CSS with no JavaScript necessary 
+          | (except for MathJax, which is non-essential by all accounts). This was 
+          | a deliberate design choice; if you are to modify this website, please 
+          | try to minimise the use of JavaScript, and make sure that all pages
+          | look presentable with JavaScript disabled.
+        h4 Server access
+        p The PMC website is currently hosted on the CSC's 
+          code corn-syrup
+          |  server, i.e., 
+          code corn-syrup.csclub.uwaterloo.ca
+          | . If you need to access files, make sure you're allowed to SSH into 
+          | the CSC's servers (pay the membership fee or talk to someone on CSC&rsquo;s 
+          | systems committee). You should also verify with the systems committee 
+          | that you have access to PMC's club account as a club executive.
+          br
+          br
+          | Once this is verified, you should be able to SSH in using your student 
+          | account username (your Quest ID). Once connected, you should run 
+          code become_club pmclub
+          |  to log in to PMC's club account. A rough map of the website's structure
+          | is given below to help you find your way around:
+        table#guide
+          tbody
+            tr
+              td Node server file
+              td
+                code ~/www/index.js
+            tr
+              td Pug files
+              td
+                code ~/www/views/
+            tr
+              td Images
+              td
+                code ~/www/public/img/
+            tr
+              td Constitution
+              td
+                code ~/www/public/pmc.const.md
+        h3 Anything Else
+        p If you have questions, are running into issues or need 
+          | help with anything, please reach out to Evan (that&rsquo;s me). 
+          | I wrote this website as President in W22, and I'm happy to help 
+          | however possible. I can be reached at  
+          a(href='mailto:egirardin@uwaterloo.ca') egirardin@uwaterloo.ca
+          |  or 
+          a(href='mailto:evangirardin@gmail.com') evangirardin@gmail.com
+          | .
+        div(style='height: 2rem;')
   include ../template/footer.pug

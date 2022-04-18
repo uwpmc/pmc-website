@@ -112,7 +112,7 @@ mixin potw(id, title, date, imgpath)
     .potwImg(style=(imgpath === null ? '' : 'background-image: url("img/potw/'+imgpath+'")'))
 body
   include ../template/header.pug
-  .header(style='background-image: url("img/desktop_background_01_gradient_graph.png");')
+  .header(style='background-image: url("/img/desktop_background_01_gradient_graph.png");')
     .headerLogo
       img(src='/img/pmamco_simple_free_nobg.png', style='height: 15em; padding: 15px;')
       div
@@ -153,6 +153,6 @@ body
       div(style='width: 100%; display: flex; justify-content: start-flex; align-items: center; flex-wrap: wrap; column-gap: 4em;')
         div(style='min-width: 15rem;')
           h1 Join our mailing list!
-          p(style='font-family: "Roboto Slab";') Get notified about events and opportunities first :)
+          p(style='margin-bottom: 1.5rem;') Get notified about events and opportunities first :)
         a.button#subscribe(href='http://eepurl.com/hJPG7b', target='_blank') Subscribe
   include ../template/footer.pug

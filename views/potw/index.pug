@@ -102,7 +102,7 @@ body
     a(id=m)
     - ++m;
   include ../template/header.pug
-  .header(style='filter: hue-rotate(320deg); background-position: bottom;')
+  .header(style='background-position: 0% 50%; background-image: linear-gradient(#eb5ea8ed, #ed5c78ed), url("/img/about/office_long.png");')
     .textArea
       h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Problem of the Week
   .switcheroo
@@ -129,5 +129,6 @@ body
                   div(class=(imgpath === null ? '' : 'imgContainer'))
                     img(src="/img/potw/"+potws[n].imgpath)
                   | !{potws[n].body}
+                  div(style='height: 2rem;')
                 - ++n;
   include ../template/footer.pug

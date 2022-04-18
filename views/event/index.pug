@@ -127,7 +127,7 @@ body
   each val in posts
     a(id=val.id)
   include ../template/header.pug
-  .header(style='filter: hue-rotate(320deg); background-position: bottom;')
+  .header(style='background-position: 0% 70%; background-image: linear-gradient(#9d5eebed, #ce5ceded), url("/img/about/mc_long.png");')
     .textArea
       h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
   .switcheroo
@@ -163,5 +163,6 @@ body
                       h2(style='font-size: 32pt; font-weight: 600; color: #ffffff; margin: 0.25em 0;') #{posts[n].title}
                       h3(style='font-size: 20pt; font-weight: bold; color: #ffffff; margin: 0.25em 0;') #{readableDate(posts[n].date.yyyymmdd())}
                   | !{posts[n].body}
+                  div(style='height: 2rem;')
                 - ++n;
   include ../template/footer.pug
