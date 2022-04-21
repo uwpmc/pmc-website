@@ -52,7 +52,19 @@ each val in sections
         return ['what', 'bad'];
     }
   }
+  function getCurTerm(month) {
+    const quot = Math.floor(month/4)
+    switch (quot) {
+      case 0:
+        return 'winter';
+      case 1:
+        return 'spring';
+      case 2:
+        return 'fall';
+    }
+  }
 script.
+  var selected;
   // Get rid of query string so page reloads aren't annoying
   const bruh = window.location.href.split('?');
   if (bruh.length > 1) {
@@ -67,17 +79,18 @@ body
     a(id=val)
   include ../template/header.pug
   .textArea
-    .dashMenu
-      a.item#create-event-btn(href='#create-event') Manage Events
-        .active
-      a.item#create-potw-btn(href='#create-potw') Manage POTW
-        .active
-      a.item#update-const-btn(href='#update-const') Constitution
-        .active
-      a.item#help-btn(href='#help') Help
-        .active
-      a.item#logout(href='/logout') Log out
-        .active
+    .dashMenuContainer
+      .dashMenu
+        a.item#create-event-btn(href='#create-event') Manage Events
+          .active
+        a.item#create-potw-btn(href='#create-potw') Manage POTW
+          .active
+        a.item#update-const-btn(href='#update-const') Constitution
+          .active
+        a.item#help-btn(href='#help') Help
+          .active
+        a.item#logout(href='/logout') Log out
+          .active
     h1(style='margin: 0; padding: 3rem 0 0 0; font-size: 48pt;') Admin Dashboard
     if typeof result !== 'undefined'
       - var reason = resReason(result);
@@ -90,41 +103,55 @@ body
         h2 Manage Events
         details
           summary Event Search (for edits and deletion)
-          label(for='edit_date') Search for events on date: 
-          input(type='date', id='edit_date', name='edit_date')
+          form(id='edit_form')
+            label(for='edit_term') Select term: 
+            select(name='edit_term', id='edit_term', selected=getCurTerm(new Date().getUTCMonth()))
+              option(value='winter') Winter
+              option(value='spring') Spring
+              option(value='fall') Fall
+            input(id='edit_year', name='edit_year', type='number', min='1900', max='2099', step='1', value=(new Date().getUTCFullYear()))
           table(style='width: 100%;')
+            colgroup
+              col
+              col(style='width: 6rem;')
+              col(style='width: 6rem;')
             thead
               tr
                 th(colspan='3') Search Results
             tbody#edit_results_box
           button(onclick='(function() {document.getElementById("eventform").reset(); easymde1.value(""); let theTable = document.querySelector("#edit_results_box"); for (let z = 0; z < theTable.children.length; ++z) { theTable.children[z].classList.remove("good"); }})()') Clear Selection
           script.
-            const editSearchInput = document.querySelector('#edit_date');
+            const editSearchInput = document.querySelector('#edit_form');
             const editResultsBox = document.querySelector('#edit_results_box');
             editSearchInput.addEventListener('change' , (e) => {
               const j = editResultsBox.childElementCount;
               for (var i = 0; i < j; i++) {
                 editResultsBox.removeChild(editResultsBox.firstChild);
               }
-              let search = e.target.value.trim();
+              //let search = e.target.value.trim();
+              let term = document.querySelector('#edit_term').value;
+              let year = document.querySelector('#edit_year').value;
               fetch('/query_events', {
                 method: 'POST',
                 headers: {
                   'Accept': 'application/json',
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({search})
+                body: JSON.stringify({term, year})
                 }).then(res =>
                   res.json()
                   ).then(data => {
-                    console.log(data)
                     if (data.length > 0) {
-                      for (let i = 0; i < data.length; i++) {
-                        console.log(data[0]); // <-- success!
-                        const row = '<tr><td>'+data[i].title+'</td><td style="width: 1%;"><button>Edit</button></td><td style="width: 1%;"><form action="/delete_event" method="POST"><button type="submit">Delete</button></td></tr>';
+                      for (let i = 0; i < data.length; ++i) {
+                        const row = '<tr><td>'+data[i].title+'</td><td style="width: 1%;"><button style="display: block; margin: auto;">Edit</button></td><td style="width: 1%;"><form action="/delete_event" method="POST" onsubmit="return confirm(\'Really delete event ' + data[i].id + ': ' + data[i].title + '?\')"><button type="submit", style="display: block; margin: auto;">Delete</button></td></tr>';
                         
                         editResultsBox.innerHTML += row;
-                        editResultsBox.lastChild.children[1].onclick = function() {
+                      }
+                      // It is important that these are separate loops. Otherwise,
+                      // setting the innerHTML erases the work we do here!
+                      for (let i = 0; i < data.length; ++i) {
+                        editResultsBox.children[i].children[1].children[0].onclick = function() {
+                          selected = data[i].id;
                           for (let q = 0; q < data.length; ++q) {
                             document.getElementById('edit_results_box').children[q].classList.remove('good');
                           }
@@ -139,15 +166,17 @@ body
                           document.getElementById('descr').value = data[i].descr;
                           easymde1.value(data[i].body);
                         }
+                        editResultsBox.children[i].children[2].children[0].children[0].id = data[i].id;
+                        editResultsBox.children[i].children[2].children[0].children[0].name = data[i].id;
                       }
-                      editResultsBox.lastChild.children[2].children[0].children[0].id = data[i].id;
-                      editResultsBox.lastChild.children[2].children[0].children[0].name = data[i].id;
                     }
                   }).catch(err => {
                     alert('error!');
                     console.error(err);
                   });
               });
+              // Force an event to get initial results
+              editSearchInput.dispatchEvent(new Event('change'));
         form#eventform(action='/new_event', enctype='multipart/form-data', method='POST')
           label(for='id') Internal ID (automatic): 
           input(type='text', id='id', name='id', readonly='', style='background-color: #ccc; cursor: default;')
@@ -196,7 +225,7 @@ body
           br
           textarea(name='body', id='body')
           script.
-            var easymde1 = new EasyMDE({element: document.getElementById('body')});
+            var easymde1 = new EasyMDE({element: document.getElementById('body'), spellChecker: false});
           br
           button.button.good(type='submit') Publish Event
       .dashSwapItem#create-potw-body
@@ -205,6 +234,10 @@ body
         details
           summary POTW Search (for edits and deletion)
           table(style='width: 100%;')
+            colgroup
+              col
+              col(style='width: 6rem;')
+              col(style='width: 6rem;')
             thead
               tr
                 th(colspan='3') Search Results
@@ -214,10 +247,10 @@ body
                 tr
                   td POTW #{p+1}: #{potws[p].title}
                   td(style='width: 1%;')
-                    button(id=potws[p].id+'-potw') Edit
+                    button(id=potws[p].id+'-potw', style='display: block; margin: auto;') Edit
                   td(style='width: 1%;')
-                    form(action='/delete_potw', method='POST')
-                      button(type='submit', id=potws[p].id, name=potws[p].id) Delete
+                    form(action='/delete_potw', method='POST', onsubmit="return confirm('Really delete POTW " + potws[p].id + ": " + potws[p].title + "?')")
+                      button(type='submit', id=potws[p].id, name=potws[p].id, style='display: block; margin: auto;') Delete
                 - p++;
           button(onclick='(function() {document.getElementById("potwform").reset(); easymde2.value(""); let theTable = document.querySelector("#edit_results_box-potw"); for (let z = 0; z < theTable.children.length; ++z) { theTable.children[z].classList.remove("good"); }})()') Clear Selection
           script.
@@ -255,16 +288,15 @@ body
           br
           textarea(name='body', id='potwbody')
           script.
-            var easymde2 = new EasyMDE({element: document.getElementById('potwbody')});
+            var easymde2 = new EasyMDE({element: document.getElementById('potwbody'), spellChecker: false});
           br
           button.button.good(type='submit') Publish POTW
         h2 Enable/Disable POTW
         p(style='margin-bottom: 0;') If you aren't running Problem of the Week this term, you should disable POTW here so that old problems don't show up on the home page.
-        div(style='display: flex; gap: 1em;')
-          form(action='/disable_potw', method='POST')
-            button.button.bad(type='submit') Disable POTW
-          form(action='/enable_potw', method='POST')
-            button.button.good(type='submit') Enable POTW
+        form(action='/toggle_potw', method='POST', style='padding-top: 2rem;')
+          label.switch
+            input(type='checkbox', onchange='this.form.submit()', checked=isPOTW)
+            span(class='slider')
       .dashSwapItem#update-const-body
         h2 Constitution
         p You can edit the content of the constitution page here.
@@ -274,7 +306,7 @@ body
         form(action='/update_const', method='POST')
           textarea(name='constitution', id='constitution')
           script.
-            var easymde3 = new EasyMDE({element: document.getElementById('constitution')})
+            var easymde3 = new EasyMDE({element: document.getElementById('constitution'), spellChecker: false})
             fetch('/pmc.const.md').then(function(res) {
               if (res.status !== 200) {
                 easymde3.value('WARNING: The constitution file pmc.const.md could not be found.');
@@ -327,7 +359,7 @@ body
                   td
                     pre
                       code
-                        | :> Summary *(one line)*
+                        | :> Summary *(one line only)*
                         | Body content...
                         | **Anything** can go in here
                         | * Even lists with
@@ -338,8 +370,8 @@ body
                         | <:
                   td#sample
                     details
-                      summary Summary
-                        em (one line)
+                      summary Summary 
+                        em (one line only)
                       p() Body content...
                         br
                         strong Anything 
@@ -350,6 +382,13 @@ body
                           | multi-line items!
                         li And another list item!
                       p ...and so on.
+        strong IMPORTANT NOTE: 
+        | The website also supports \(\LaTeX\) rendering via MathJax. However, since many 
+        | characters can be interpreted as either Markdown or LaTeX syntax, 
+        | you will need to escape special symbols (like backslashes, square 
+        | brackets, any other special Markdown characters) with an additional 
+        | backslash before the symbol. If you don't do this, then Markdown 
+        | rendering will give you a bad time.
         h3 Event/POTW Management
         p Events and POTWs can be added/edited from this dashboard. The "internal ID" 
           | field isn't something you need to worry about; it's only used for 
@@ -357,6 +396,11 @@ body
           | "edit" button. 
           | If you're editing an existing event/POTW and don't want to update the 
           | cover image, just don't upload a new image and it won't change.
+          br
+          br
+          | For POTWs, you may want to edit them after their deadlines to include 
+          | solutions. If you do this, consider using the custom Markdown syntax 
+          | for spoilers (described above).
         h3 Modifying This Website
         h4 Tech Stack
         p The PMC website runs on Node with the Express framework and uses Pug/Jade 
@@ -414,5 +458,5 @@ body
           |  or 
           a(href='mailto:evangirardin@gmail.com') evangirardin@gmail.com
           | .
-        div(style='height: 2rem;')
+      div(style='min-height: 2rem;')
   include ../template/footer.pug

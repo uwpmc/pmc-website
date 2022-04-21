@@ -12,6 +12,11 @@ each val in posts
       opacity: 1 !important;
       transition: max-height 0.5s ease, opacity 0.5s ease;
     }
+    a[id="#{k+1}"]:target ~ .switcheroo #list {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      transition: max-height 0.5s ease opacity 0.5s ease;
+    }
 
 -
   function readableDate(date) {
@@ -92,12 +97,14 @@ each val in posts
     return s + ' 20' + term[1] + term[2];
   }
   function nextTerm(term) {
+    const year = parseInt(term[1]+term[2])+1;
     if (term[0] == 'w') { return 's' + term[1] + term[2]; }
     if (term[0] == 's') { return 'f' + term[1] + term[2]; }
-    if (term[0] == 'f') { return 'w' + (parseInt(term[1]+term[2])+1); }
+    if (term[0] == 'f') { return 'w' + (year < 10 ? '0' : '') + year; }
   }
   function prevTerm(term) {
-    if (term[0] == 'w') { return 'f' + (parseInt(term[1]+term[2])-1); }
+    const year = parseInt(term[1]+term[2])-1;
+    if (term[0] == 'w') { return 'f' + (year < 10 ? '0' : '') + year; }
     if (term[0] == 's') { return 'w' + term[1] + term[2]; }
     if (term[0] == 'f') { return 's' + term[1] + term[2]; }
   }
@@ -131,9 +138,9 @@ body
     .textArea
       h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Events
   .switcheroo
-    .table
-      .row
-        div(style='width: 50%; display: table-cell; vertical-align: top;')
+    table.table
+      tr.row
+        td(style='width: 50%; display: table-cell; vertical-align: top;')
           div(style='width: 100%; position: relative; margin: 0; padding: 0;')
             .textArea#list(style='width: 50%; max-width: 80rem; min-width: 35rem;')
               .eventsTermsContainer
@@ -145,9 +152,10 @@ body
               hr
               - var n = 0;
               while n < posts.length
-                +event(posts[n].id, posts[n].type, posts[n].title, posts[n].descr, posts[n].date, posts[n].begin, posts[n].end, posts[n].loc,posts[n].imgpath)
+                div(style='border-radius: 6px; overflow: hidden; margin: 1em 0; padding: 0;')
+                  +event(posts[n].id, posts[n].type, posts[n].title, posts[n].descr, posts[n].date, posts[n].begin, posts[n].end, posts[n].loc,posts[n].imgpath)
                 - ++n;
-        div(style='width: 50%; display: table-cell;')
+        td(style='width: 50%; display: table-cell; vertical-align: top;')
           .textArea(style='width: 50%; max-width: 80rem; min-width: 35rem;')
             div(style='width: 100%; position: relative; margin: 0; padding: 0;')
               - var n = 0;

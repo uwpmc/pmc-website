@@ -13,8 +13,11 @@ body {
 * {
   font-family: "Roboto Slab", "Times New Roman", sans-serif;
   box-sizing: border-box;
+  hyphens: auto;
+  word-wrap: break-word;
 }
 h1 {
+  font-size: 30pt;
   color: #161616;
   font-family: "Inter", "Helvetica", sans-serif;
   & strong {
@@ -178,6 +181,12 @@ a {
 .header {
 
 }
+
+#list {
+  max-height: 999999px;
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+}
+
 .switcheroo {
   width: 100%;
   margin: auto;
@@ -189,10 +198,12 @@ a {
     display: table;
     transform: translateX(0);
     transition: all 0.5s ease;
+    table-layout: fixed;
     & .row {
       width: 50%;
       display: table-row;
       & .textArea .subText {
+        vertical-align: top;
         position: relative;
         margin: 0;
         padding: 0;
@@ -222,7 +233,8 @@ a {
           padding: 1rem;
           background-position: center;
           background-size: cover;
-          box-shadow: inset 0 0 20px #444;
+          border-radius: 0 1rem 1rem 0;
+          box-shadow: 0 0 10px #444;
           & h1, & h2, & h3 {
             text-shadow: 0 0 20px #333;
             margin: 0.5rem !important;
@@ -235,6 +247,9 @@ a {
             width: 6rem;
             height: 100%;
             transform: translateX(-6rem);
+            border-radius: 1rem 0 0 1rem;
+
+            box-shadow: 0 0 10px #444;
           }
         }
         & .imgContainer {
@@ -243,6 +258,7 @@ a {
           text-align: center;
           background-color: #eee;
           margin: 1em 0;
+          border-radius: 0.25rem;
           & img {
             max-width: 100%;
             max-height: 30rem;
@@ -316,6 +332,7 @@ a {
     padding: 1rem 0;
   }
 }
+
 .eventContainer {
   width: 100%;
   position: relative;
@@ -335,7 +352,7 @@ a {
 .potwItem {
   position: relative;
   padding: 0.3em 1em;
-  border-radius: 0.5em;
+  border-radius: 0.25rem;
   //min-width: 30%;
   width: 30%;
   min-width: 20em;
@@ -343,12 +360,13 @@ a {
   margin: 10px;
   flex-grow: 1;
   flex-shrink: 3;
-  height: 10em;
+  //height: 10em;
   overflow: hidden;
   background-size: cover;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
   background-image: linear-gradient(#eb635eee, #ed925cce);
   transition: background-image 0.2s ease;
+
   &:hover .potwImg, &:focus-within .potwImg {
     transform: scale(1.07);
   }
@@ -364,7 +382,7 @@ a {
     z-index: -1;
     transition: transform 0.25s ease;
   }
-  & * {
+  & > * {
     padding: inherit;
     position: absolute;
     text-decoration: none !important;
@@ -373,14 +391,20 @@ a {
   & .number {
     left: 0;
     top: 0;
+    margin-top: 1rem;
   }
   & .date {
     right: 0;
     top: 0;
+    margin-top: 1rem;
   }
   & .title {
+    position: relative;
     left: 0;
     bottom: 0;
+    padding-top: 7rem;
+    padding-left: 0;
+    padding-right: 2rem;
   }
   & .arrow {
     right: 0;
@@ -406,7 +430,7 @@ a {
   min-width: 250px;
   //max-width: 650px;
   margin: 10px;
-  border-radius: 12px;
+  border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 0 15px 0 rgba(0,0,0,0.5);
   top: 0;
@@ -480,7 +504,7 @@ input[type="text"] {
   font-size: 18pt;
   font-weight: 600;
   background-color: #de4b7c;
-  border-radius: 12px;
+  border-radius: 0.3rem;
   padding: 10px 20px;
   margin: 1em 0;
   color: inherit;
@@ -515,7 +539,7 @@ input[type="text"] {
     width: min(250px,30%);
     flex-grow: 1;
     height: 25em;
-    border-radius: 2em;
+    border-radius: 0.5rem;
     box-shadow: 0 0 16px #888;
   }
 }
@@ -634,28 +658,27 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
 .longEventItem, .longPotwItem {
   position: relative;
   width: 100%;
-  margin: 1em 0;
   display:block;
   color: inherit;
-  //border-radius: 1em;
-  background-color: #eee;
-  transition: background-color 0.2s ease, border-left 0.1s linear;
+  background-image: linear-gradient(#f1f1f1, #e3e3e3);
+  transition: background-color 0.2s ease, border-left 0.2s ease;
   padding: 0.5em 1em;
+  overflow: hidden;
   &.dead {
-    border-left: 3px solid #444;
+    border-left: 6px solid #444;
     &:hover, &:focus-within {
       background-color: #ddd;
-      border-left: 8px solid #444;
+      border-left: 14px solid #444;
     }
     & h2 {
       color: #444;
     }
   }
   &.alive {
-    border-left: 3px solid #e90a54;
+    border-left: 6px solid #e90a54;
     &:hover, &:focus-within {
       background-color: #ddd;
-      border-left: 8px solid #e90a54;
+      border-left: 14px solid #e90a54;
     }
     & h2 {
       color: #e90a54;
@@ -688,6 +711,49 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   }
 }
 
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 6rem;
+  height: 3rem;
+  & input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: all 0.3s ease;
+  border-radius: 1.5rem;
+  &:before {
+    position: absolute;
+    content: "";
+    height: 2.25rem;
+    width: 2.25rem;
+    left: 0.375rem;
+    bottom: 0.375rem;
+    background-color: white;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+  }
+}
+input:checked + .slider {
+  background-color: #2196f3;
+}
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+input:checked + .slider:before {
+  transform: translateX(3rem);
+}
+
 .dashSwapper {
   width: 100%;
   margin: auto;
@@ -702,6 +768,9 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
       max-height: 99999px;
       opacity: 1;
       transition: max-height 0.25s ease 0.25s, opacity 0.25s ease 0.25s;
+    }
+    & table {
+      table-layout: fixed;
     }
     & details {
       border: 1px solid #aaa;
@@ -726,15 +795,21 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     }
   }
 }
-.dashMenu {
+
+.dashMenuContainer {
+  border-radius: 9px;
+  overflow: hidden;
+  margin: 0;
+  padding-left: 9px;
   position: absolute;
-  transform: translate(-120%, 0);
+  transform: translate(-120%, 0); margin: 3em 0 0 0;
+}
+.dashMenu {
   width: auto;
   display: flex;
   flex-flow: column nowrap;
-  margin: 3em 0 0 0;
   background-color: #ededed;
-  box-shadow: -6px 0 0 #aaa;
+  box-shadow: -9px 0 0 #544;
   overflow: hidden;
   & .item {
     position: relative;
@@ -769,22 +844,22 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     }
     &#logout {
       background-color: #ccc;
-      color: #161616;
+      color: #333;
     }
   }
 }
 
 @media (max-width: 1100px) {
-  .dashMenu {
+  .dashMenuContainer {
     position: relative;
     transform: translate(0);
     flex-flow: row wrap;
-    & .item {
-      font-size: 12pt;
-      &#logout {
-        margin-left: auto;
-      }
-    }
+  }
+}
+@media (max-width: 1300px) {
+  .textArea {
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
 @media (max-width: 936px) {

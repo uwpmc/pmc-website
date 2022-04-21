@@ -157,9 +157,10 @@ app.get('/auth/google/callback',
     passport.authenticate( 'google', {
         successRedirect: '/dashboard',
         failureRedirect: '/login'
-}));
+    })
+);
 
-//Define the Login Route
+//Define the login route
 app.get("/login", (req, res) => {
     if (req.isAuthenticated()) { res.redirect('dashboard') }
     else { res.render("login", {isPOTW: isPOTW}) }
@@ -194,7 +195,7 @@ const handleError = (err, res) => {
 app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) => {
   if (typeof req.file === 'undefined') {
     if (req.body.id === '') { // new event
-      connection.query("INSERT INTO pmc.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, 'NULL'], (err, rows, fields) => {
+      connection.query("INSERT INTO pmc.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, null], (err, rows, fields) => {
         if (err) throw err;
         console.log('New event added (no image)')
       })
@@ -248,7 +249,7 @@ app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) =>
 app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => {
   if (typeof req.file === 'undefined') {
     if (req.body.id == '') {
-      connection.query("INSERT INTO pmc.potw ( title, date, body, imgpath ) VALUES (?, ?, ?, ?)", [req.body.title, req.body.date, req.body.body, 'NULL'], (err, rows, fields) => {
+      connection.query("INSERT INTO pmc.potw ( title, date, body, imgpath ) VALUES (?, ?, ?, ?)", [req.body.title, req.body.date, req.body.body, null], (err, rows, fields) => {
         if (err) throw err;
         console.log('New POTW added (no image)')
       })
@@ -281,7 +282,7 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
           fs.unlink(path.join(__dirname, "./public/img/potw/"+rows[0].imgpath), err => {
             if (err) return handleError(err, res);
           });
-          console.log("Deleted old POTW image" + rows[0].imgpath)
+          console.log("Deleted old POTW image " + rows[0].imgpath)
         });
       }
       connection.query("REPLACE INTO pmc.potw ("+(isNew ? "" : "id, ")+" title, date, body, imgpath ) VALUES ("+(isNew ? "" : "?, ")+"?, ?, ?, ?)", (isNew ? [] : [req.body.id]).concat([req.body.title, req.body.date, req.body.body, req.body.date+'-'+rand+ext]), (err, rows, fields) => {
@@ -358,27 +359,21 @@ app.post("/update_const", checkAuthenticated, (req, res) => {
 })
 
 app.post("/query_events", checkAuthenticated, (req, res) => {
-  const { search } = req.body;
-  console.log(search);
-  console.log(req);
-  connection.query("SELECT * FROM pmc.events WHERE date = '" + search + "'", (err, rows, fields) => {
+  const { term, year } = req.body;
+  const start = (term === 'winter' ? 1 : (term === 'spring' ? 5 : 9));
+  console.log(term);
+  console.log(year);
+  connection.query("SELECT * FROM pmc.events WHERE YEAR(date) = " + year + " AND MONTH(date) >= " + start + " AND MONTH(date) <= " + (start+3), (err, rows, fields) => {
     if (err) throw err;
-    console.log(search);
     console.log(rows);
     res.json(rows);
   })
 })
 
-app.post("/enable_potw", checkAuthenticated, (req, res) => {
-  isPOTW = true;
-  fs.writeFileSync('potw.json', JSON.stringify({potw: true}))
-  res.redirect("/dashboard?res=potwenabled#create-potw")
-})
-
-app.post("/disable_potw", checkAuthenticated, (req, res) => {
-  isPOTW = false;
-  fs.writeFileSync('potw.json', JSON.stringify({potw: false}))
-  res.redirect("/dashboard?res=potwdisabled#create-potw")
+app.post("/toggle_potw", checkAuthenticated, (req, res) => {
+  isPOTW = !isPOTW;
+  fs.writeFileSync('potw.json', JSON.stringify({potw: isPOTW}))
+  res.redirect("/dashboard?res=potw" + (isPOTW ? "en" : "dis") + "abled#create-potw")
 })
 
 app.get("/logout", (req,res) => {
