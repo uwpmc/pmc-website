@@ -4,7 +4,7 @@ meta(name="google-signin-client_id", content="407152582406-ad0u942n6550ctlh4852h
 script(src="https://apis.google.com/js/platform.js", async, defer)
 link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
 script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
-- var sections = ['create-event', 'create-potw', 'update-const', 'help'];
+- var sections = ['create-event', 'create-potw', 'course-list', 'update-const', 'help'];
 each val in sections
   style(type='text/css').
     a[id="#{val}"]:target ~ .textArea ##{val}-body {
@@ -42,8 +42,12 @@ each val in sections
         return ['Event successfully deleted.', 'good'];
       case 'potwdeleted':
         return ['POTW successfully deleted.', 'good'];
+      case 'courseupd':
+        return ['Course list successfully updated.', 'good'];
       case 'constupd':
         return ['Constitution successfully updated.', 'good'];
+      case 'typesuccess':
+        return ['Event type modifications saved.', 'good'];
       case 'noselect':
         return ['Your selection must be non-empty.', 'bad'];
       case 'badfile':
@@ -63,6 +67,10 @@ each val in sections
         return 'fall';
     }
   }
+  var typesList = '<option value="-">-</option>';
+  for (let k = 0; k < types.length; ++k) {
+    typesList += '<option value='+types[k].id+'>'+types[k].name+'</option>';
+  }
 script.
   var selected;
   // Get rid of query string so page reloads aren't annoying
@@ -74,6 +82,7 @@ script.
     }
   }
   window.history.replaceState({}, '', bruh[0]);
+
 body
   each val in sections
     a(id=val)
@@ -84,6 +93,8 @@ body
         a.item#create-event-btn(href='#create-event') Manage Events
           .active
         a.item#create-potw-btn(href='#create-potw') Manage POTW
+          .active
+        a.item#course-list-btn(href='#course-list') Course List
           .active
         a.item#update-const-btn(href='#update-const') Constitution
           .active
@@ -213,7 +224,7 @@ body
           br
           br
           label(for='image') Image (optional but encouraged, PNG/JPG only): 
-          input(type='file', id='image', name='image')
+          input(type='file', accept='.png, .jpg', id='image', name='image')
           br
           br
           label(for='descr') Short description (max 255 characters, for preview):
@@ -228,6 +239,62 @@ body
             var easymde1 = new EasyMDE({element: document.getElementById('body'), spellChecker: false});
           br
           button.button.good(type='submit') Publish Event
+        h2 Event Types
+        p Events each have a type which corresponds to a colour. For example, a Pure Math Prof Talk might have a purple colour.
+          br
+          | You can adjust colours and add new event types here.
+        details
+          summary Event Type Editor
+          form(action='/new_type', method='POST', onsubmit="return confirm('Please double-check your changes and confirm to save changes.')")
+            table(style='width: 100%;')
+              colgroup
+                col
+                col(style='width: 6rem;')
+                col(style='width: 6rem;')
+              thead
+                tr
+                  th Event Type
+                  th Colour 1 (Top)
+                  th Colour 2 (Bottom)
+                  th Convert events to...
+                  th Delete?
+              tbody#edit_results_box-type
+                - var p = 0;
+                while p < types.length
+                  tr
+                    td
+                      input(type='hidden', name='ntypes['+p+'][id]', value=types[p].id)
+                      if p > 0
+                        input(type='text', name='ntypes['+p+'][typename]', value=types[p].name)
+                      else
+                        input(type='hidden', name='ntypes[0][typename]', value='Other')
+                        | #{types[p].name}
+                    td(style='width: 1%;')
+                      input(type='color', name='ntypes['+p+'][fstcol]', value=types[p].fstcol)
+                    td(style='width: 1%;')
+                      input(type='color', name='ntypes['+p+'][sndcol]', value=types[p].sndcol)
+                    td(style='width: 1%;')
+                      if p > 0
+                        select(name='ntypes['+p+'][convert]')
+                          | !{typesList}
+                      else
+                        input(type='hidden', name='ntypes[0][convert]', value='-')
+                        p(style='text-align: center;') (exempt)
+                    td(style='width: 1%;')
+                      if p > 0
+                        if types_count[p].count === 0
+                          form(action='/delete_type', method='POST', onsubmit="return confirm('WARNING: Deleting a type will cause all events of that type to revert to \\'Other\\'. Really delete event type \\'" + types[p].name + "\\'?')")
+                            button(type='submit', id='type'+types[p].id, name='type'+types[p].id) Delete
+                        else
+                          p(style='text-align: center;') (non-empty)
+                      else
+                        p(style='text-align: center;') (exempt)
+                  - p++;
+            script.
+              var utypes = !{JSON.stringify(types)};
+            button(onclick='(function() {let man = document.getElementById("edit_results_box-type"); for (let q = 0; q < man.children.length; ++q) { man.children[q].children[1].children[0].value = utypes[q].fstcol; man.children[q].children[2].children[0].value = utypes[q].sndcol; }})()') Reset Changes
+            button(onclick='(function() {let man = document.getElementById("edit_results_box-type"); man.innerHTML += "<tr><td><input type=\\"text\\" name=\\"ntypes["+man.children.length+"][typename]\\" required></td><td><input type=\\"color\\" name=\\"ntypes["+man.children.length+"][fstcol]\\"></td><td><input type=\\"color\\" name=\\"ntypes["+man.children.length+"][sndcol]\\"></td><td></td><td><button onclick=\\"this.parentElement.parentElement.remove()\\">Delete</button></td></tr>"; })()') New Type
+            button(type='submit') Save Changes
       .dashSwapItem#create-potw-body
         // POTW Creation
         h2 Manage POTW
@@ -254,7 +321,7 @@ body
                 - p++;
           button(onclick='(function() {document.getElementById("potwform").reset(); easymde2.value(""); let theTable = document.querySelector("#edit_results_box-potw"); for (let z = 0; z < theTable.children.length; ++z) { theTable.children[z].classList.remove("good"); }})()') Clear Selection
           script.
-            let ugh = !{JSON.stringify(potws)};
+            const ugh = !{JSON.stringify(potws)};
             for (let l = 0; l < ugh.length; ++l) {
               document.getElementById(ugh[l].id+'-potw').onclick = function() {
                 for (let q = 0; q < ugh.length; ++q) {
@@ -281,7 +348,7 @@ body
           br
           br
           label(for='image') Image (optional but encouraged, PNG/JPG only): 
-          input(type='file', id='potwimage', name='image')
+          input(type='file', accept='.png, .jpg', id='potwimage', name='image')
           br
           br
           label(for='body') Problem, submission rules, prizes, etc. (max 32768 characters):
@@ -297,6 +364,27 @@ body
           label.switch
             input(type='checkbox', onchange='this.form.submit()', checked=isPOTW)
             span(class='slider')
+      .dashSwapItem#course-list-body
+        h2 Course Descriptions
+        p Select and edit course descriptions below. Note that you can only edit one at once; only changes to the active course list will be saved.
+        .coursesNav(style='margin: 0;')
+          each val in courses
+            .item
+              button(id=val.shortSubject) #{val.longSubject}
+        form(action='/update_courses', method='POST')
+          input(type='hidden', name='subjectId', id='subjectId', value=courses[0].id)
+          textarea(name='courses', id='courses')
+          script.
+            var easymde4 = new EasyMDE({element: document.getElementById('courses'), spellChecker: false})
+            const please = !{JSON.stringify(courses)};
+            for (let i = 0; i < please.length; ++i) {
+              document.getElementById(please[i].shortSubject).onclick = function() {
+                easymde4.value(please[i].body);
+                document.getElementById("subjectId").value = please[i].id;
+              }
+            }
+            easymde4.value(please[0].body)
+          button.button.good(type='submit') Update Course List
       .dashSwapItem#update-const-body
         h2 Constitution
         p You can edit the content of the constitution page here.

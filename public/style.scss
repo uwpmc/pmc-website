@@ -60,7 +60,7 @@ textarea {
 
 nav {
   width: 100%;
-  min-width: 850px;
+  min-width: 860px;
   height: 50px;
   position: relative;
   top: 0;
@@ -148,7 +148,7 @@ a {
   background-blend-mode: normal;
   background-image: url('img/desktop_background_01_gradient.png');
   background-size: cover;
-  box-shadow: inset 0 -8px rgba(0,0,0,0.4);
+  box-shadow: inset 0 -8px rgba(0,0,0,0.4), 0 0 24px rgba(0,0,0,0.4);
 }
 .headerLogo {
   width: 40%;
@@ -171,7 +171,7 @@ a {
   font-family: "Inter", "Helvetica", sans-sans-serif;
   font-weight: 500;
   text-decoration: none;
-  font-size: 16pt;
+  font-size: 13pt;
   color: #161616;
   transition: color 0.15s ease;
   &:hover, &:focus-within {
@@ -185,6 +185,21 @@ a {
 #list {
   max-height: 999999px;
   transition: max-height 0.2s ease, opacity 0.2s ease;
+}
+
+.courseDesc {
+  width: 100%;
+  margin: auto;
+  vertical-align: top;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  overflow-y: clip; // hidden breaks things
+  display: flow-root; // ! very important; starts a new formatting context
+
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+  max-height: 0;
+  opacity: 0;
 }
 
 .switcheroo {
@@ -217,7 +232,7 @@ a {
           position: absolute;
           top: 0;
           left: 0;
-          transform: translate(-120%, 1rem);
+          transform: translate(-3.5rem, 1rem);
           & svg {
             transition: transform 0.2s ease;
           }
@@ -436,6 +451,8 @@ a {
   top: 0;
   min-height: 30em;
   transition: top ease 0.2s, margin ease 0.2s;
+  background-size: cover;
+  background-position: center;
   & h2 {
     font-family: "Inter", "Helvetica", sans-serif;
     font-weight: 600;
@@ -477,6 +494,13 @@ a {
 	cursor: pointer;
 	outline: inherit;
 }
+#edit_results_box-type {
+  & input:not([type='text']), & button, & select {
+    display: block;
+    margin: auto;
+  }
+}
+
 input[type="text"] {
   padding: 1px 2px;
   background-color: #fff;
@@ -504,7 +528,7 @@ input[type="text"] {
   font-size: 18pt;
   font-weight: 600;
   background-color: #de4b7c;
-  border-radius: 0.3rem;
+  border-radius: 0.5rem;
   padding: 10px 20px;
   margin: 1em 0;
   color: inherit;
@@ -589,10 +613,17 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     filter: brightness(1.2);
   }
 }
-#constitution, form[action="/update_const"] .EasyMDEContainer {
+#constitution, #courses, form[action="/update_courses"] .EasyMDEContainer, form[action="/update_const"] .EasyMDEContainer {
   padding: 2rem 0;
+  & li {
+    margin-bottom: 0.25rem;
+  }
+  & ul, & ol {
+    margin-bottom: 1rem;
+  }
   & h1 {
     color: #e90a54;
+    margin: 0 0 1rem 0;
   }
   & h2 {
     font-weight: 600;
@@ -604,7 +635,8 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   }
   & p {
     font-size: 13pt;
-    padding-left: 1em;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
   }
   & summary {
     font-size: 13pt;
@@ -613,6 +645,36 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     margin: 1rem;
   }
 }
+#courses, form[action="/update_courses"] .EasyMDEContainer {
+  & h1, & h2 {
+    padding: 0.5rem;
+    background-color: #e90a54;
+    color: #fff;
+  }
+}
+.coursesNav {
+  margin: 0 auto 2rem auto;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  & .item {
+    display: block;
+    padding: 1rem;
+    white-space: nowrap;
+    text-align: center;
+    & a {
+      font-family: 'Roboto', 'Arial', sans-serif;
+      font-size: 14pt;
+      font-weight: 500;
+      &:hover, &:focus-within {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
 .EasyMDEContainer {
   padding: 0 !important;
 }
@@ -797,10 +859,10 @@ input:checked + .slider:before {
 }
 
 .dashMenuContainer {
-  border-radius: 9px;
+  border-radius: 6px;
   overflow: hidden;
   margin: 0;
-  padding-left: 9px;
+  padding-left: 6px;
   position: absolute;
   transform: translate(-120%, 0); margin: 3em 0 0 0;
 }
@@ -809,7 +871,7 @@ input:checked + .slider:before {
   display: flex;
   flex-flow: column nowrap;
   background-color: #ededed;
-  box-shadow: -9px 0 0 #544;
+  box-shadow: -6px 0 0 #444;
   overflow: hidden;
   & .item {
     position: relative;
@@ -849,7 +911,8 @@ input:checked + .slider:before {
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 11
+00px) {
   .dashMenuContainer {
     position: relative;
     transform: translate(0);
@@ -915,61 +978,4 @@ input:checked + .slider:before {
 }
 tr.good {
   background-color: #cde0fa;
-}
-
-#pmath {
-  // purple
-  background-size: cover;
-  background-image: linear-gradient(#ba50ebff, #ff70a4ff);
-  background-position: center;
-  & .dateBox p {
-    color: #e6c1f7;
-  }
-}
-#co {
-  // green
-  background-size: cover;
-  background-image: linear-gradient(#34eb71ff, #5bd4beff);
-  background-position: center;
-  & .dateBox p {
-    color: #a3e3b9;
-  }
-}
-#amath {
-  // yellow
-  background-size: cover;
-  background-image: linear-gradient(#fc6e5bff, #f2be4bff);
-  background-position: center;
-  & .dateBox p {
-    color: #f5deab;
-  }
-}
-#sasms {
-  // red
-  background-size: cover;
-  background-image: linear-gradient(#eb635eff, #ed925cff);
-  background-position: center;
-  & .dateBox p {
-    color: #f5aeab;
-  }
-}
-#over9k {
-  // blue
-  background-size: cover;
-  background-image: linear-gradient(#506ef2ff, #ba77edff);
-  background-position: center;
-  & .dateBox p {
-    color: #a8b2f0;
-  }
-}
-#other {
-  background-size: cover;
-  background-image: linear-gradient(#222, #555);
-  background-position: center;
-  & .dateBox p {
-    color: #ccc;
-  }
-  & .info * {
-    color: #eee;
-  }
 }

@@ -12,7 +12,7 @@ each val in posts
       opacity: 1 !important;
       transition: max-height 0.5s ease, opacity 0.5s ease;
     }
-    a[id="#{k+1}"]:target ~ .switcheroo #list {
+    a[id="#{val.id}"]:target ~ .switcheroo #list {
       max-height: 0 !important;
       opacity: 0 !important;
       transition: max-height 0.5s ease opacity 0.5s ease;
@@ -108,21 +108,16 @@ each val in posts
     if (term[0] == 's') { return 'w' + term[1] + term[2]; }
     if (term[0] == 'f') { return 's' + term[1] + term[2]; }
   }
-  function eventBGColor(type, opaque) {
-    switch(type) {
-      case 'pmath':
-        return 'linear-gradient(to right, #ba50eb' + (opaque ? 'ff' : 'cc') + ', #ff70a4' + (opaque ? 'ff' : '88') + ')'
-      case 'co':
-        return 'linear-gradient(to right, #34eb71' + (opaque ? 'ff' : 'cc') + ', #5bd4be' + (opaque ? 'ff' : '88') + ')'
-      case 'amath':
-        return 'linear-gradient(to right, #fc6e5b' + (opaque ? 'ff' : 'cc') + ', #f2be4b' + (opaque ? 'ff' : '88') + ')'
-      case 'sasms':
-        return 'linear-gradient(to right, #eb635e' + (opaque ? 'ff' : 'cc') + ', #ed925c' + (opaque ? 'ff' : '88') + ')'
-      case 'over9k':
-        return 'linear-gradient(to right, #4560f7' + (opaque ? 'ff' : 'cc') + ', #ba77ed' + (opaque ? 'ff' : '88') + ')'
-      case 'other':
-        return 'linear-gradient(to right, #222222' + (opaque ? 'ff' : 'cc') + ', #555555' + (opaque ? 'ff' : '88') + ')'
-    }    
+  function eventBGColor(type) {
+    for (let i = 0; i < types.length; ++i) {
+      //console.log(types[i].id + ' ' + type)
+      if (types[i].id === type) {
+        //return 'linear-gradient(' + types[i].fstcol + 'ff, ' + types[i].sndcol + 'ce)';
+        return [types[i].fstcol, types[i].sndcol];
+      }
+    }
+    //return 'linear-gradient(#000000, #000000)';
+    return ['#000000', '#000000'];
   }
 
 mixin event(id, type, title, desc, date, begintime, endtime, loc, imgpath)
@@ -161,7 +156,7 @@ body
               - var n = 0;
               while n < posts.length
                 .subText(id='event-'+(posts[n].id))
-                  .title(style='background-image: '+eventBGColor(posts[n].type, posts[n].imgpath === null)+ (posts[n].imgpath === null ? '' : ', url("/img/events/'+posts[n].imgpath+'")'))
+                  .title(style='background-image: linear-gradient(' + eventBGColor(posts[n].type)[0] + 'cc,' + eventBGColor(posts[n].type)[1] + '88)' + (posts[n].imgpath === null ? '' : ', url("/img/events/'+posts[n].imgpath+'")'))
                     a.back(href='#')
                     a(href='#')
                       svg(xmlns='http://www.w3.org/2000/svg', width='40', height='40')

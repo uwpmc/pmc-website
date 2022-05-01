@@ -75,30 +75,25 @@ include ../template/head.pug
             ].join('');
           };
   function eventBGColor(type) {
-    switch(type) {
-      case 'pmath':
-        return 'linear-gradient(#ba50ebff, #ff70a4ce)'
-      case 'co':
-        return 'linear-gradient(#34eb71ff, #5bd4bece)'
-      case 'amath':
-        return 'linear-gradient(#fc6e5bff, #f2be4bce)'
-      case 'sasms':
-        return 'linear-gradient(#eb635eff, #ed925cce)'
-      case 'over9k':
-        return 'linear-gradient(#4560f7ff, #ba77edce)'
-      case 'other':
-        return 'linear-gradient(#222222ff, #555555ce)'
-    }    
+    for (let i = 0; i < types.length; ++i) {
+      //console.log(types[i].id + ' ' + type)
+      if (types[i].id === type) {
+        //return 'linear-gradient(' + types[i].fstcol + 'ff, ' + types[i].sndcol + 'ce)';
+        return [types[i].fstcol, types[i].sndcol];
+      }
+    }
+    //return 'linear-gradient(#000000, #000000)';
+    return ['#000000', '#000000'];
   }
 
 mixin event(id, type, title, desc, date, begintime, endtime, loc, imgpath)
   a.eventItemHoverBuffer(href='events/' + getTerm(date) + '#' + id)
-    .eventItem(id=type, style=(imgpath === null ? '' : 'background-image: '+eventBGColor(type)+", url('img/events/"+imgpath+"')"))
+    .eventItem(id=type, style='background-image: linear-gradient(' + eventBGColor(type)[0] + 'ff,' + eventBGColor(type)[1] + 'ce)' + (imgpath === null ? '' : ", url('img/events/"+imgpath+"')"))
       .info
         h2 #{title}
         p(style='font-size: 14pt;') #{desc}
       .dateBox
-        p #{readableDate(date)}
+        p(style='color: ' + eventBGColor(type)[1] + '; filter: saturate(50%) brightness(130%);') #{readableDate(date)}
           br
           | #{readableTime(begintime)}&ndash;#{readableTime(endtime)}
           br

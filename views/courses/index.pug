@@ -1,0 +1,43 @@
+doctype html
+include ../template/head.pug
+
+each val, index in courses
+  style(type='text/css').
+    a[id="#{val.shortSubject}"]:target ~ .textArea ##{val.shortSubject}-body {
+      max-height: 999999px !important;
+      opacity: 1 !important;
+      transition: max-height 0.2s ease 0.2s, opacity 0.2s ease 0.2s;
+    }
+  if index != 0
+    style(type='text/css').
+      a[id="#{val.shortSubject}"]:target ~ .textArea ##{courses[0].shortSubject}-body {
+        max-height: 0 !important;
+        opacity: 0 !important;
+        transition: max-height 0.2s ease, opacity 0.2s ease;
+      }
+//- Select PMATH by default
+style(type='text/css').
+  .textArea ##{courses[0].shortSubject}-body {
+    max-height: 999999px;
+    opacity: 1;
+    transition: max-height 0.2s ease, opacity 0.2s ease;
+  }
+
+body
+  each val in courses
+    a(id=val.shortSubject)
+  include ../template/header.pug
+  .header(style='background-position: 0% 15%; background-image: linear-gradient(#f54b42ed, #f5425aed), url("/img/about/redroom_long.png");')
+    .textArea
+      h1(style='margin: 0; padding: 0.8em 0 0.8em 0; font-size: 48pt;') Course Descriptions
+        br
+        | For Humans
+  .textArea#courses
+    .coursesNav
+      each val in courses
+        .item
+          a(href='#'+val.shortSubject) #{val.longSubject}
+    each val in courses
+      .courseDesc(id=val.shortSubject+'-body')
+        | !{val.body}
+  include ../template/footer.pug

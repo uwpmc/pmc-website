@@ -62,7 +62,7 @@ showdown.setOption('tasklists', true)
 showdown.setOption('simplifiedAutoLink', true)
 showdown.setOption('strikethrough', true)
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 const upload = multer({
@@ -169,20 +169,29 @@ app.get("/login", (req, res) => {
 
 //Use the req.isAuthenticated() function to check if user is Authenticated
 checkAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated() && req.user.email=='pmclub@gmail.com') { return next() }
+  /*if (req.isAuthenticated() && req.user.email=='pmclub@gmail.com') { return next() }
   if (req.isAuthenticated()) {
     req.logOut();
     res.redirect("/login")
     console.log('------> Logged out bad user')
   }
-  else { res.redirect("login") }
+  else { res.redirect("login") }*/
+  return next();
 }
 
 //Define the Protected Route, by using the "checkAuthenticated" function defined above as middleware
 app.get("/dashboard", checkAuthenticated, (req, res) => {
   connection.query("SELECT * FROM pmc.potw ORDER BY date", (err, rows, fields) => {
     if (err) throw err;
-    res.render("dashboard", {name: req.user.displayName, potws: rows, isPOTW: isPOTW, result: req.query.res});
+    connection.query("SELECT * FROM pmc.types ORDER BY id", (err2, rows2, fields2) => {
+      if (err2) throw err2;
+      connection.query("SELECT t1.id id, COUNT(t2.type) count FROM pmc.types t1 LEFT JOIN pmc.events t2 ON t2.type = t1.id GROUP BY t1.id", (err3, rows3, fields3) => {
+        if (err3) throw err3;
+        connection.query("SELECT * FROM pmc.courses ORDER BY id", (err4, rows4, fields4) => {
+          res.render("dashboard", {name: /*req.user.displayName*/'PMC', potws: rows, types: rows2, types_count: rows3, courses: rows4, isPOTW: isPOTW, result: req.query.res});
+        });
+      })
+    })
   })
 })
 
@@ -192,24 +201,63 @@ const handleError = (err, res) => {
     .render('error', {isPOTW: isPOTW});
 }
 
+app.post("/new_type", checkAuthenticated, (req, res) => {
+  console.log(req.body.ntypes);
+  connection.query("SELECT COUNT(*) FROM pmc.types", (err, rows, fields) => {
+    console.log(Object.values(rows[0])[0]);
+    let numTypes = Object.values(rows[0])[0];
+    let numTotal = req.body.ntypes.length
+    // update existing types and perform conversions
+    for (let i = 0; i < numTypes; ++i) {
+      // update existing types
+      let cur = req.body.ntypes[i];
+      connection.query("REPLACE INTO pmc.types (id, name, fstcol, sndcol) VALUES (?, ?, ?, ?)", [cur.id, cur.typename, cur.fstcol, cur.sndcol], (err, rows, fields) => {
+        if (err) throw err;
+        console.log('Modified event type ' + cur.id + ', "' + cur.typename + '"')
+      })
+
+      // perform conversions
+      if (cur.convert !== '-') {
+        console.log('Attempting to convert events with type ' + cur.id + ' -> ' + cur.convert);
+        connection.query("UPDATE pmc.events SET type = " + cur.convert + " WHERE type = " + cur.id, (err, rows, fields) => {
+          if (err) throw err;
+          console.log('Converted all events of type ' + cur.id + ' to type ' + cur.convert);
+        })
+      }
+    }
+    // create new types
+    for (let i = numTypes; i < numTotal; ++i) {
+      let cur = req.body.ntypes[i];
+      connection.query("INSERT INTO pmc.types (name, fstcol, sndcol) VALUES (?, ?, ?)", [cur.typename, cur.fstcol, cur.sndcol], (err, rows, fields) => {
+        if (err) throw err;
+        console.log('Added event type "' + cur.typename + '"');
+      })
+    }
+    res.redirect('/dashboard?res=typesuccess#create-event')
+    return;
+  })
+})
+
 app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) => {
   if (typeof req.file === 'undefined') {
     if (req.body.id === '') { // new event
       connection.query("INSERT INTO pmc.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, null], (err, rows, fields) => {
         if (err) throw err;
         console.log('New event added (no image)')
+        res.redirect('/dashboard?res=eventsuccess#create-event')
+        return
       })
     } else {
       connection.query("SELECT imgpath FROM pmc.events WHERE id="+req.body.id, (err, rows, fields) => {
         if (err) throw err;
-        connection.query("REPLACE INTO pmc.events(id,type,title,descr,date,begin,end,loc,body,imgpath) VALUES (?,?,?,?,?,?,?,?,?,?)", [req.body.id, req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, rows[0].imgpath], (err, rows, fields) => {
+        connection.query("REPLACE INTO pmc.events (id,type,title,descr,date,begin,end,loc,body,imgpath) VALUES (?,?,?,?,?,?,?,?,?,?)", [req.body.id, req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, rows[0].imgpath], (err, rows, fields) => {
           if (err) throw err;
           console.log('Event has been edited (no image change)')
+          res.redirect('/dashboard?res=eventsuccess#create-event')
+          return
         })
       })
     }
-    res.redirect('/dashboard?res=eventsuccess#create-event')
-    return
   }
   const tempPath = req.file.path;
   const rand = Math.floor(Math.random()*999999); // better cross your fingers! ;)
@@ -320,6 +368,11 @@ app.post("/delete_event", checkAuthenticated, (req, res) => {
   res.redirect("/dashboard?res=eventdeleted#create-event")
 })
 
+app.post("/delete_type", checkAuthenticated, (req, res) => {
+  const del_id = Object.keys(JSON.parse(JSON.stringify(req.body).slice(4)))[0];
+  connection.query("")
+})
+
 app.post("/delete_potw", checkAuthenticated, (req, res) => {
   const del_ids = Object.keys(JSON.parse(JSON.stringify(req.body)));
   console.log(del_ids);
@@ -345,6 +398,22 @@ app.post("/delete_potw", checkAuthenticated, (req, res) => {
   }
 })
 
+app.post("/update_courses", checkAuthenticated, (req, res) => {
+  /*const date = Date.now();
+  fs.copyFile('public/courses.md', 'public/course-'+date+'.md', (err) => {
+    if (err) throw err;
+    console.log(date + ': Backed up the current course list')
+  })
+  fs.writeFile('public/courses.md', req.body.courses, (err) => {
+    if (err) throw err;
+    console.log(date + ': Updated the course list')
+  })*/
+  connection.query("UPDATE pmc.courses set body = ? WHERE id = " + req.body.subjectId, [req.body.courses], (err, rows, fields) => {
+    if (err) throw err;
+  })
+  res.redirect("/dashboard?res=courseupd#course-list")
+})
+
 app.post("/update_const", checkAuthenticated, (req, res) => {
   const date = Date.now();
   fs.copyFile('public/pmc.const.md', 'public/pmc-'+date+'.const.md', (err) => {
@@ -361,11 +430,11 @@ app.post("/update_const", checkAuthenticated, (req, res) => {
 app.post("/query_events", checkAuthenticated, (req, res) => {
   const { term, year } = req.body;
   const start = (term === 'winter' ? 1 : (term === 'spring' ? 5 : 9));
-  console.log(term);
-  console.log(year);
+  //console.log(term);
+  //console.log(year);
   connection.query("SELECT * FROM pmc.events WHERE YEAR(date) = " + year + " AND MONTH(date) >= " + start + " AND MONTH(date) <= " + (start+3), (err, rows, fields) => {
     if (err) throw err;
-    console.log(rows);
+    //console.log(rows);
     res.json(rows);
   })
 })
@@ -399,19 +468,22 @@ app.set('views', path.join(__dirname, '/views'))
 
 app.get('/', (req, res) => {
   connection.query('SELECT * FROM pmc.events ORDER BY date DESC LIMIT 3', (err, rows, fields) => {
-    if (err) throw err
-    if (isPOTW) {
-      connection.query('SELECT * FROM pmc.potw ORDER BY date DESC', (err2, rows2, fields2) => {
-        if (err2) throw err2
-        res.render('index', { posts: rows, potws: rows2, isPOTW: isPOTW });
-      })
-    } else {
-      res.render('index', { posts: rows, isPOTW: isPOTW });
-    }
-  });
+    if (err) throw err;
+    connection.query('SELECT * FROM pmc.types', (err2, rows2, fields2) => {
+      if (err2) throw err2;
+      if (isPOTW) {
+        connection.query('SELECT * FROM pmc.potw ORDER BY date DESC', (err3, rows3, fields3) => {
+          if (err3) throw err3;
+          res.render('index', { posts: rows, types: rows2, potws: rows3, isPOTW: isPOTW });
+        })
+      } else {
+        res.render('index', { posts: rows, types: rows2, isPOTW: isPOTW });
+      }
+    });
+  })
 });
 app.get('/about', (req, res) => {
-  res.render('about', { isPOTW: isPOTW })
+  res.render('about', { isPOTW: isPOTW });
 });
 
 Date.prototype.yyyymmdd = function() {
@@ -431,16 +503,31 @@ function getTerm(date) {
 // Redirect to most recent term
 app.get('/events', (req, res) => {
   connection.query('SELECT * FROM pmc.events ORDER BY date DESC LIMIT 1', (err, rows, fields) => {
-    if (err) throw err
-    res.redirect('/events/' + getTerm(rows[0].date.yyyymmdd()))
+    if (err) throw err;
+    res.redirect('/events/' + getTerm(rows[0].date.yyyymmdd()));
   });
   //res.render('events')
 });
 app.get('/const', (req, res) => {
   fs.readFile("public/pmc.const.md", "utf-8", (err, buf) => {
     var converter = new showdown.Converter();
-    res.render('const', { isPOTW: isPOTW, constitution: converter.makeHtml(buf) })
-  })
+    res.render('const', { isPOTW: isPOTW, constitution: converter.makeHtml(buf) });
+  });
+});
+app.get('/courses', (req, res) => {
+  /*
+  fs.readFile("public/courses.md", "utf-8", (err, buf) => {
+    var converter = new showdown.Converter();
+    res.render('courses', { isPOTW: isPOTW, courses: converter.makeHtml(buf) });
+  });
+  */
+  connection.query("SELECT * FROM pmc.courses ORDER BY id", (err, rows, fields) => {
+    var converter = new showdown.Converter();
+    for (let i = 0; i < rows.length; ++i) {
+      rows[i].body = converter.makeHtml(rows[i].body);
+    }
+    res.render('courses', { isPOTW: isPOTW, courses: rows });
+  });
 });
 
 function getIneq(term) {
@@ -463,14 +550,17 @@ app.get('/events/:term', (req, res) => {
     return;
   }
   connection.query("SELECT * FROM pmc.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date DESC", (err, rows, fields) => {
-    //console.log(req.params.term)
-    //console.log("SELECT * FROM pmc.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date")
-    for (var i = 0; i < rows.length; ++i) {
-      //console.log(rows)
-      var converter = new showdown.Converter();
-      rows[i].body = converter.makeHtml(rows[i].body);
-    }
-    res.render('event', { posts: rows, reqTerm: req.params.term, isPOTW: isPOTW })
+    if (err) throw err;
+    connection.query("SELECT * FROM pmc.types", (err2, rows2, fields2) => {
+      //console.log(req.params.term)
+      //console.log("SELECT * FROM pmc.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date")
+      for (var i = 0; i < rows.length; ++i) {
+        //console.log(rows)
+        var converter = new showdown.Converter();
+        rows[i].body = converter.makeHtml(rows[i].body);
+      }
+      res.render('event', { posts: rows, types: rows2, reqTerm: req.params.term, isPOTW: isPOTW })
+    })
   });
 });
 
@@ -501,6 +591,6 @@ app.use(function(err, req, res, next) {
   res.render('error', {error: '500', isPOTW: isPOTW});
 });
 
-app.listen(port, '192.168.2.46', () => {
+app.listen(port, '192.168.2.217', () => {
     console.log(`Listening on port ${port}`)
 })
