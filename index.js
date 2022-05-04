@@ -591,6 +591,6 @@ app.use(function(err, req, res, next) {
   res.render('error', {error: '500', isPOTW: isPOTW});
 });
 
-app.listen(port, '192.168.2.217', () => {
+app.listen(port, 'localhost', () => {
     console.log(`Listening on port ${port}`)
 })
