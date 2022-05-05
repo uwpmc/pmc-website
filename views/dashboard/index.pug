@@ -195,12 +195,8 @@ body
           br
           label(for='eventtype') Event type: 
           select(name='eventtype', id='eventtype', required='')
-            option(value='pmath') PMath
-            option(value='amath') AMath
-            option(value='co') C&O
-            option(value='over9k') Contest (Over 9000)
-            option(value='sasms') SASMS
-            option(value='other') Other
+            each val in types
+              option(value=val.id) #{val.name}
           br
           br
           label(for='date') Date: 
@@ -372,7 +368,7 @@ body
             .item
               button(id=val.shortSubject) #{val.longSubject}
         form(action='/update_courses', method='POST')
-          input(type='hidden', name='subjectId', id='subjectId', value=courses[0].id)
+          input(type='hidden', name='subjectId', id='subjectId', value=(courses.length > 1 ? courses[0].id : null))
           textarea(name='courses', id='courses')
           script.
             var easymde4 = new EasyMDE({element: document.getElementById('courses'), spellChecker: false})

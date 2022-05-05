@@ -4,7 +4,7 @@
 
 const express = require('express')
 const app = express()
-const port = 80
+const port = 3000
 const multer = require('multer')
 
 const path = require('path')
@@ -69,11 +69,10 @@ const upload = multer({
     dest: path.join(__dirname, "./public/img/temp")
 });
 
-const mysql = require('mysql')
+const mysql = require('mysql2')
 const connection = mysql.createConnection({
-  host: 'localhost',
+  socketPath: '/run/mysqld/mysqld.sock',
   user: 'pmclub',
-  password: 'lEa9BHnY3z1uYMDg8lfhJYaoE',
   database: 'pmclub'
 })
 
@@ -112,7 +111,7 @@ authUser = (request, accessToken, refreshToken, profile, done) => {
 passport.use(new GoogleStrategy({
     clientID:     GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost/auth/google/callback",
+    callbackURL: "https://puremath.club/auth/google/callback",
     passReqToCallback   : true
   }, authUser));
 
@@ -197,7 +196,7 @@ app.get("/dashboard", checkAuthenticated, (req, res) => {
 const handleError = (err, res) => {
   res
     .status(500)
-    .render('error', {isPOTW: isPOTW});
+    .render('error', {error: '500', isPOTW: isPOTW});
 }
 
 app.post("/new_type", checkAuthenticated, (req, res) => {
@@ -238,13 +237,14 @@ app.post("/new_type", checkAuthenticated, (req, res) => {
 })
 
 app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) => {
+  //console.log(typeof req.file);
   if (typeof req.file === 'undefined') {
     if (req.body.id === '') { // new event
       connection.query("INSERT INTO pmclub.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, null], (err, rows, fields) => {
         if (err) throw err;
         console.log('New event added (no image)')
         res.redirect('/dashboard?res=eventsuccess#create-event')
-        return
+        return;
       })
     } else {
       connection.query("SELECT imgpath FROM pmclub.events WHERE id="+req.body.id, (err, rows, fields) => {
@@ -253,10 +253,11 @@ app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) =>
           if (err) throw err;
           console.log('Event has been edited (no image change)')
           res.redirect('/dashboard?res=eventsuccess#create-event')
-          return
+          return;
         })
       })
     }
+    return; // ??? this is necessary for some reason
   }
   const tempPath = req.file.path;
   const rand = Math.floor(Math.random()*999999); // better cross your fingers! ;)
@@ -468,6 +469,7 @@ app.set('views', path.join(__dirname, '/views'))
 
 app.get('/', (req, res) => {
   connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 3', (err, rows, fields) => {
+    //console.log(connection)
     if (err) throw err;
     connection.query('SELECT * FROM pmclub.types', (err2, rows2, fields2) => {
       if (err2) throw err2;
@@ -504,6 +506,7 @@ function getTerm(date) {
 app.get('/events', (req, res) => {
   connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 1', (err, rows, fields) => {
     if (err) throw err;
+    if (rows.length == 0) { return handleError(err, res); }
     res.redirect('/events/' + getTerm(rows[0].date.yyyymmdd()));
   });
   //res.render('events')
@@ -571,6 +574,7 @@ app.get('/potw', (req, res) => {
     return;
   }
   connection.query("SELECT * FROM pmclub.potw ORDER BY date DESC", (err, rows, fields) => {
+    if (err) throw err;
     for (var i = 0; i < rows.length; ++i) {
       var converter = new showdown.Converter();
       rows[i].body = converter.makeHtml(rows[i].body);
@@ -591,6 +595,6 @@ app.use(function(err, req, res, next) {
   res.render('error', {error: '500', isPOTW: isPOTW});
 });
 
-app.listen(port, 'localhost', () => {
+app.listen(port, () => {
     console.log(`Listening on port ${port}`)
 })

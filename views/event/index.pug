@@ -121,7 +121,7 @@ each val in posts
   }
 
 mixin event(id, type, title, desc, date, begintime, endtime, loc, imgpath)
-  a(href='#'+id, class='longEventItem '+(Date.now() > date ? 'dead' : 'alive'))
+  a(href='#'+id, class='longEventItem '+(Date.now() > date + 1 ? 'dead' : 'alive'))
     h2 #{title}
     h3 #{readableDate(date.yyyymmdd())} @ #{readableTime(begintime)}&ndash;#{readableTime(endtime)} in #{loc}
     p #{desc}
