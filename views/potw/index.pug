@@ -93,7 +93,7 @@ while k < potws.length
           };
 
 mixin potw(id, title, date, imgpath, body)
-  a.longPotwItem(href='#'+id, class='longPotwItem '+(Date.now() > date ? 'dead' : 'alive'))
+  a.longPotwItem(href='#'+id, class='longPotwItem '+(Date.now() - 86400000 > date ? 'dead' : 'alive'))
     h2 POTW ##{id}: #{title}
     h3 #{readableDate(date.yyyymmdd())}
 body
