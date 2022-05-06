@@ -1,2 +1,21 @@
 # pmc-website
-The website for the Pure Math, Applied Math, Combinatorics &amp; Optimization Club of the University of Waterloo
+This is the website for The Pure Math, Applied Math, Combinatorics &amp; Optimization Club under the Mathematics Society of the Waterloo Undergraduate Student Association at the University of Waterloo (PMC for short)!
+
+## Stack
+The website runs a lightweight stack, with only a few packages on top of Express with Node.js (mostly for MySQL database connections and Markdown rendering). The client's experience is JavaScript-free, except for MathJax for rendering LaTeX.
+
+Pug (formerly Jade) is used as the templating engine for all pages. Events, POTWs (problem of the week), and more are stored in a MySQL database. The website provides a simple CMS for club executives to manage content and configure some aspects of the website.
+
+## Accessing the website
+The website is served via a Node server hosted on the CSC's `caffeine` machine (`caffeine.csclub.uwaterloo.ca`), and is kept alive via a detached `tmux` session on the `pmclub` account. The MySQL database should also be accessed from this machine (it can be accessed passwordless from the `pmclub` account).
+
+### Logging In
+To get access to the `pmclub` account as a club executive, let CSC's Systems Committee (syscom) know to give you access. Once this is done, SSH into the caffeine server with your own account (your Quest ID), and then run `become_club pmclub` and `cd ~/www`.
+
+### Webserver Session
+The website is kept alive via a detached `tmux` session on the `pmclub` account. Once logged in via `become_club`, you can re-attach the session via `tmux attach -t web`, and detach with <kbd>Ctrl</kbd> + <kbd>B</kbd> followed by <kbd>D</kbd>. After attaching the session, you should see the web server logs. Inputting <kbd>Ctrl</kbd> + <kbd>C</kbd> will kill the server.
+
+If the session is dead, you can create a new one with `tmux new -s web`. Start the server while in the `~/www` directory by running `node index.js`.
+
+### Updating
+The `~/www` directory contains this Git directory. Please push any changes you make to files, and make sure to pull changes and restart the Node instance if changes are made.
