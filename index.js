@@ -549,7 +549,7 @@ app.get('/events/:term', (req, res) => {
   const t = req.params.term;
   if (t.length != 3 || (t[0] != 'w' && t[0] != 's' && t[0] != 'f') || isNaN(parseInt(t[1])) || isNaN(parseInt(t[2]))) {
     res.status(404);
-    res.render('error', { isPOTW: isPOTW });
+    res.render('error', { error: '404', isPOTW: isPOTW });
     return;
   }
   connection.query("SELECT * FROM pmclub.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date DESC", (err, rows, fields) => {
