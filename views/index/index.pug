@@ -88,16 +88,9 @@ include ../template/head.pug
 
 mixin event(id, type, title, desc, date, begintime, endtime, loc, imgpath)
   a.eventItemHoverBuffer(href='events/' + getTerm(date) + '#' + id)
-    .eventItem(id=type, style='background-image: linear-gradient(' + eventBGColor(type)[0] + 'ff,' + eventBGColor(type)[1] + 'ce)' + (imgpath === null ? '' : ", url('img/events/"+imgpath+"')"))
-      .info
-        h2 #{title}
-        p(style='font-size: 14pt;') #{desc}
-      .dateBox
-        p(style='color: ' + eventBGColor(type)[1] + '; filter: saturate(50%) brightness(130%);') #{readableDate(date)}
-          br
-          | #{readableTime(begintime)}&ndash;#{readableTime(endtime)}
-          br
-          span(style='color: #ffffff; font-family: inherit;') #{loc}
+    .eventItem
+      p(style='font-weight: 600; color: #565965;') #{title}
+      p(style='font-size: 14pt;') #{readableDate(date)} | #{readableTime(begintime)} | #{loc}
 mixin potw(id, title, date, imgpath)
   a.potwItem(href='/potw#'+id)
     h1.number ##{id}
@@ -107,24 +100,27 @@ mixin potw(id, title, date, imgpath)
     .potwImg(style=(imgpath === null ? '' : 'background-image: url("img/potw/'+imgpath+'")'))
 body
   include ../template/header.pug
-  .header(style='background-image: url("/img/desktop_background_01_gradient_graph.png");')
-    .headerLogo
-      img(src='/img/pmamco_simple_free_nobg.png', style='height: 15em; padding: 15px;')
-      div
-        h1(style='padding: 15px 15px 15px 15px; position: relative; min-width: 30rem;')
-          | The 
-          strong {Pure Math,
-          br
-          strong Applied Math,
-          br
-          strong C&amp;O} 
-          | Club
-        .socials
-          a(href='https://discord.gg/6m9Jw9UCVF', style='background-image: url(/img/discord.png);', target='_blank')
-          a(href='https://instagram.com/uwpmclub', style='background-image: url(/img/instagram.png);', target='_blank')
-          a(href='https://facebook.com/groups/uwpmc', style='background-image: url(/img/facebook.png);', target='_blank')
-          a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(/img/youtube.png);', target='_blank')
-  .textArea
+  //-.header(style='background-image: url("/img/desktop_background_01_gradient.png");')
+  div(style='padding: 0 2rem; width: 100%;')
+    .headerAlt
+      .headerLogo
+        img(src='/img/pmamco_simple_free_nobg.png', style='height: 15em; padding: 15px;')
+        div
+          h1(style='padding: 1rem; position: relative;')
+            | The 
+            strong {Pure Math,
+            br
+            strong Applied Math,
+            br
+            strong C&amp;O} 
+            | Club
+          .socials
+            a(href='https://discord.gg/6m9Jw9UCVF', style='background-image: url(/img/discord.svg); filter: brightness(0); width: 2.5rem;', target='_blank')
+            a(href='https://instagram.com/uwpmclub', style='background-image: url(/img/instagram.svg); width: 2rem;', target='_blank')
+            //-a(href='https://facebook.com/groups/uwpmc', style='background-image: url(/img/facebook.png);', target='_blank')
+            a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(/img/youtube.svg); width: 2rem;', target='_blank')
+
+  .textArea(style='width: min(80rem,100%);')
     h1(style='padding-top: 0.3em;') Events
     .eventContainer
       - var n = posts.length - 1;
@@ -134,7 +130,7 @@ body
     a.button#pastEvents(href='./events') Browse all events
   
   if isPOTW
-    .textArea
+    .textArea(style='width: min(80rem,100%);')
       h1 Problem of the Week
       //- N.B. Order has to be REVERSED here to make it wrap correctly
       .potwContainer
@@ -144,10 +140,9 @@ body
           - m--;
       
   div(style='width: 100%; background-color: #e0e0e0;')
-    .textArea(style='padding: 1em 0 1em 0;')
-      div(style='width: 100%; display: flex; justify-content: start-flex; align-items: center; flex-wrap: wrap; column-gap: 4em;')
-        div(style='min-width: 15rem;')
-          h1 Join our mailing list!
-          p(style='margin-bottom: 1.5rem;') Get notified about events and opportunities first :)
-        a.button#subscribe(href='http://eepurl.com/hJPG7b', target='_blank') Subscribe
+    .textArea(style='padding-top: 1em; padding-bottom: 1em;')
+      div
+        h1 Join our mailing list!
+        p We send emails whenever events or opportunities are coming up. You can unsubscribe any time. No spam!
+      a.button#subscribe(href='http://eepurl.com/hJPG7b', target='_blank') Subscribe
   include ../template/footer.pug

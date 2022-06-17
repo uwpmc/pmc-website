@@ -2,10 +2,33 @@ script(src='https://polyfill.io/v3/polyfill.min.js?features=es6')
 script#MathJax-script(async, src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML')
 nav
   div(style='width: 100%; height: 100%; max-width: 2000px; margin: 0 auto;')
-    .navStuff(style='width: 100%; margin: 0; padding: 0; height: 100%;')
+    .navStuff(style='width: 100%; height: 100%;')
       a.navLogo(href='/')
-        img(src='/img/pmamco_simple_free_nobg.png', style='height: 2em; width: 2em; position: relative;')
+        img(src='/img/pmamco_simple_free.svg', style='height: 2em; width: 2em; position: relative;')
         .navItem(style='font-weight: 700; display: block; font-size: 20pt;') Pure Math Club
+      input#hamb-check(type='checkbox')
+      label.hamb(for='hamb-check')
+        .menuBar
+        .menuBar
+        .menuBar
+      label#bg(for='hamb-check')
+      #menu
+        ul
+          li(style='background-color: transparent; padding: 1rem 4rem;')
+            img(src='/img/pmamco_simple_free.svg', style='height: 5em; width: 5em; position: relative;')
+          li
+            a(href='/') Home
+          li
+            a(href='/about') About
+          li
+            a(href='/events') Events
+          if isPOTW
+            li
+              a(href='/POTW') POTW
+          li
+            a(href='/courses') Courses
+          li
+            a(href='/const') Constitution
       a.navItem(href='/') Home
       a.navItem(href='/about') About
       a.navItem(href='/events') Events
