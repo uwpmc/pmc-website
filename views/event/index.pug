@@ -157,7 +157,7 @@ body
               while n < posts.length
                 .subText(id='event-'+(posts[n].id))
                   h2(style='font-size: 32pt; font-weight: 600; color: #db2323; margin: 0.5rem 0;') #{posts[n].title}
-                  h3(style='font-size: 20pt; font-weight: bold; color: #000; margin: 0.5rem 0;') #{readableDate(posts[n].date.yyyymmdd())}
+                  h3(style='font-size: 20pt; font-weight: bold; color: #fff; margin: 0.5rem 0; padding: 0.5rem; background-color: #db2323;') #{readableDate(posts[n].date.yyyymmdd())}
                   h3(style='font-size: 14pt; font-weight: bold; color: #000; margin: 0.8rem 0;') #{readableTime(posts[n].begin)}&ndash;#{readableTime(posts[n].end)}
                     br
                     | #{posts[n].loc}

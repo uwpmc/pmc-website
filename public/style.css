@@ -60,6 +60,10 @@ p {
   font-family: "Roboto", "Arial", sans-serif;
 }
 
+li {
+  font-size: 13pt;
+}
+
 ul {
   margin-bottom: 0;
   margin-top: 0;
@@ -333,7 +337,7 @@ a {
     font-size: 10pt !important;
   }
 
-  p {
+  p, td, th {
     font-size: 10pt !important;
   }
 
@@ -363,6 +367,10 @@ a {
 
   .button {
     font-size: 20pt !important;
+  }
+
+  .subText li {
+    font-size: 13pt;
   }
 
   #constitution li, #constitution ul, #courses li, #courses ul, form[action="/update_courses"] .EasyMDEContainer li, form[action="/update_courses"] .EasyMDEContainer ul, form[action="/update_const"] .EasyMDEContainer li, form[action="/update_const"] .EasyMDEContainer ul {
