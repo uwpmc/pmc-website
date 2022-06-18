@@ -370,7 +370,7 @@ a {
   }
 
   .subText li {
-    font-size: 13pt;
+    font-size: 10pt;
   }
 
   #constitution li, #constitution ul, #courses li, #courses ul, form[action="/update_courses"] .EasyMDEContainer li, form[action="/update_courses"] .EasyMDEContainer ul, form[action="/update_const"] .EasyMDEContainer li, form[action="/update_const"] .EasyMDEContainer ul {
