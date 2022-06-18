@@ -181,16 +181,10 @@ checkAuthenticated = (req, res, next) => {
 app.get("/dashboard", checkAuthenticated, (req, res) => {
   connection.query("SELECT * FROM pmclub.potw ORDER BY date", (err, rows, fields) => {
     if (err) throw err;
-    connection.query("SELECT * FROM pmclub.types ORDER BY id", (err2, rows2, fields2) => {
-      if (err2) throw err2;
-      connection.query("SELECT t1.id id, COUNT(t2.type) count FROM pmclub.types t1 LEFT JOIN pmclub.events t2 ON t2.type = t1.id GROUP BY t1.id", (err3, rows3, fields3) => {
-        if (err3) throw err3;
-        connection.query("SELECT * FROM pmclub.courses ORDER BY id", (err4, rows4, fields4) => {
-          res.render("dashboard", {name: req.user.displayName, potws: rows, types: rows2, types_count: rows3, courses: rows4, isPOTW: isPOTW, result: req.query.res});
-        });
-      })
-    })
-  })
+    connection.query("SELECT * FROM pmclub.courses ORDER BY id", (err4, rows4, fields4) => {
+      res.render("dashboard", {name: req.user.displayName, potws: rows, courses: rows4, isPOTW: isPOTW, result: req.query.res});
+    });
+  });
 })
 
 const handleError = (err, res) => {
@@ -199,48 +193,12 @@ const handleError = (err, res) => {
     .render('error', {error: '500', isPOTW: isPOTW});
 }
 
-app.post("/new_type", checkAuthenticated, (req, res) => {
-  console.log(req.body.ntypes);
-  connection.query("SELECT COUNT(*) FROM pmclub.types", (err, rows, fields) => {
-    console.log(Object.values(rows[0])[0]);
-    let numTypes = Object.values(rows[0])[0];
-    let numTotal = req.body.ntypes.length
-    // update existing types and perform conversions
-    for (let i = 0; i < numTypes; ++i) {
-      // update existing types
-      let cur = req.body.ntypes[i];
-      connection.query("REPLACE INTO pmclub.types (id, name, fstcol, sndcol) VALUES (?, ?, ?, ?)", [cur.id, cur.typename, cur.fstcol, cur.sndcol], (err, rows, fields) => {
-        if (err) throw err;
-        console.log('Modified event type ' + cur.id + ', "' + cur.typename + '"')
-      })
-
-      // perform conversions
-      if (cur.convert !== '-') {
-        console.log('Attempting to convert events with type ' + cur.id + ' -> ' + cur.convert);
-        connection.query("UPDATE pmclub.events SET type = " + cur.convert + " WHERE type = " + cur.id, (err, rows, fields) => {
-          if (err) throw err;
-          console.log('Converted all events of type ' + cur.id + ' to type ' + cur.convert);
-        })
-      }
-    }
-    // create new types
-    for (let i = numTypes; i < numTotal; ++i) {
-      let cur = req.body.ntypes[i];
-      connection.query("INSERT INTO pmclub.types (name, fstcol, sndcol) VALUES (?, ?, ?)", [cur.typename, cur.fstcol, cur.sndcol], (err, rows, fields) => {
-        if (err) throw err;
-        console.log('Added event type "' + cur.typename + '"');
-      })
-    }
-    res.redirect('/dashboard?res=typesuccess#create-event')
-    return;
-  })
-})
 
 app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) => {
   //console.log(typeof req.file);
   if (typeof req.file === 'undefined') {
     if (req.body.id === '') { // new event
-      connection.query("INSERT INTO pmclub.events ( type, title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, null], (err, rows, fields) => {
+      connection.query("INSERT INTO pmclub.events ( title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, null], (err, rows, fields) => {
         if (err) throw err;
         console.log('New event added (no image)')
         res.redirect('/dashboard?res=eventsuccess#create-event')
@@ -249,7 +207,7 @@ app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) =>
     } else {
       connection.query("SELECT imgpath FROM pmclub.events WHERE id="+req.body.id, (err, rows, fields) => {
         if (err) throw err;
-        connection.query("REPLACE INTO pmclub.events (id,type,title,descr,date,begin,end,loc,body,imgpath) VALUES (?,?,?,?,?,?,?,?,?,?)", [req.body.id, req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, rows[0].imgpath], (err, rows, fields) => {
+        connection.query("REPLACE INTO pmclub.events (id,title,descr,date,begin,end,loc,body,imgpath) VALUES (?,?,?,?,?,?,?,?,?)", [req.body.id, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, rows[0].imgpath], (err, rows, fields) => {
           if (err) throw err;
           console.log('Event has been edited (no image change)')
           res.redirect('/dashboard?res=eventsuccess#create-event')
@@ -280,7 +238,7 @@ app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) =>
         });
       }
       // looooooong!
-      connection.query("REPLACE INTO pmclub.events ( "+(isNew ? "" : "id, ")+"type, title, descr, date, begin, end, loc, body, imgpath ) VALUES ("+(isNew ? "" : "?, ")+"?, ?, ?, ?, ?, ?, ?, ?, ?)", (isNew ? [] : [req.body.id]).concat([req.body.eventtype, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, req.body.date+'-'+rand+ext]), (err, rows, fields) => {
+      connection.query("REPLACE INTO pmclub.events ( "+(isNew ? "" : "id, ")+"title, descr, date, begin, end, loc, body, imgpath ) VALUES ("+(isNew ? "" : "?, ")+"?, ?, ?, ?, ?, ?, ?, ?)", (isNew ? [] : [req.body.id]).concat([req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, req.body.date+'-'+rand+ext]), (err, rows, fields) => {
         if (err) throw err;
         if (isNew) console.log('New event added (with image)')
         else console.log('Event has been edited (with image change)')
@@ -369,10 +327,6 @@ app.post("/delete_event", checkAuthenticated, (req, res) => {
   res.redirect("/dashboard?res=eventdeleted#create-event")
 })
 
-app.post("/delete_type", checkAuthenticated, (req, res) => {
-  const del_id = Object.keys(JSON.parse(JSON.stringify(req.body).slice(4)))[0];
-  connection.query("")
-})
 
 app.post("/delete_potw", checkAuthenticated, (req, res) => {
   const del_ids = Object.keys(JSON.parse(JSON.stringify(req.body)));
@@ -471,18 +425,15 @@ app.get('/', (req, res) => {
   connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 3', (err, rows, fields) => {
     //console.log(connection)
     if (err) throw err;
-    connection.query('SELECT * FROM pmclub.types', (err2, rows2, fields2) => {
-      if (err2) throw err2;
-      if (isPOTW) {
-        connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', (err3, rows3, fields3) => {
-          if (err3) throw err3;
-          res.render('index', { posts: rows, types: rows2, potws: rows3, isPOTW: isPOTW });
-        })
-      } else {
-        res.render('index', { posts: rows, types: rows2, isPOTW: isPOTW });
-      }
-    });
-  })
+    if (isPOTW) {
+      connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', (err3, rows3, fields3) => {
+        if (err3) throw err3;
+        res.render('index', { posts: rows, potws: rows3, isPOTW: isPOTW });
+      })
+    } else {
+      res.render('index', { posts: rows, isPOTW: isPOTW });
+    }
+  });
 });
 app.get('/about', (req, res) => {
   res.render('about', { isPOTW: isPOTW });
@@ -554,16 +505,11 @@ app.get('/events/:term', (req, res) => {
   }
   connection.query("SELECT * FROM pmclub.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date DESC", (err, rows, fields) => {
     if (err) throw err;
-    connection.query("SELECT * FROM pmclub.types", (err2, rows2, fields2) => {
-      //console.log(req.params.term)
-      //console.log("SELECT * FROM pmclub.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date")
-      for (var i = 0; i < rows.length; ++i) {
-        //console.log(rows)
-        var converter = new showdown.Converter();
-        rows[i].body = converter.makeHtml(rows[i].body);
-      }
-      res.render('event', { posts: rows, types: rows2, reqTerm: req.params.term, isPOTW: isPOTW })
-    })
+    for (var i = 0; i < rows.length; ++i) {
+      var converter = new showdown.Converter();
+      rows[i].body = converter.makeHtml(rows[i].body);
+    }
+    res.render('event', { posts: rows, reqTerm: req.params.term, isPOTW: isPOTW })
   });
 });
 

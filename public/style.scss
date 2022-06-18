@@ -76,10 +76,10 @@ nav {
 
 #menu {
   position: fixed;
-  right: -18rem;
+  right: -16rem;
   top: 0;
   height: 100%;
-  width: 18rem;
+  width: 16rem;
   background-color: #eaa239;
   transition: right 0.4s 0s ease;
   & ul {
@@ -87,7 +87,7 @@ nav {
     padding: 2rem 0;
     & li {
       //padding: 1rem 4rem;
-      font-size: 16pt;
+      font-size: 16pt !important;
       font-weight: 600;
       & a {
         color: #161616;
@@ -98,10 +98,10 @@ nav {
   }
 }
 .menuBar {
-  width: 35px;
-  height: 5px;
+  width: 32px;
+  height: 4px;
   background-color: #161616;
-  margin: 6px 0;
+  margin: 5px 0;
 }
 #bg {
   opacity: 0;
@@ -233,8 +233,8 @@ a {
 .socials {
   display: flex;
   align-items: center;
-  width: 20%;
-  min-width: 400px;
+  //width: 20%;
+  //min-width: 400px;
   max-width: 1250px;
   margin: 0;
   padding: 0 0 0 1rem;
@@ -261,6 +261,9 @@ a {
   //box-shadow: inset 0 -8px rgba(0,0,0,0.4), 0 0 24px rgba(0,0,0,0.4);
   //box-shadow: 0 0 14px #777;
   //background-color: #eaa23988;
+  & h1 {
+    font-size: 48pt;
+  }
 }
 .headerAlt {
   margin: auto;
@@ -302,20 +305,68 @@ a {
 }
 
 @media screen and (max-width: 860px) {
+  h1 {
+    font-size: 20pt !important;
+  }
+  h2 {
+    font-size: 16pt !important;
+  }
+  h3 {
+    font-size: 12pt !important;
+  }
+  h4 {
+    font-size: 10pt !important;
+  }
+  p {
+    font-size: 10pt !important;
+  }
+  .eventItem p {
+    font-size: 12pt !important;
+  }
   a.navItem {
     display: none;
   }
   .hamb {
     display: inline-block;
   }
-  .headerLogo {
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    width: 80% !important;
+  .headerLogo h1 {
+    font-size: 20pt;
+  }
+  .header h1 {
+    font-size: 24pt;
   }
   .headerLogo img {
     //display: none;
     height: 10em !important;
+  }
+  .button {
+    font-size: 20pt !important;
+  }
+  #constitution, #courses, form[action="/update_courses"] .EasyMDEContainer, form[action="/update_const"] .EasyMDEContainer {
+    & li, & ul {
+      font-size: 10pt !important;
+    }
+  }
+  .socials {
+    height: 1.5rem;
+    & a {
+      margin: 0 0.25rem;
+    }
+  }
+}
+@media screen and (max-width: 640px) {
+  .headerLogo {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 80% !important;
+    padding: 2rem 0;
+  }
+  .headerLogo img {
+    //display: none;
+    height: 8em !important;
+  }
+  .navLogo .navItem {
+    font-size: 16pt !important;
   }
 }
 
@@ -578,8 +629,8 @@ a {
   }
 }
 .eventItemHoverBuffer {
-  width: 30%;
-  min-width: 25rem;
+  //width: 30%;
+  //min-width: 25rem;
   //max-width: 650px;
   flex-grow: 1;
   // Prevents CSS jitter
@@ -594,7 +645,7 @@ a {
   //width: 30%;
   position: relative;
   background-color: #f2f2f2;
-  min-width: 25rem;
+  //min-width: 25rem;
   padding: 1rem;
   //max-width: 650px;
   margin: 10px;
@@ -773,6 +824,9 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     font-size: 13pt;
     padding-left: 1rem;
     margin-bottom: 1rem;
+  }
+  & li {
+    font-size: 13pt;
   }
   & summary {
     font-size: 13pt;
