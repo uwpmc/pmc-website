@@ -11,6 +11,7 @@ const path = require('path')
 const fs = require('fs')
 var bodyParser = require('body-parser')
 var showdown  = require('showdown')
+var serveIndex = require('serve-index')
 
 // Showdown extension to wrap images in containers
 var imgWrapper = function(converter) {
@@ -528,7 +529,7 @@ app.get('/potw', (req, res) => {
     res.render('potw', { potws: rows, isPOTW: isPOTW })
   });
 });
-
+app.use('/files', express.static('/public/files'), serveIndex('public/files', {'icons': true}))
 
 app.use(function(req, res, next) {
   res.status(404);
