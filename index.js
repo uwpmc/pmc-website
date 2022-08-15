@@ -1,4 +1,4 @@
-// THE PURE MATH, APPLIED MATH, COMBINATORICS & OPTIMIZAITON CLUB WEBSITE
+// THE PURE MATH, APPLIED MATH, COMBINATORICS & OPTIMIZATION CLUB WEBSITE
 // Written with love by Evan Girardin, W22/S22 PMC President
 // Please direct all compliments and hate mail to evangirardin at gmail dot com
 
