@@ -89,7 +89,8 @@ fs.readFile("potw.json", "utf-8", (err, buf) => {
 const session = require('express-session')
 const passport = require('passport')
 
-const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+//const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+const SamlStrategy = require('passport-saml').Strategy;
 
 //Middleware
 app.use(session({
@@ -101,19 +102,29 @@ app.use(session({
 app.use(passport.initialize()) // init passport on every route call
 app.use(passport.session())    //allow passport to use "express-session"
 
-const GOOGLE_CLIENT_ID =
-"407152582406-ad0u942n6550ctlh4852hm26qss44t4r.apps.googleusercontent.com"
-const GOOGLE_CLIENT_SECRET="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"
+//const GOOGLE_CLIENT_ID = "407152582406-ad0u942n6550ctlh4852hm26qss44t4r.apps.googleusercontent.com"
+//const GOOGLE_CLIENT_SECRET = "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"
 
 authUser = (request, accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
-  }
+  return done(null, profile);
+}
 
-passport.use(new GoogleStrategy({
+/*passport.use(new GoogleStrategy({
     clientID:     GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
     callbackURL: "https://puremath.club/auth/google/callback",
     passReqToCallback   : true
+  }, authUser));
+*/
+passport.use(new SamlStrategy({
+    //path: '/login/callback',
+    callbackUrl: 'https://your-app.example.net/login/callback',
+    entryPoint: 'https://adfs.uwaterloo.ca/adfs/ls/',
+    issuer: 'https://your-app.example.net/login/callback',
+    authnContext: 'http://schemas.microsoft.com/ws/2008/06/identity/authenticationmethod/windows',
+    identifierFormat: null,
+    //audience: 'https://adfs.uwaterloo.ca/FederationMetadata/2007-06/FederationMetadata.xml',
+    cert: 'MIIDtzCCAh8CFDIm78gtcVu3u/Qi/5/flk9dyZC1MA0GCSqGSIb3DQEBCwUAMBgxFjAUBgNVBAMMDXB1cmVtYXRoLmNsdWIwHhcNMjIwODE1MTg0ODQ5WhcNMzIwODE0MTg0ODQ5WjAYMRYwFAYDVQQDDA1wdXJlbWF0aC5jbHViMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAvxy9AX6SKLEW8bPTCSVtd8Pvha+3osaXJwz3uiDEQbdpr+vdWn56BbQgSApX556G6+Uv0KSP+YS+YPKLm4yJv64Tnij0gbXm8ZSJtF8+5FP96gklDcQ+5k1oWn8Is26PVhzU5HUq78qBRslhuunSgqXV2N+hI3Q7H7Irm7zsozATX32ZOxw8NH1SHuyjAm6L7mCyVgPfPVuuKrmQRQqSiI5v+aIT5wYWqOmhs621ajn94PoZqJ+WyvsEOfOUU8praA0IYsuHYX76QCyodw31rpNJGUtci4IXmpRs7tYTrMu6woGdfYsv+JNmzQgQPj+uQkHNne5mXN5j7buTHexewUCsYsm8oz2b3uJ8TKhHaT+LDKn9zcD+8pE52EDC5eeVIDBBwHRF3TwJVNUV8p8bO/GrEZZ/8wD08PkVhUW8ZKUuwC7UO++NVMD67CyJvwxTDre+mHP2bLhtJJYWJ5rot8r6oOoqjRpbrHKDpm/V2lb50+3G3oVvz8VbgfSlZYHFAgMBAAEwDQYJKoZIhvcNAQELBQADggGBAKlJ/hgrohJet14Rxp6MJUWE5sJDkXDvE1AZ+Qe0Vb60f5DWZI1x+9khvkuw61+9XCr0/b/5cX+cdUke/uG3eLkV32h4YROoQY5y/ziUqay4PVz8YVB7WMcKZ2PMMjuKO5u+cybiIc8qIRjZ2FcHtBMf1X/HSg/b8DNXaoTpQYNzGlT55tewVOa2S85ZGKfJf76ICdgjpXXmfoOfGSkOxaeOBXKDUSPB7+AaY1GZA6Tz1CZW5s4n4JiIs0oaYA7w+5naFK6TEUsud9roi8deIpUDX8pRsA+rvFwcznxFQ6Q1S40uVsNe/BpAzmJpvxNDAPRYVX0rzeW3EPzLx3jOQpPBIUGfQZdan/NS0vfX9+2WhTojabJS+udXiBIfKAfvWfaXucLcOHpwpEW5jhvUQdANMwhFwQh0N1eNQzlHQMt0Gi6FhpB6wRNpiL39KK9f9gmsPPIl4eBLy2wBJPpGBMU+CIJd4JP5pM9zuBQ/hccmckMUdeoFQES0vmlF/E6EQA==' // cert must be provided
   }, authUser));
 
 passport.serializeUser( (user, done) => {
@@ -124,48 +135,30 @@ passport.deserializeUser((user, done) => {
   done (null, user)
 })
 
-//Middleware to see how the params are populated by Passport
-let count = 1
-showlogs = (req, res, next) => {
-    console.log("\n==============================")
-    console.log(`------------>  ${count++}`)
-
-    console.log(`\n req.session.passport -------> `)
-    console.log(req.session.passport)
-
-    console.log(`\n req.user -------> `)
-    console.log(req.user)
-
-    console.log("\n Session and Cookie")
-    console.log(`req.session.id -------> ${req.session.id}`)
-    console.log(`req.session.cookie -------> `)
-    console.log(req.session.cookie)
-
-    console.log("===========================================\n")
-
-    next()
-}
-
-//app.use(showlogs) //user printData function as middleware to print populated variables
-
-app.get('/auth/google',
-  passport.authenticate('google', { scope:
-      [ 'email', 'profile' ] }
-));
-
-app.get('/auth/google/callback',
-    passport.authenticate( 'google', {
-        successRedirect: '/dashboard',
-        failureRedirect: '/login'
-    })
+app.post(
+  "/login/callback",
+  bodyParser.urlencoded({ extended: false }),
+  passport.authenticate("saml", { failureRedirect: "/", failureFlash: true }),
+  function (req, res) {
+    res.redirect("/");
+  }
 );
 
+app.get(
+  "/login",
+  passport.authenticate("saml", { failureRedirect: "/", failureFlash: true }),
+  function (req, res) {
+    res.redirect("/");
+  }
+);
+
+/*
 //Define the login route
 app.get("/login", (req, res) => {
     if (req.isAuthenticated()) { res.redirect('dashboard') }
     else { res.render("login", {isPOTW: isPOTW}) }
 })
-
+*/
 
 //Use the req.isAuthenticated() function to check if user is Authenticated
 checkAuthenticated = (req, res, next) => {
@@ -484,6 +477,11 @@ app.get('/courses', (req, res) => {
     res.render('courses', { isPOTW: isPOTW, courses: rows });
   });
 });
+app.get('/sasms', (req, res) => {
+  connection.query('SELECT * FROM pmclub.sasms ORDER BY time', (err, rows, fields) => {
+    res.render('sasms', { isPOTW: isPOTW, sasms: rows });
+  });
+});
 
 function getIneq(term) {
   var str = "20" + term.slice(1,3) + '-0'
@@ -530,6 +528,10 @@ app.get('/potw', (req, res) => {
   });
 });
 app.use('/files', express.static('/public/files'), serveIndex('public/files', {'icons': true}))
+
+app.get('/history', (req, res) => {
+  res.render('history', { isPOTW: isPOTW })
+})
 
 app.use(function(req, res, next) {
   res.status(404);
