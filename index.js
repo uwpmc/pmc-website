@@ -109,6 +109,8 @@ const connection = mysql.createConnection({
   user: 'pmclub',
   database: 'pmclub'
 })
+const mysqlAwait = require('mysql2/promise')
+const conn = await mysqlAwait.createConnection({ database: 'pmclub', user: 'pmclub', socketPath: '/run/mysqld/mysqld.sock' });
 
 var isPOTW;
 fs.readFile("potw.json", "utf-8", (err, buf) => {
@@ -183,8 +185,6 @@ app.get(
 );
 
 getStatus = async (req) => {
-  const mysqlAwait = require('mysql2/promise')
-  const conn = await mysqlAwait.createConnection({ database: 'pmclub', user: 'pmclub', socketPath: '/run/mysqld/mysqld.sock' });
   if (req.user == undefined || req.user.nameID == undefined) { return 0; }
   let [rows, fields] = await conn.execute('SELECT * FROM pmclub.execs WHERE nameID=?', [req.user.nameID]);
   if (rows.length > 0) { return 2; }
@@ -480,6 +480,10 @@ app.get('/sasms', async (req, res) => {
   });
 });
 */
+app.get('/history', checkAuthenticated, async (req, res) => {
+  res.render('history', { loginStatus: await getStatus(req), isPOTW: isPOTW });
+});
+
 function getIneq(term) {
   var str = "20" + term.slice(1,3) + '-0'
   if (term[0] == 'w') { str += '1' }
