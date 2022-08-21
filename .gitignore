@@ -1,0 +1,6 @@
+*.log
+node_modules/
+public/files/
+package-lock.json
+package.json
+prepros.config

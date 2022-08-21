@@ -6,12 +6,45 @@ const express = require('express')
 const app = express()
 const port = 3000
 const multer = require('multer')
+const util = require('util')
 
 const path = require('path')
 const fs = require('fs')
 var bodyParser = require('body-parser')
 var showdown  = require('showdown')
 var serveIndex = require('serve-index')
+var winston = require('winston')
+
+const options = {
+  file: {
+    level: 'info',
+    filename: 'pmc.log',
+    handleExceptions: true,
+    json: true,
+    maxsize: 5242880,
+    maxFiles: 5,
+    colorize: false
+  },
+  console: {
+    level: 'debug',
+    handleExceptions: true,
+    json: false,
+    colorize: true
+  }
+}
+const logger = winston.createLogger({
+  level: 'info',
+  transports: [
+    new winston.transports.File(options.file),
+    new winston.transports.Console(options.console)
+  ],
+  exitOnError: false,
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.align(),
+    winston.format.printf(info => `[${info.level}] ${[info.timestamp]}: ${info.message}`)
+  )
+})
 
 // Showdown extension to wrap images in containers
 var imgWrapper = function(converter) {
@@ -78,71 +111,68 @@ const connection = mysql.createConnection({
 })
 
 var isPOTW;
-
 fs.readFile("potw.json", "utf-8", (err, buf) => {
   isPOTW = JSON.parse(buf).potw;
 })
 
 
-/* OAUTH WORK */
+/* AUTHENTICATION */
 
 const session = require('express-session')
 const passport = require('passport')
 
-//const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 const SamlStrategy = require('passport-saml').Strategy;
 
-//Middleware
 app.use(session({
-    secret: "secret",
-    resave: false ,
-    saveUninitialized: true ,
+    secret: '1q2w3e!Q@W#Ebulcmp',
+    resave: false,
+    saveUninitialized: false,
 }))
 
-app.use(passport.initialize()) // init passport on every route call
-app.use(passport.session())    //allow passport to use "express-session"
+app.use(passport.initialize());
+app.use(passport.session());
 
-//const GOOGLE_CLIENT_ID = "407152582406-ad0u942n6550ctlh4852hm26qss44t4r.apps.googleusercontent.com"
-//const GOOGLE_CLIENT_SECRET = "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"
-
-authUser = (request, accessToken, refreshToken, profile, done) => {
-  return done(null, profile);
+authUser = (user, done) => {
+  return done(null, user);
 }
 
-/*passport.use(new GoogleStrategy({
-    clientID:     GOOGLE_CLIENT_ID,
-    clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "https://puremath.club/auth/google/callback",
-    passReqToCallback   : true
-  }, authUser));
-*/
-passport.use(new SamlStrategy({
-    //path: '/login/callback',
-    callbackUrl: 'https://your-app.example.net/login/callback',
-    entryPoint: 'https://adfs.uwaterloo.ca/adfs/ls/',
-    issuer: 'https://your-app.example.net/login/callback',
-    authnContext: 'http://schemas.microsoft.com/ws/2008/06/identity/authenticationmethod/windows',
+const idpCert = fs.readFileSync("csclub_idp.cert", "utf-8")
+const spCert = fs.readFileSync("https_puremath.club.cert", "utf-8")
+const spKey = fs.readFileSync("https_puremath.club.key", "utf-8")
+
+const samlStrategy = new SamlStrategy({
+    callbackUrl: 'https://puremath.club/saml/postResponse',
+    entryPoint: 'https://csclub.uwaterloo.ca/keycloak/saml/sso',
+    issuer: 'https://puremath.club',
+    privateKey: spKey,
     identifierFormat: null,
-    //audience: 'https://adfs.uwaterloo.ca/FederationMetadata/2007-06/FederationMetadata.xml',
-    cert: 'MIIDtzCCAh8CFDIm78gtcVu3u/Qi/5/flk9dyZC1MA0GCSqGSIb3DQEBCwUAMBgxFjAUBgNVBAMMDXB1cmVtYXRoLmNsdWIwHhcNMjIwODE1MTg0ODQ5WhcNMzIwODE0MTg0ODQ5WjAYMRYwFAYDVQQDDA1wdXJlbWF0aC5jbHViMIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAvxy9AX6SKLEW8bPTCSVtd8Pvha+3osaXJwz3uiDEQbdpr+vdWn56BbQgSApX556G6+Uv0KSP+YS+YPKLm4yJv64Tnij0gbXm8ZSJtF8+5FP96gklDcQ+5k1oWn8Is26PVhzU5HUq78qBRslhuunSgqXV2N+hI3Q7H7Irm7zsozATX32ZOxw8NH1SHuyjAm6L7mCyVgPfPVuuKrmQRQqSiI5v+aIT5wYWqOmhs621ajn94PoZqJ+WyvsEOfOUU8praA0IYsuHYX76QCyodw31rpNJGUtci4IXmpRs7tYTrMu6woGdfYsv+JNmzQgQPj+uQkHNne5mXN5j7buTHexewUCsYsm8oz2b3uJ8TKhHaT+LDKn9zcD+8pE52EDC5eeVIDBBwHRF3TwJVNUV8p8bO/GrEZZ/8wD08PkVhUW8ZKUuwC7UO++NVMD67CyJvwxTDre+mHP2bLhtJJYWJ5rot8r6oOoqjRpbrHKDpm/V2lb50+3G3oVvz8VbgfSlZYHFAgMBAAEwDQYJKoZIhvcNAQELBQADggGBAKlJ/hgrohJet14Rxp6MJUWE5sJDkXDvE1AZ+Qe0Vb60f5DWZI1x+9khvkuw61+9XCr0/b/5cX+cdUke/uG3eLkV32h4YROoQY5y/ziUqay4PVz8YVB7WMcKZ2PMMjuKO5u+cybiIc8qIRjZ2FcHtBMf1X/HSg/b8DNXaoTpQYNzGlT55tewVOa2S85ZGKfJf76ICdgjpXXmfoOfGSkOxaeOBXKDUSPB7+AaY1GZA6Tz1CZW5s4n4JiIs0oaYA7w+5naFK6TEUsud9roi8deIpUDX8pRsA+rvFwcznxFQ6Q1S40uVsNe/BpAzmJpvxNDAPRYVX0rzeW3EPzLx3jOQpPBIUGfQZdan/NS0vfX9+2WhTojabJS+udXiBIfKAfvWfaXucLcOHpwpEW5jhvUQdANMwhFwQh0N1eNQzlHQMt0Gi6FhpB6wRNpiL39KK9f9gmsPPIl4eBLy2wBJPpGBMU+CIJd4JP5pM9zuBQ/hccmckMUdeoFQES0vmlF/E6EQA==' // cert must be provided
-  }, authUser));
+    signatureAlgorithm: 'sha256',
+    cert: idpCert
+}, authUser);
+
+passport.use(samlStrategy);
 
 passport.serializeUser( (user, done) => {
-   done(null, user)
+  done(null, user)
 })
 
 passport.deserializeUser((user, done) => {
-  done (null, user)
+  done(null, user)
 })
 
-app.post(
-  "/login/callback",
+app.post("/saml/postResponse",
   bodyParser.urlencoded({ extended: false }),
   passport.authenticate("saml", { failureRedirect: "/", failureFlash: true }),
   function (req, res) {
+    logger.info(req.user.nameID + ' logged in')
     res.redirect("/");
   }
 );
+
+app.get('/metadata', (req, res) => {
+  res.type('application/xml');
+  res.send(samlStrategy.generateServiceProviderMetadata(null, spCert));
+});
 
 app.get(
   "/login",
@@ -152,106 +182,68 @@ app.get(
   }
 );
 
-/*
-//Define the login route
-app.get("/login", (req, res) => {
-    if (req.isAuthenticated()) { res.redirect('dashboard') }
-    else { res.render("login", {isPOTW: isPOTW}) }
-})
-*/
-
-//Use the req.isAuthenticated() function to check if user is Authenticated
-checkAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated() && req.user.email=='pmclub@gmail.com') { return next() }
-  if (req.isAuthenticated()) {
-    req.logOut();
-    res.redirect("/login")
-    console.log('------> Logged out bad user')
-  }
-  else { res.redirect("login") }
+getStatus = async (req) => {
+  const mysqlAwait = require('mysql2/promise')
+  const conn = await mysqlAwait.createConnection({ database: 'pmclub', user: 'pmclub', socketPath: '/run/mysqld/mysqld.sock' });
+  if (req.user == undefined || req.user.nameID == undefined) { return 0; }
+  let [rows, fields] = await conn.execute('SELECT * FROM pmclub.execs WHERE nameID=?', [req.user.nameID]);
+  if (rows.length > 0) { return 2; }
+  else { return 1; }
 }
 
-//Define the Protected Route, by using the "checkAuthenticated" function defined above as middleware
+checkAuthenticated = async (req, res, next) => {
+  //console.log(req.session);
+  if (req.isAuthenticated()) { logger.info(req.user.nameID + ' login/protected page request');
+    if (await getStatus(req) === 2) { logger.info('...this user is an exec'); return next(); }
+    else { logger.info('...this user is not an exec'); res.redirect('/'); }
+  }
+  else { logger.info('user tried accessing protected page without login'); res.redirect("/"); }
+}
+
+/* /AUTHENTICATION */
+
 app.get("/dashboard", checkAuthenticated, (req, res) => {
   connection.query("SELECT * FROM pmclub.potw ORDER BY date", (err, rows, fields) => {
     if (err) throw err;
-    connection.query("SELECT * FROM pmclub.courses ORDER BY id", (err4, rows4, fields4) => {
-      res.render("dashboard", {name: req.user.displayName, potws: rows, courses: rows4, isPOTW: isPOTW, result: req.query.res});
+    connection.query("SELECT * FROM pmclub.execs", (err3, rows3, fields3) => {
+      if (err3) throw err3;
+      connection.query("SELECT * FROM pmclub.courses ORDER BY id", (err4, rows4, fields4) => {
+        if (err4) throw err4;
+        res.render("dashboard", {name: req.user.nameID, execs: rows3, loginStatus: 2, potws: rows, courses: rows4, isPOTW: isPOTW, result: req.query.res});
+      });
     });
   });
 })
 
-const handleError = (err, res) => {
-  res
-    .status(500)
-    .render('error', {error: '500', isPOTW: isPOTW});
+const handleError = async (err, res) => {
+  res.status(500).render('error', {loginStatus: await getStatus(req), error: '500', isPOTW: isPOTW});
 }
 
 
 app.post("/new_event", upload.single("image"), checkAuthenticated, (req, res) => {
-  //console.log(typeof req.file);
-  if (typeof req.file === 'undefined') {
     if (req.body.id === '') { // new event
-      connection.query("INSERT INTO pmclub.events ( title, descr, date, begin, end, loc, body, imgpath ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", [req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, null], (err, rows, fields) => {
+      connection.query("INSERT INTO pmclub.events ( title, descr, date, begin, end, loc, body) VALUES (?, ?, ?, ?, ?, ?, ?)", [req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body], (err, rows, fields) => {
         if (err) throw err;
-        console.log('New event added (no image)')
+        logger.info(req.user.nameID + ' added new event')
         res.redirect('/dashboard?res=eventsuccess#create-event')
         return;
       })
     } else {
-      connection.query("SELECT imgpath FROM pmclub.events WHERE id="+req.body.id, (err, rows, fields) => {
-        if (err) throw err;
-        connection.query("REPLACE INTO pmclub.events (id,title,descr,date,begin,end,loc,body,imgpath) VALUES (?,?,?,?,?,?,?,?,?)", [req.body.id, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, rows[0].imgpath], (err, rows, fields) => {
+        connection.query("REPLACE INTO pmclub.events (id,title,descr,date,begin,end,loc,body) VALUES (?,?,?,?,?,?,?,?)", [req.body.id, req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body], (err, rows, fields) => {
           if (err) throw err;
-          console.log('Event has been edited (no image change)')
+          logger.info(req.user.nameID + 'edited event ' + req.body.id)
           res.redirect('/dashboard?res=eventsuccess#create-event')
           return;
         })
-      })
     }
     return; // ??? this is necessary for some reason
-  }
-  const tempPath = req.file.path;
-  const rand = Math.floor(Math.random()*999999); // better cross your fingers! ;)
-  const ext = path.extname(req.file.originalname).toLowerCase();
-  const targetPath = path.join(__dirname, "./public/img/events/"+req.body.date+'-'+rand+ext);
-  console.log(tempPath)
-  console.log(targetPath)
-  const isNew = (req.body.id === '');
-  if (ext === ".png" || ext === ".jpg") {
-    fs.rename(tempPath, targetPath, err => {
-      if (err) return handleError(err, res);
-      if (!isNew) {
-        // delete existing image; we're replacing it
-        connection.query("SELECT imgpath FROM pmclub.events WHERE id="+req.body.id, (err, rows, fields) => {
-          if (err) throw err;
-          fs.unlink(path.join(__dirname, "./public/img/events/"+rows[0].imgpath), err => {
-            if (err) return handleError(err, res);
-          });
-          console.log("Deleted old event image" + rows[0].imgpath)
-        });
-      }
-      // looooooong!
-      connection.query("REPLACE INTO pmclub.events ( "+(isNew ? "" : "id, ")+"title, descr, date, begin, end, loc, body, imgpath ) VALUES ("+(isNew ? "" : "?, ")+"?, ?, ?, ?, ?, ?, ?, ?)", (isNew ? [] : [req.body.id]).concat([req.body.title, req.body.descr, req.body.date, req.body.begin, req.body.end, req.body.loc, req.body.body, req.body.date+'-'+rand+ext]), (err, rows, fields) => {
-        if (err) throw err;
-        if (isNew) console.log('New event added (with image)')
-        else console.log('Event has been edited (with image change)')
-      })
-      res.redirect('/dashboard?res=eventsuccess#create-event')
-    });
-  } else {
-    fs.unlink(tempPath, err => {
-      if (err) return handleError(err, res);
-      res.redirect(403, '/dashboard?res=badfile#create-event')
-    });
-  }
 })
 app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => {
   if (typeof req.file === 'undefined') {
     if (req.body.id == '') {
       connection.query("INSERT INTO pmclub.potw ( title, date, body, imgpath ) VALUES (?, ?, ?, ?)", [req.body.title, req.body.date, req.body.body, null], (err, rows, fields) => {
         if (err) throw err;
-        console.log('New POTW added (no image)')
+        logger.info(req.user.nameID + ' added new POTW (no image)')
       })
     } else {
       connection.query("SELECT imgpath FROM pmclub.potw WHERE id="+req.body.id, (err, rows, fields) => {
@@ -259,7 +251,7 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
         if (err) throw err;
         connection.query("REPLACE INTO pmclub.potw(id,title,date,body,imgpath) VALUES (?,?,?,?,?)", [req.body.id, req.body.title, req.body.date, req.body.body, rows[0].imgpath], (err, rows, fields) => {
           if (err) throw err;
-          console.log('POTW has been edited (no image change)')
+          logger.info(req.user.nameID+' edited POTW '+req.body.id+' (no image change)')
         })
       })
     }
@@ -270,8 +262,8 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
   const rand = Math.floor(Math.random()*999999);
   const ext = path.extname(req.file.originalname).toLowerCase();
   const targetPath = path.join(__dirname, "./public/img/potw/"+req.body.date+'-'+rand+ext);
-  console.log(tempPath)
-  console.log(targetPath)
+  //console.log(tempPath)
+  //console.log(targetPath)
   const isNew = (req.body.id === '');
   if (ext === ".png" || ext === ".jpg") {
     fs.rename(tempPath, targetPath, err => {
@@ -283,13 +275,13 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
           fs.unlink(path.join(__dirname, "./public/img/potw/"+rows[0].imgpath), err => {
             if (err) return handleError(err, res);
           });
-          console.log("Deleted old POTW image " + rows[0].imgpath)
+          logger.info("Deleted old POTW image " + rows[0].imgpath)
         });
       }
       connection.query("REPLACE INTO pmclub.potw ("+(isNew ? "" : "id, ")+" title, date, body, imgpath ) VALUES ("+(isNew ? "" : "?, ")+"?, ?, ?, ?)", (isNew ? [] : [req.body.id]).concat([req.body.title, req.body.date, req.body.body, req.body.date+'-'+rand+ext]), (err, rows, fields) => {
         if (err) throw err;
-        if (isNew) console.log('New POTW added (with image)');
-        else console.log('POTW has been edited (with image change)');
+        if (isNew) logger.info(req.user.nameID+' added new POTW (with image)');
+        else logger.info(req.user.nameID+' edited POTW '+req.body.id+' (with image change)');
       })
       res.redirect('/dashboard?res=potwsuccess#create-potw')
     });
@@ -304,17 +296,8 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
 app.post("/delete_event", checkAuthenticated, (req, res) => {
   // This is really bad, I'm sorry lol
   const del_id = Object.keys(JSON.parse(JSON.stringify(req.body)))[0];
-  // delete associated image
-  connection.query("SELECT * FROM pmclub.events WHERE id = '" + del_id + "'", (err, rows, fields) => {
-    if (err) throw err;
-    console.log('Deleting event ' + del_id + ' and image ' + rows[0].imgpath)
-    if (rows[0].imgpath !== null) {
-      fs.unlink(path.join(__dirname, "./public/img/events/"+rows[0].imgpath), err2 => {
-        if (err2) return handleError(err2, res);
-      });
-    }
-  })
   // delete event in db
+  logger.info(req.user.nameID+" deleting event "+del_id)
   connection.query("DELETE FROM pmclub.events WHERE id = '" + del_id + "'", (err, rows, fields) => {
     if (err) throw err;
   })
@@ -324,13 +307,12 @@ app.post("/delete_event", checkAuthenticated, (req, res) => {
 
 app.post("/delete_potw", checkAuthenticated, (req, res) => {
   const del_ids = Object.keys(JSON.parse(JSON.stringify(req.body)));
-  console.log(del_ids);
   // delete potw in db
   if (del_ids.length > 0) {
     connection.query("SELECT * FROM pmclub.potw WHERE id IN (" + del_ids.toString() + ") ORDER BY date", (err, rows, fields) => {
       if (err) throw err;
       for (var i = 0; i < rows.length; ++i) {
-        console.log('Deleting POTW ' + del_ids[i] + ' and image ' + rows[i].imgpath)
+        logger.info(req.user.nameID+' deleting POTW ' + del_ids[i] + ' and image ' + rows[i].imgpath)
         if (rows[i].imgpath !== null) {
           fs.unlink(path.join(__dirname, "./public/img/potw/"+rows[i].imgpath), err2 => {
             if (err2) return handleError(err2, res);
@@ -363,15 +345,35 @@ app.post("/update_courses", checkAuthenticated, (req, res) => {
   res.redirect("/dashboard?res=courseupd#course-list")
 })
 
+app.post("/update_execs", checkAuthenticated, (req, res) => {
+  logger.info(req.user.nameID + " attempted to modify execs");
+  // Disallow self-removal
+  if (!req.body.formexecs.includes(req.user.nameID)) {
+    res.redirect("/dashboard?res=execfail#update-execs");
+    return;
+  }
+  logger.info(req.user.nameID+' changed exec list to '+req.body.formexecs.toString())
+  connection.query("DELETE FROM pmclub.execs", (err, rows, fields) => {
+    if (err) throw err;
+  })
+  var query = "INSERT INTO pmclub.execs VALUES "
+  for (let i = 0; i < req.body.formexecs.length; ++i) {
+    query += "(?),"
+  }
+  query = query.substring(0,query.length-1);
+  connection.query(query, req.body.formexecs);
+  res.redirect("/dashboard?res=execupd#update-execs")
+});
+
 app.post("/update_const", checkAuthenticated, (req, res) => {
   const date = Date.now();
   fs.copyFile('public/pmc.const.md', 'public/pmc-'+date+'.const.md', (err) => {
     if (err) throw err;
-    console.log(date + ': Backed up the current constitution')
+    logger.info('backed up the current constitution as ' + date)
   })
   fs.writeFile('public/pmc.const.md', req.body.constitution, (err) => {
     if (err) throw err;
-    console.log(date + ': Updated the constitution')
+    logger.info(req.user.nameID + ' updated the constitution')
   })
   res.redirect("/dashboard?res=constupd#update-const")
 })
@@ -395,42 +397,36 @@ app.post("/toggle_potw", checkAuthenticated, (req, res) => {
 })
 
 app.get("/logout", (req,res) => {
-    req.logOut()
-    res.redirect("/login")
-    console.log(Date.now() + ': Admin logged out')
+    if (req.user !== undefined && req.user.nameID !== undefined) {
+      logger.info(req.user.nameID + ' logged out')
+      req.logOut()
+    }
+    res.redirect("/")
 })
-/*//Define the Logout
-app.post("/logout", (req,res) => {
-    req.logOut()
-    res.redirect("/login")
-    console.log(': Admin logged out')
-})*/
-
-/* /OAUTH WORK */
 
 app.use(express.static('public'));
 
-console.log('Static directory '+path.join(__dirname, '/public'));
 
 app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, '/views'))
 
+
 app.get('/', (req, res) => {
-  connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 3', (err, rows, fields) => {
+  connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 3', async (err, rows, fields) => {
     //console.log(connection)
     if (err) throw err;
     if (isPOTW) {
-      connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', (err3, rows3, fields3) => {
+      connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', async (err3, rows3, fields3) => {
         if (err3) throw err3;
-        res.render('index', { posts: rows, potws: rows3, isPOTW: isPOTW });
+        res.render('index', { loginStatus: await getStatus(req), posts: rows, potws: rows3, isPOTW: isPOTW });
       })
     } else {
-      res.render('index', { posts: rows, isPOTW: isPOTW });
+      res.render('index', { loginStatus: await getStatus(req), posts: rows, isPOTW: isPOTW });
     }
   });
 });
-app.get('/about', (req, res) => {
-  res.render('about', { isPOTW: isPOTW });
+app.get('/about', async (req, res) => {
+  res.render('about', { loginStatus: await getStatus(req), isPOTW: isPOTW });
 });
 
 Date.prototype.yyyymmdd = function() {
@@ -456,10 +452,10 @@ app.get('/events', (req, res) => {
   });
   //res.render('events')
 });
-app.get('/const', (req, res) => {
-  fs.readFile("public/pmc.const.md", "utf-8", (err, buf) => {
+app.get('/const', async (req, res) => {
+  fs.readFile("public/pmc.const.md", "utf-8", async (err, buf) => {
     var converter = new showdown.Converter();
-    res.render('const', { isPOTW: isPOTW, constitution: converter.makeHtml(buf) });
+    res.render('const', { loginStatus: await getStatus(req), isPOTW: isPOTW, constitution: converter.makeHtml(buf) });
   });
 });
 app.get('/courses', (req, res) => {
@@ -469,20 +465,21 @@ app.get('/courses', (req, res) => {
     res.render('courses', { isPOTW: isPOTW, courses: converter.makeHtml(buf) });
   });
   */
-  connection.query("SELECT * FROM pmclub.courses ORDER BY id", (err, rows, fields) => {
+  connection.query("SELECT * FROM pmclub.courses ORDER BY id", async (err, rows, fields) => {
     var converter = new showdown.Converter();
     for (let i = 0; i < rows.length; ++i) {
       rows[i].body = converter.makeHtml(rows[i].body);
     }
-    res.render('courses', { isPOTW: isPOTW, courses: rows });
+    res.render('courses', { loginStatus: await getStatus(req), isPOTW: isPOTW, courses: rows });
   });
 });
-app.get('/sasms', (req, res) => {
-  connection.query('SELECT * FROM pmclub.sasms ORDER BY time', (err, rows, fields) => {
-    res.render('sasms', { isPOTW: isPOTW, sasms: rows });
+/*
+app.get('/sasms', async (req, res) => {
+  connection.query('SELECT * FROM pmclub.sasms ORDER BY time', async (err, rows, fields) => {
+    res.render('sasms', { loginStatus: await getStatus(req), isPOTW: isPOTW, sasms: rows });
   });
 });
-
+*/
 function getIneq(term) {
   var str = "20" + term.slice(1,3) + '-0'
   if (term[0] == 'w') { str += '1' }
@@ -495,55 +492,72 @@ function getIneq(term) {
   return str;
 }
 
-app.get('/events/:term', (req, res) => {
+app.get('/events/:term', async (req, res) => {
   const t = req.params.term;
   if (t.length != 3 || (t[0] != 'w' && t[0] != 's' && t[0] != 'f') || isNaN(parseInt(t[1])) || isNaN(parseInt(t[2]))) {
     res.status(404);
-    res.render('error', { error: '404', isPOTW: isPOTW });
+    res.render('error', { loginStatus: await getStatus(req), error: '404', isPOTW: isPOTW });
     return;
   }
-  connection.query("SELECT * FROM pmclub.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date DESC", (err, rows, fields) => {
+  connection.query("SELECT * FROM pmclub.events WHERE date >= '"+getIneq(req.params.term)+"' ORDER BY date DESC", async (err, rows, fields) => {
     if (err) throw err;
     for (var i = 0; i < rows.length; ++i) {
       var converter = new showdown.Converter();
       rows[i].body = converter.makeHtml(rows[i].body);
     }
-    res.render('event', { posts: rows, reqTerm: req.params.term, isPOTW: isPOTW })
+    res.render('event', { loginStatus: await getStatus(req), posts: rows, reqTerm: req.params.term, isPOTW: isPOTW })
   });
 });
 
-app.get('/potw', (req, res) => {
+app.get('/potw', async (req, res) => {
   if (!isPOTW) {
     res.status(404);
-    res.render('error', { error: '404', isPOTW: isPOTW });
+    res.render('error', { loginStatus: await getStatus(req), error: '404', isPOTW: isPOTW });
     return;
   }
-  connection.query("SELECT * FROM pmclub.potw ORDER BY date DESC", (err, rows, fields) => {
+  connection.query("SELECT * FROM pmclub.potw ORDER BY date DESC", async (err, rows, fields) => {
     if (err) throw err;
     for (var i = 0; i < rows.length; ++i) {
       var converter = new showdown.Converter();
       rows[i].body = converter.makeHtml(rows[i].body);
     }
-    res.render('potw', { potws: rows, isPOTW: isPOTW })
+    res.render('potw', { loginStatus: await getStatus(req), potws: rows, isPOTW: isPOTW })
   });
 });
 app.use('/files', express.static('/public/files'), serveIndex('public/files', {'icons': true}))
 
-app.get('/history', (req, res) => {
-  res.render('history', { isPOTW: isPOTW })
+app.get('/history', async (req, res) => {
+  res.render('history', { loginStatus: await getStatus(req), isPOTW: isPOTW })
 })
 
-app.use(function(req, res, next) {
+app.use(async function(req, res, next) {
   res.status(404);
-  res.render('error', {error: '404', isPOTW: isPOTW});
+  res.render('error', {loginStatus: await getStatus(req), error: '404', isPOTW: isPOTW});
 });
 
-app.use(function(err, req, res, next) {
+app.use(async function(err, req, res, next) {
   res.status(500);
-  console.log(err);
-  res.render('error', {error: '500', isPOTW: isPOTW});
+  logger.info(err);
+  res.render('error', {loginStatus: await getStatus(req), error: '500', isPOTW: isPOTW});
 });
 
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`)
+const server = app.listen(port, () => {
+  logger.info('')
+  logger.info('THE PURE MATH, APPLIED MATH, COMBINATORICS & OPTIMIZATION CLUB')
+  logger.info('Website written by Evan Girardin (evangirardin@gmail.com)')
+  logger.info('---')
+  logger.info('Static directory: '+path.join(__dirname, '/public'));
+  logger.info(`Listening on port ${port}`)
+  logger.info('')
 })
+
+function shutdown() {
+  logger.info('Kill signal received -- shutting down now')
+  server.close(() => {
+    connection.end();
+    process.exit(0);
+  })
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);

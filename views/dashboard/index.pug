@@ -4,7 +4,7 @@ meta(name="google-signin-client_id", content="407152582406-ad0u942n6550ctlh4852h
 script(src="https://apis.google.com/js/platform.js", async, defer)
 link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
 script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
-- var sections = ['create-event', 'create-potw', 'course-list', 'update-const', 'help'];
+- var sections = ['create-event', 'create-potw', 'course-list', 'update-execs', 'update-const', 'help'];
 each val in sections
   style(type='text/css').
     a[id="#{val}"]:target ~ .textArea ##{val}-body {
@@ -46,6 +46,10 @@ each val in sections
         return ['Course list successfully updated.', 'good'];
       case 'constupd':
         return ['Constitution successfully updated.', 'good'];
+      case 'execupd':
+        return ['Executive list successfully updated.', 'good'];
+      case 'execfail':
+        return ['You cannot remove yourself as an executive.', 'bad']
       case 'noselect':
         return ['Your selection must be non-empty.', 'bad'];
       case 'badfile':
@@ -76,6 +80,7 @@ script.
     }
   }
   window.history.replaceState({}, '', bruh[0]);
+  var cur = !{execs.length};
 
 body
   each val in sections
@@ -92,11 +97,14 @@ body
           .active
         a.item#update-const-btn(href='#update-const') Constitution
           .active
+        a.item#update-execs-btn(href='#update-execs') Executives
+          .active
         a.item#help-btn(href='#help') Help
           .active
         a.item#logout(href='/logout') Log out
           .active
-    h1(style='margin: 0; padding: 3rem 0 0 0;') Admin Dashboard
+    h1(style='margin: 0; padding: 3rem 0 0 0;') Admin Dashboard 
+      span(style='font-size: 12pt; font-weight: 400; font-style: italic;') logged in as #{name}
     if typeof result !== 'undefined'
       - var reason = resReason(result);
       div(class='dashResult '+reason[1])
@@ -124,7 +132,7 @@ body
               tr
                 th(colspan='3') Search Results
             tbody#edit_results_box
-          button(onclick='(function() {document.getElementById("eventform").reset(); easymde1.value(""); let theTable = document.querySelector("#edit_results_box"); for (let z = 0; z < theTable.children.length; ++z) { theTable.children[z].classList.remove("good"); }})()') Clear Selection
+          button(onclick='(function() {document.getElementById("eventform").reset(); easymde1.value(""); let theTable = document.querySelector("#edit_results_box"); for (let z = 0; z < theTable.children.length; ++z) { theTable.children[z].classList.remove("good"); }})()') Deselect
           script.
             const editSearchInput = document.querySelector('#edit_form');
             const editResultsBox = document.querySelector('#edit_results_box');
@@ -204,10 +212,6 @@ body
           br
           label(for='title') Title (max 255 chararacters): 
           input(type='text', id='title', name='title', required='')
-          br
-          br
-          label(for='image') Image (optional but encouraged, PNG/JPG only): 
-          input(type='file', accept='.png, .jpg', id='image', name='image')
           br
           br
           label(for='descr') Short description (max 255 characters, for preview):
@@ -332,6 +336,30 @@ body
               });
             })
           button.button.good(type='submit') Update Constitution
+      .dashSwapItem#update-execs-body
+        h2 Executives
+        p Grant access to new executives or revoke privileges. This should usually be done at the start of term, after an election.
+          br
+          | Executives are admins and have access to this dashboard. Make sure to spell their Quest IDs correctly.
+        form(action='update_execs', method='POST')
+          table
+            colgroup
+              col
+              col(style='width: 6rem')
+            thead
+              tr
+                th(colspan='2') Current Executives
+            tbody#edit_results_box-execs
+              - var p = 0;
+              while p < execs.length
+                tr
+                  td
+                    input(type='text', value=execs[p].nameID, name="formexecs["+p+"]")
+                  td(style='width: 1%;')
+                    button(type='button', style='display: block; margin: auto;', onclick='this.closest("tbody").children.length > 1 ? this.closest("tr").remove() : false') Remove
+                - p++;
+          button(type='button', style='display: block;', onclick='((el) => {el.appendChild(el.children[0].cloneNode(true)).querySelector("input").value=""; el.children[el.children.length-1].querySelector("input").name="formexecs["+cur+"]"; ++cur;})(this.previousElementSibling.querySelector("tbody"))') Add User
+          button.button.good(type='submit') Save Changes
       .dashSwapItem#help-body
         h2 Help
         h3 Markdown
@@ -432,9 +460,9 @@ body
           | look presentable with JavaScript disabled.
         h4 Server access
         p The PMC website is currently hosted on the CSC's 
-          code corn-syrup
+          code caffeine
           |  server, i.e., 
-          code corn-syrup.csclub.uwaterloo.ca
+          code caffeine.csclub.uwaterloo.ca
           | . If you need to access files, make sure you're allowed to SSH into 
           | the CSC's servers (pay the membership fee or talk to someone on CSC&rsquo;s 
           | systems committee). You should also verify with the systems committee 
@@ -467,7 +495,7 @@ body
         h3 Anything Else
         p If you have questions, are running into issues or need 
           | help with anything, please reach out to Evan (that&rsquo;s me). 
-          | I wrote this website as President in W22, and I'm happy to help 
+          | I wrote this website as President in W22/S22, and I'm happy to help 
           | however possible. I can be reached at  
           a(href='mailto:egirardin@uwaterloo.ca') egirardin@uwaterloo.ca
           |  or 
