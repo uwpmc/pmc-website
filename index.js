@@ -13,6 +13,7 @@ const fs = require('fs')
 var bodyParser = require('body-parser')
 var showdown  = require('showdown')
 var serveIndex = require('serve-index')
+var serveStatic = require('serve-static')
 var winston = require('winston')
 
 const options = {
@@ -164,8 +165,14 @@ app.post("/saml/postResponse",
   bodyParser.urlencoded({ extended: false }),
   passport.authenticate("saml", { failureRedirect: "/", failureFlash: true }),
   function (req, res) {
-    logger.info(req.user.nameID + ' logged in')
-    res.redirect("/");
+    var dest = "/";
+    if (req.session.reqUrl) {
+      //console.log(req.session.reqUrl);
+      dest = req.session.reqUrl;
+      req.session.reqUrl = null;
+    }
+    logger.info(req.user.nameID + ' logged in, redirecting to ' + dest);
+    res.redirect(dest);
   }
 );
 
@@ -193,12 +200,28 @@ getStatus = async (req) => {
 }
 
 checkAuthenticated = async (req, res, next) => {
-  //console.log(req.session);
-  if (req.isAuthenticated()) { logger.info(req.user.nameID + ' login/protected page request');
+  if (req.isAuthenticated()) {
+    logger.info(req.user.nameID + ' made HIGH protected page request: ' + req.originalUrl);
     if (await getStatus(req) === 2) { logger.info('...this user is an exec'); return next(); }
     else { logger.info('...this user is not an exec'); res.redirect('/'); }
   }
-  else { logger.info('user tried accessing protected page without login'); res.redirect("/"); }
+  else {
+    logger.info('user tried accessing HIGH protected page without login: ' + req.originalUrl);
+    req.session.reqUrl = req.originalUrl; // Create session value with requested URL
+    res.redirect('/login');
+  }
+}
+
+checkLoggedIn = async (req, res, next) => {
+  if (req.isAuthenticated()) {
+    logger.info(req.user.nameID + ' made LOW protected page request: ' + req.originalUrl);
+    return next();
+  }
+  else {
+    logger.info('user tried accessing LOW protected page without login: ' + req.originalUrl);
+    req.session.reqUrl = req.originalUrl; // Create session value with requested URL
+    res.redirect('/login');
+  }
 }
 
 /* /AUTHENTICATION */
@@ -263,8 +286,6 @@ app.post("/new_potw", upload.single("image"), checkAuthenticated, (req, res) => 
   const rand = Math.floor(Math.random()*999999);
   const ext = path.extname(req.file.originalname).toLowerCase();
   const targetPath = path.join(__dirname, "./public/img/potw/"+req.body.date+'-'+rand+ext);
-  //console.log(tempPath)
-  //console.log(targetPath)
   const isNew = (req.body.id === '');
   if (ext === ".png" || ext === ".jpg") {
     fs.rename(tempPath, targetPath, err => {
@@ -382,11 +403,8 @@ app.post("/update_const", checkAuthenticated, (req, res) => {
 app.post("/query_events", checkAuthenticated, (req, res) => {
   const { term, year } = req.body;
   const start = (term === 'winter' ? 1 : (term === 'spring' ? 5 : 9));
-  //console.log(term);
-  //console.log(year);
   connection.query("SELECT * FROM pmclub.events WHERE YEAR(date) = " + year + " AND MONTH(date) >= " + start + " AND MONTH(date) <= " + (start+3), (err, rows, fields) => {
     if (err) throw err;
-    //console.log(rows);
     res.json(rows);
   })
 })
@@ -405,7 +423,6 @@ app.get("/logout", (req,res) => {
     res.redirect("/")
 })
 
-app.use(express.static('public'));
 
 
 app.set('view engine', 'pug')
@@ -414,7 +431,6 @@ app.set('views', path.join(__dirname, '/views'))
 
 app.get('/', (req, res) => {
   connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 3', async (err, rows, fields) => {
-    //console.log(connection)
     if (err) throw err;
     if (isPOTW) {
       connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', async (err3, rows3, fields3) => {
@@ -529,7 +545,10 @@ app.get('/potw', async (req, res) => {
     res.render('potw', { loginStatus: await getStatus(req), potws: rows, isPOTW: isPOTW })
   });
 });
-app.use('/files', express.static('/public/files'), serveIndex('public/files', {'icons': true}))
+
+app.use('/static', express.static('public'));
+app.use('/files', checkLoggedIn);
+app.use('/files', checkLoggedIn, express.static('/authfiles'), serveIndex('authfiles', {'icons': true}), serveStatic('authfiles'))
 
 app.get('/history', async (req, res) => {
   res.render('history', { loginStatus: await getStatus(req), isPOTW: isPOTW })

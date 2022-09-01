@@ -1,0 +1,116 @@
+body {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url("/img/history/amclub/background_1985.png"); }
+
+.bg {
+  background-image: linear-gradient(#484d70ea, #303136ea);
+  padding-bottom: 2rem;
+  box-shadow: 0 0 20px; }
+
+h1.header {
+  font-size: calc(15vw);
+  font-family: "CMU Serif", "Times New Roman", serif !important;
+  font-weight: 600;
+  color: #000; }
+
+@media screen and (max-width: 860px) {
+  h1.header {
+    font-size: 90pt !important; } }
+.f85 h1, .f85 h2, .f85 h3 {
+  text-align: center;
+  font-family: "CMU Serif", "Times New Roman", serif !important; }
+.f85 h1 {
+  font-weight: 600; }
+.f85 h2 {
+  font-style: italic; }
+.f85 h1, .f85 h2, .f85 h3, .f85 h4, .f85 h5, .f85 h6, .f85 p {
+  color: #fff; }
+.f85 p {
+  font-family: "CMU Serif", "Times New Roman", serif !important;
+  font-size: 12pt;
+  font-weight: 400;
+  text-align: center; }
+.f85 .article {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column nowrap;
+  max-width: 28rem;
+  margin: 1rem auto; }
+  .f85 .article.withbg {
+    margin-top: 3rem;
+    margin-bottom: 3rem; }
+  .f85 .article.withbg:before {
+    z-index: -5;
+    content: "";
+    position: absolute;
+    top: -2rem;
+    left: -2rem;
+    background-image: linear-gradient(#484d70ea, #303136ea);
+    width: calc(100% + 4rem);
+    height: calc(100% + 4rem);
+    border-radius: 1rem; }
+  .f85 .article.fullscreen {
+    min-height: calc(100vh - 64px); }
+  .f85 .article p, .f85 .article h4 {
+    width: 100%;
+    font-family: "CMU Serif", "Times New Roman", serif;
+    text-indent: 1.5em;
+    font-size: 12pt;
+    text-align: justify; }
+  .f85 .article h4 {
+    font-weight: 400;
+    text-align: right;
+    text-indent: 0;
+    margin: 0; }
+  .f85 .article h1 {
+    font-size: 24pt;
+    text-align: center;
+    margin-bottom: 0;
+    width: 100%; }
+  .f85 .article h2 {
+    font-size: 16pt;
+    font-weight: 400;
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+    margin: 0; }
+  .f85 .article h3 {
+    margin: 0.35em;
+    font-weight: 400; }
+  .f85 .article h1 + h2 {
+    margin-top: 0; }
+  .f85 .article h2 + h2 {
+    margin-top: 0; }
+  .f85 .article h1 + p, .f85 .article h2 + p {
+    margin-top: 1em; }
+  .f85 .article p + h4 {
+    margin-top: 1em; }
+  .f85 .article p + p {
+    margin-top: 0.3em; }
+  .f85 .article h5 {
+    width: 100%;
+    font-size: 12pt;
+    margin: 0.5em 0;
+    text-indent: 0;
+    text-align: left; }
+
+table {
+  margin: 2rem auto !important; }
+
+.splide {
+  margin: 2rem 0;
+  padding: 2rem 3rem;
+  background-image: linear-gradient(#666, #222);
+  box-shadow: 0 0 20px; }
+
+img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  height: 30rem;
+  object-fit: contain; }
+
+/*# sourceMappingURL=hist-style.css.map */

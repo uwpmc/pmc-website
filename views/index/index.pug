@@ -97,14 +97,14 @@ mixin potw(id, title, date, imgpath)
     h3.date #{readableDate(date)}
     h3.title #{title}
     h3.arrow >
-    .potwImg(style=(imgpath === null ? '' : 'background-image: url("img/potw/'+imgpath+'")'))
+    .potwImg(style=(imgpath === null ? '' : 'background-image: url("/static/img/potw/'+imgpath+'")'))
 body
   include ../template/header.pug
-  //-.header(style='background-image: url("/img/desktop_background_01_gradient.png");')
+  //-.header(style='background-image: url("/static/img/desktop_background_01_gradient.png");')
   div(style='padding: 0 2rem; width: 100%;')
     .headerAlt
       .headerLogo
-        img(src='/img/pmamco_simple_free.svg', style='height: 15em; padding: 15px;')
+        img(src='/static/img/pmamco_simple_free.svg', style='height: 15em; padding: 15px;')
         div
           h1(style='padding: 1rem; position: relative;')
             | The&nbsp;
@@ -115,10 +115,10 @@ body
             strong C&amp;O}&nbsp;
             | Club
           .socials
-            a(href='https://discord.gg/6m9Jw9UCVF', style='background-image: url(/img/discord.svg); filter: brightness(0); width: 2.5rem;', target='_blank')
-            a(href='https://instagram.com/uwpmclub', style='background-image: url(/img/instagram.svg); width: 2rem;', target='_blank')
-            //-a(href='https://facebook.com/groups/uwpmc', style='background-image: url(/img/facebook.png);', target='_blank')
-            a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(/img/youtube.svg); width: 2rem;', target='_blank')
+            a(href='https://discord.gg/6m9Jw9UCVF', style='background-image: url(/static/img/discord.svg); filter: brightness(0); width: 2.5rem;', target='_blank')
+            a(href='https://instagram.com/uwpmclub', style='background-image: url(/static/img/instagram.svg); width: 2rem;', target='_blank')
+            //-a(href='https://facebook.com/groups/uwpmc', style='background-image: url(/static/img/facebook.png);', target='_blank')
+            a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(/static/img/youtube.svg); width: 2rem;', target='_blank')
 
   .textArea(style='width: min(80rem,100%);')
     h1(style='padding-top: 0.3em;') Events

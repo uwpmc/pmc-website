@@ -1,6 +1,5 @@
 *.log
 node_modules/
-public/files/
+authfiles/
 package-lock.json
-package.json
 prepros.config

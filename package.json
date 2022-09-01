@@ -4,6 +4,7 @@
     "express": "^4.17.3",
     "express-mysql-session": "^2.1.8",
     "express-session": "^1.17.2",
+    "jstransformer-markdown-it": "^3.0.0",
     "markdown-to-pug": "^1.0.11",
     "multer": "^1.4.4",
     "mysql": "^2.18.1",
@@ -12,6 +13,7 @@
     "passport-saml": "^3.2.1",
     "pug-cli": "^1.0.0-alpha6",
     "serve-index": "^1.9.1",
+    "serve-static": "^1.15.0",
     "showdown": "^2.0.3",
     "winston": "^3.8.1"
   }

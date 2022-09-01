@@ -1,0 +1,7 @@
+### *Friday, July 12, 1991*
+### *Vol. 56 No. 4* *math***NEWS**  *3*
+# Pure Math Club
+## here we are once again
+Well loyal followers, here we are once again, bringing you a truly wonderous update about our truly wonderous events that we have had and that we will have. According to our most-highly-esteemed executive, we have had:
+- Talks about many diverse, unrelated, and otherwise really interesting topics. Actually, yesterday (that's Thursday for those of you who don't have time to keep track of time), we had a wonderous talk by Professor Peter Hoffman about Surfaces such as the sphere, torus, Klein bottle, Moebius band, etc., and about good 'ol Algebraic Topology (of course you remember this elementary topic from high school while you were studying the various topological phenomena of the cheerleading team). Naturally this talk is still in the future, but sadly, you will not know that unless you were there. We also had a wonderous talk about Matrix Inequalities by Professor Ken Davidson. it was a great talk. I really wish that he had taught my 2A Linear Algebra course. I might have actually understood the course.
+- The beloved PMC executive had a fantastic social outing to the movies about two weeks ago. We went and saw Robin Hood. It was a very nice movie. Reviews by the PMC executive ranged from: "I loved it!! It was extremely gratifying!!" to "Lousy popcorn!" to "Boy, it sure relieved my sexual tension!". I imagine that all in attendance had a really biffo time. More social outings to follow.

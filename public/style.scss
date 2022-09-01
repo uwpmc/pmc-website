@@ -14,10 +14,12 @@ body {
   flex-direction:column;
 }
 * {
-  font-family: 'Roboto', 'Arial', sans-serif;
   box-sizing: border-box;
   hyphens: auto;
   word-wrap: break-word;
+}
+p, li, ul, td, th {
+  font-family: 'Roboto', 'Arial', sans-serif;
 }
 h1 {
   font-size: 24pt;
@@ -70,10 +72,10 @@ nav {
   height: 50px;
   position: relative;
   top: 0;
-  //background-color: #ededed;
+  //background-color: #fff;
   //box-shadow: 0 8px rgba(0,0,0,0.4);
   z-index: 7;
-  margin: 0.5rem 0;
+  padding: 2rem 0;
   vertical-align: middle;
 }
 
@@ -481,7 +483,7 @@ a {
         & p {
           font-size: 13pt;
           padding-left: 0;
-	  margin-bottom: 1rem;
+	        margin-bottom: 1rem;
         }
         & summary {
           font-size: 13pt;
@@ -548,6 +550,9 @@ a {
       padding: 1rem;
       display: table-cell;
       vertical-align: inherit;
+    }
+    & tbody tr td {
+      background-color: #fff;
     }
   }
   & .subText table {
