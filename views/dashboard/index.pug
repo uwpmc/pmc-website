@@ -326,7 +326,7 @@ body
           textarea(name='constitution', id='constitution')
           script.
             var easymde3 = new EasyMDE({element: document.getElementById('constitution'), spellChecker: false})
-            fetch('/pmc.const.md').then(function(res) {
+            fetch('/static/pmc.const.md').then(function(res) {
               if (res.status !== 200) {
                 easymde3.value('WARNING: The constitution file pmc.const.md could not be found.');
                 return;
