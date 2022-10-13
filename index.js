@@ -172,7 +172,7 @@ app.post("/saml/postResponse",
       dest = req.session.reqUrl;
       req.session.reqUrl = null;
     }
-    logger.info(req.user.nameID + ' logged in, redirecting to ' + dest);
+    logger.info(req.user.nameID + ' (' + req.headers['x-forwarded-for'] + ') logged in, redirecting to ' + dest);
     res.redirect(dest);
   }
 );
@@ -202,12 +202,12 @@ getStatus = async (req) => {
 
 checkAuthenticated = async (req, res, next) => {
   if (req.isAuthenticated()) {
-    logger.info(req.user.nameID + ' made HIGH protected page request: ' + req.originalUrl);
+    logger.info(req.user.nameID + ' (' + req.headers['x-forwarded-for']  + ') made HIGH protected page request: ' + req.originalUrl);
     if (await getStatus(req) === 2) { logger.info('...this user is an exec'); return next(); }
     else { logger.info('...this user is not an exec'); res.redirect('/'); }
   }
   else {
-    logger.info('user tried accessing HIGH protected page without login: ' + req.originalUrl);
+    logger.info(req.headers['x-forwarded-for'] + ' tried accessing HIGH protected page without login: ' + req.originalUrl);
     req.session.reqUrl = req.originalUrl; // Create session value with requested URL
     res.redirect('/login');
   }
@@ -215,11 +215,11 @@ checkAuthenticated = async (req, res, next) => {
 
 checkLoggedIn = async (req, res, next) => {
   if (req.isAuthenticated()) {
-    logger.info(req.user.nameID + ' made LOW protected page request: ' + req.originalUrl);
+    logger.info(req.user.nameID + ' (' + req.headers['x-forwarded-for'] + ') made LOW protected page request: ' + req.originalUrl);
     return next();
   }
   else {
-    logger.info('user tried accessing LOW protected page without login: ' + req.originalUrl);
+    logger.info(req.headers['x-forwarded-for'] + ' tried accessing LOW protected page without login: ' + req.originalUrl);
     req.session.reqUrl = req.originalUrl; // Create session value with requested URL
     res.redirect('/login');
   }
