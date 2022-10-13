@@ -138,9 +138,9 @@ authUser = (user, done) => {
   return done(null, user);
 }
 
-const idpCert = fs.readFileSync("csclub_idp.cert", "utf-8")
-const spCert = fs.readFileSync("https_puremath.club.cert", "utf-8")
-const spKey = fs.readFileSync("https_puremath.club.key", "utf-8")
+const idpCert = process.env.CSC_IDP_CERT
+const spCert = process.env.PMC_ADFS_CERT
+const spKey = process.env.PMC_ADFS_KEY
 
 const samlStrategy = new SamlStrategy({
     callbackUrl: 'https://puremath.club/saml/postResponse',

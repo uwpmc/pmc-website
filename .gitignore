@@ -3,3 +3,5 @@ node_modules/
 authfiles/
 package-lock.json
 prepros.config
+.env
+*.xml
