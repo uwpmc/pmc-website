@@ -15,6 +15,7 @@ var showdown  = require('showdown')
 var serveIndex = require('serve-index')
 var serveStatic = require('serve-static')
 var winston = require('winston')
+require('dotenv').config()
 
 const options = {
   file: {
@@ -125,7 +126,7 @@ const passport = require('passport')
 const SamlStrategy = require('passport-saml').Strategy;
 
 app.use(session({
-    secret: '1q2w3e!Q@W#Ebulcmp',
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
 }))
