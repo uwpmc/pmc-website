@@ -414,6 +414,7 @@ a {
       width: 50%;
       display: table-row;
       & .textArea .subText {
+        overflow-x: auto;
         vertical-align: top;
         position: relative;
         margin: 0;
