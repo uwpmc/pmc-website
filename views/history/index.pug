@@ -1,0 +1,1123 @@
+doctype html
+head
+  include ../template/head.pug
+  title History - Pure Math Club
+  meta(name='decription', content="The official website of the University of Waterloo's Pure Math, Applied Math, Combinatorics & Optimization Club, under the Mathematics Society.")
+  link(rel='stylesheet', href='/static/hist-style.css', type='text/css')
+  link(rel='stylesheet', href='/static/fonts/style.css', type='text/css')
+  link(rel='stylesheet', href='/static/photoswipe.css', type='text/css')
+  link(rel='stylesheet', href='/static/photoswipe-dynamic-caption-plugin.css', type='text/css')
+  link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/@splidejs/splide@4.0.7/dist/css/splide.min.css', type='text/css')
+  script(src='https://cdn.jsdelivr.net/npm/@splidejs/splide@4.0.7/dist/js/splide.min.js')
+  script(src='/static/photoswipe.umd.min.js')
+  script(src='/static/photoswipe-lightbox.umd.min.js')
+  script(src='/static/photoswipe-dynamic-caption-plugin.umd.min.js')
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      var elms = document.getElementsByClassName('splide');
+      for (let i = 0; i < elms.length; ++i) {
+        new Splide(elms[i], {type: 'loop', width: '28rem', gap: '2rem', arrows: false}).mount();
+      }
+    });
+body
+  .bg 
+    include ../template/header.pug
+    .textArea.f85
+      //.splide
+        //.splide__track
+          //ul.splide__list
+            //li.splide__slide.article.fullscreen
+      .article.fullscreen
+        include:markdown-it(html) amc_founding_f85_v39i3.md
+      //-
+         li.splide__slide.article.fullscreen
+           include:markdown-it(html) amc_article_f85_v39i5.md
+         li.splide__slide.article.fullscreen
+            include:markdown-it(html) amc_article_w86_v40i1.md
+         li.splide__slide.article.fullscreen
+            include:markdown-it(html) amc_article_s86_v41i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) amc_article_s89_v50i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) amc_article_s89_v50i5.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) amc_article_f89_v51i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f90_v54i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f90_v54i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w91_v55i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w91_v55i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w91_v55i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w91_v55i4.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w91_v55i6.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s91_v56i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s91_v56i4.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s91_v56i5.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f91_v57i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f91_v57i4.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f91_v57i5.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w92_v58i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w92_v58i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w92_v58i6.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s92_v59i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s92_v59i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s92_v59i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s92_v59i4.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s92_v59i5.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f92_v60i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f92_v60i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f92_v60i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w93_v61i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w93_v61i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f93_v63i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f93_v63i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f93_v63i4.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s94_v65i2.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s94_v65i4.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f94_v66i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f94_v66i4.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f94_v66i6.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w95_v67i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w95_v67i5.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s95_v68i1.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_s95_v68i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_f95_v69i3.md
+          li.splide__slide.article.fullscreen
+            include:markdown-it(html) pmc_article_w97_v73i1.md
+  div(style='background-color: #ffffff; margin-top: 4rem; padding-bottom: 1rem;')
+  .textArea
+    h1 Photos
+    .pswp-gallery
+      a(href='/static/img/history/amclub/amc01.jpg', data-pswp-width='640', data-pswp-height='398', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc01-200.jpg', alt='Applied Math Club membership card, 1985/86. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc02.png', data-pswp-width='1868', data-pswp-height='960', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc02-200.png', alt='Applied Math Club BBQ, 1986. Courtesy of Alison Burnham.')
+      a(href='/static/img/history/amclub/amc03.jpg', data-pswp-width='640', data-pswp-height='481', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc03-200.jpg', alt='Applied Math summer BBQ. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc04.jpg', data-pswp-width='640', data-pswp-height='481', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc04-200.jpg', alt='Applied Math summer BBQ. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc05.jpg', data-pswp-width='640', data-pswp-height='481', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc05-200.jpg', alt='Applied Math summer BBQ. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc06.jpg', data-pswp-width='481', data-pswp-height='640', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc06-200.jpg', alt='Applied Math summer BBQ. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc07.jpg', data-pswp-width='640', data-pswp-height='481', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc07-200.jpg', alt='Applied Math summer BBQ. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc08.jpg', data-pswp-width='4032', data-pswp-height='3024', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc08-200.jpg', alt='Applied Math Christmas party. Courtesy of Alison Burnham')
+      a(href='/static/img/history/amclub/amc09.jpg', data-pswp-width='4032', data-pswp-height='3024', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc09-200.jpg', alt='Photo of Bruce Sutherland at the Applied Math Christmas party. Courtesy of Alison Burnham.')
+      a(href='/static/img/history/amclub/amc10.jpg', data-pswp-width='640', data-pswp-height='481', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc10-200.jpg', alt='Applied Math Christmas party. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc11.jpg', data-pswp-width='481', data-pswp-height='640', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc11-200.jpg', alt='Applied Math Clinic news article. The clinic was related to but not directly part of the club, except that meetings took place in the club office. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc12.jpg', data-pswp-width='640', data-pswp-height='480', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc12-200.jpg', alt='Applied Math Clinic. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/amc13.jpg', data-pswp-width='640', data-pswp-height='481', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/amc13-200.jpg', alt='Applied Math Club membership card. Year unknown. Courtesy of Bruce Sutherland.')
+      a(href='/static/img/history/amclub/cheque.jpg', data-pswp-width='750', data-pswp-height='326', data-cropped='true', target='_blank')
+        img(src='/static/img/history/amclub/cheque-200.jpg', alt='The Applied Math Club\'s first cheque for $0, to Dan Schnabel, signed by Alison Burnham and Bruce Sutherland, dated February 5, 1986.')
+      a(href='/static/img/history/pmclub/pmamco-logo.jpg', data-pswp-width='1213', data-pswp-height='910', data-cropped='true', target='_blank')
+        img(src='/static/img/history/pmclub/pmamco-logo-200.jpg', alt='Classic PMAMC&OC logo from the \'90s on a shirt. Courtesy of Sam Lisi.')
+      a(href='/static/img/history/pmclub/prochoice.jpg', data-pswp-width='1213', data-pswp-height='910', data-cropped='true', target='_blank')
+        img(src='/static/img/history/pmclub/prochoice-200.jpg', alt='Pro (Axiom of) Choice shirt club merch. Courtesy of Sam Lisi.')
+    script(type='text/javascript').
+      var lightbox = new PhotoSwipeLightbox({
+        gallery: '.pswp-gallery',
+        children: 'a',
+        pswpModule: PhotoSwipe
+      });
+      var captionPlugin = new PhotoSwipeDynamicCaption(lightbox, {
+        type: 'auto'
+      });
+      lightbox.init()
+    h1 Past Executives and Historical Notes
+    p(style='font-size: 13pt; padding-bottom: 1rem;') This page is incomplete. If you have any information or photos you'd like added, get into contact with us at 
+      a(href='mailto:pmclub@gmail.com') pmclub@gmail.com
+      | .
+    p(style='font-size: 13pt; padding-bottom: 1rem;')
+      strong Legend:
+    ul
+      li PR: President
+      li VP: Vice-President
+      li SE: Secretary
+      li TR: Treasurer
+      li KE: Keeper of the Sacred Shoe
+      li VPF: Vice-President, Finance
+      li VP PM: Vice-President, Pure Math
+      li VP AM: Vice-President, Applied Math
+      li VP CO: Vice-President, C&O
+      li VP PO: Vice-President, Pop
+      li VP PR: Vice-President, Propaganda
+    table
+      colgroup
+        col
+        col(style='white-space: nowrap;')
+        col(style='white-space: nowrap;')
+      thead
+        tr
+          th Term
+          th PMC
+          th AMC
+      tbody
+        tr
+          td(rowspan='2') F85
+          td.defunct (DNE)
+          td PR: Alison Burnham
+            br
+            | PR: Bruce Sutherland
+            br
+            | PR: Dan Schnabel
+        tr
+          td(colspan='2')
+            strong Note: 
+            | The Applied Math Club is founded and given a room and modest funds thanks to the support of then-Chair Bruno Forte.
+        tr
+          td W86
+          td PR: Aaron Palmer
+            br
+            | PR: Chris Anand
+            br
+            | PR: Penny Haxell
+          td PR: Alison Burnham
+            br
+            | PR: Bruce Sutherland
+            br
+            | PR: Dan Schnabel
+        tr
+          td S86
+          td PR: Aaron Palmer
+            br
+            | PR: Chris Anand
+            br
+            | PR: Penny Haxell
+          td PR: Alison Burnham
+            br
+            | PR: Bruce Sutherland
+            br
+            | PR: Dan Schnabel
+        tr
+          td F86
+          td PR: Aaron Palmer
+            br
+            | PR: Chris Anand
+            br
+            | PR: Penny Haxell
+          td PR: Alison Burnham
+            br
+            | PR: Bruce Sutherland
+            br
+            | PR: Dan Schnabel
+        tr
+          td W87
+          td PR: Aaron Palmer
+            br
+            | PR: Chris Anand
+            br
+            | PR: Penny Haxell
+          td PR: Alison Burnham
+            br
+            | PR: Bruce Sutherland
+            br
+            | PR: Dan Schnabel
+        tr
+          td S87
+          td PR: Aaron Palmer
+            br
+            | PR: Chris Anand
+            br
+            | PR: Penny Haxell
+          td PR: Paulina Chin
+        tr
+          td F87
+          td PR: Aaron Palmer
+            br
+            | PR: Chris Anand
+            br
+            | PR: Penny Haxell
+          td PR: Paulina Chin
+        tr
+          td W88
+          td PR: Aaron Palmer
+            br
+            | PR: Chris Anand
+            br
+            | PR: Penny Haxell
+          td PR: Graydon Hazenberg
+            br
+            | TR: Rob Muir
+        tr
+          td S88
+          td PR: Norbert Kusters
+          td ?
+        tr
+          td F88
+          td ?
+          td ?
+        tr
+          td W89
+          td ?
+          td PR: Graydon Hazenberg
+            br
+            | TR: Steven Fry
+        tr
+          td(rowspan='2') S89
+          td ?
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Joint PMC/AMC coffee and tea party in July
+        tr
+          td F89
+          td PR: Norbert Kusters
+          td PR: Graydon Hazenberg
+        tr
+          td W90
+          td ?
+          td PR: Graydon Hazenberg
+        tr
+          td S90
+          td PR: Sharon Y. M. Fournier
+          td PR: Michael Glaum
+            br
+            | PR: Michael Lunney
+        tr
+          td(rowspan='2') F90
+          td PR: Kivi Shapiro?
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC soccer team is established
+            br
+            strong Note: 
+            | PMC gets a new logo (PMC cube)
+        tr
+          td W91
+          td PR: Sharon Y. M. Fournier
+          td ?
+        tr
+          td S91
+          td PR: Carmen Young
+            br
+            | VP: Mike Buckley
+            br
+            | TR: Jason Knell
+            br
+            | SE: Brian Clink
+          td ?
+        tr
+          td(rowspan='2') F91
+          td PR: Sharon Y. M. Fournier
+            br
+            | VP: Wayne Liu
+            br
+            | TR: Nikhil Shah
+            br
+            | TR: Colin Springer
+          td.defunct (dormant)
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC adds C&O to its name, becoming PMAMC&OC
+            br
+            strong Note: 
+            | PMC forms its official volleyball team. ActSci challenges PMC to a game. PMC loses.
+        tr
+          td W92
+          td PR: Leon Hsu
+            br
+            | VP: Nikhil Shah
+            br
+            | TR: Eric Sutherland
+          td.defunct 
+        tr
+          td S92
+          td PR: Wayne Liu
+            br
+            | VP: Steve Gamble
+            br
+            | SE: Kevin Takahashi
+          td.defunct 
+        tr
+          td F92
+          td ?
+          td.defunct 
+        tr
+          td W93
+          td PR: Dean Gaudet
+            br
+            | VP: Andre Chang
+            br
+            | SE: Amber O'Hearn
+            br
+            | TR: Kevin Takahashi
+          td.defunct 
+        tr
+          td S93
+          td ?
+          td.defunct 
+        tr
+          td F93
+          td ?
+          td PR: Blair Nicolle
+            br
+            | PR: Blaine Campbell
+        tr
+          td W94
+          td ?
+          td PR: Blair Nicolle
+            br
+            | PR: Blaine Campbell
+        tr
+          td S94
+          td PR: Todd Parsons
+            br
+            | VP: Peter Milley
+            br
+            | SE/TR: Kevin Takahashi
+          td PR: Blair Nicolle
+            br
+            | PR: Blaine Campbell
+    table
+      colgroup
+        col
+        col
+      thead
+        tr
+          th Term
+          th PMC
+      tbody
+        tr
+          td(rowspan='2') F94
+          td PR: Chris Hendrie (amicably impeached)
+            br
+            | PR: Marni Mishna?
+            br
+            | VP: Kevin Hare
+            br
+            | SE: Mike Mosca
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Graydon Hazenberg wins 
+            em Jeopardy
+        tr
+          td W95
+          td PR: Marni Mishna
+            br
+            | VP: Debra Richardson
+        tr
+          td S95
+          td PR: Max Stevens
+        tr
+          td(rowspan='2') F95
+          td PR: Max Stevens
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC&OC adds AM to its name, becoming PMAMC&OC
+        tr
+          td W96
+          td PR: Matthew Walsh
+            br
+            | TR: Michal Ostrowski
+        tr
+          td S96
+          td PR: Alex Lee
+            br
+            | VP: Marni Mishna
+            br
+            | TR: Duane Mattos
+        tr
+          td F96
+          td PR: Kevin Purbhoo
+        tr
+          td(rowspan='2') W97
+          td PR: Russell O'Connor
+            br
+            | VP: Nikita Borisov
+            br
+            | SE: Duane Mattos
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC Gets a new logo (PMAMC&OC rectangle)
+        tr
+          td S97
+          td PR: Viet-Trung Luu?
+        tr
+          td(rowspan='2') F97
+          td PR: Marni Mishna?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | First SASMS is organized by Marni Mishna
+        tr
+          td W98
+          td PR: Jeff (Floyd) Morton
+            br
+            | VP: Aaron Bruce
+            br
+            | SE/TR: Jeff Lair
+            br
+            | KE: Michal Ostroski
+        tr
+          td(rowspan='2') S98
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Russell O'Connor is CSC president
+        tr
+          td F98
+          td PR: Soroosh Yazdani
+            br
+            | VP: Sam Lisi
+            br
+            | KE: Suresh Naidu
+        tr
+          td(rowspan='2') W99
+          td PR: Sam Lisi
+            br
+            | VP: Jim Nastos
+            br
+            | TR: Joel Kamnitzer
+            br
+            | KE: Suresh Naidu
+        tr
+          td(colspan='2')
+            strong Note: 
+            | First Absolut Trials is held
+            br
+            strong Note: 
+            | Michael Froh wins the Absolut Trials
+        tr
+          td S99
+          td PR: Adam Nevraumont?
+        tr
+          td(rowspan='2') F99
+          td PR: Dan Pollock?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Steve Forrest wins the Absolut Trials
+        tr
+          td(rowspan='2') W00
+          td PR: Wai Ling Yee?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Joel Kamnitzer wins the Absolut Trials
+        tr
+          td S00
+          td PR: Brenda Fine?
+        tr
+          td(rowspan='2') F00
+          td PR: Joel Kamnitzer
+        tr
+          td(colspan='2')
+            strong Note: 
+            | First 24-hour SASMS is organized by Joel Kamnitzer
+            br
+            strong Note: 
+            | Masoud Kamgarpour wins the Absolut Trials
+        tr
+          td(rowspan='2') W01
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Richard Hoshino wins the Absolut Trials
+        tr
+          td S01
+          td ?
+        tr
+          td(rowspan='2') F01
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Ben Willson wins the Absolut Trials
+        tr
+          td(rowspan='2') W02
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Ben Willson wins the Absolut Trials
+        tr
+          td S02
+          td ?
+        tr
+          td(rowspan='2') F02
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Jon Lee wins the Absolut Trials
+        tr
+          td(rowspan='2') W03
+          td PR: Lino Demasi
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Daniel Redelmeier wins the Absolut Trials
+        tr
+          td(rowspan='2') S03
+          td PR: Masoud Kamgarpour
+        tr
+          td(colspan='2')
+            strong Note: 
+            | The Axe of Choice is acquired on a Fields Institute trip
+            br
+            strong Note: 
+            | The PMC mini-fridge is mortally wounded in an axe-related defrosting incident
+        tr
+          td F03
+          td KE: Luis Serrano
+        tr
+          td(rowspan='2') W04
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | TTC token wins the Absolut Trials???
+        tr
+          td S04
+          td ?
+        tr
+          td F04
+          td ?
+        tr
+          td W05
+          td ?
+        tr
+          td(rowspan='2') S05
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Scott Bathurst wins the Absolut Trials
+        tr
+          td(rowspan='2') F05
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Tor Myklebust wins the Absolut Trials
+        tr
+          td(rowspan='2') W06
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Tor Myklebust wins the Absolut Trials
+        tr
+          td(rowspan='2') S06
+          td ?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | David Belanger wins the Absolut Trials
+        tr
+          td(rowspan='2') F06
+          td PR: Lalit Jain
+            br
+            | TR: Lloyd Elliot
+            br
+            | SE: Jennifer Smith
+        tr
+          td(colspan='2')
+            strong Note: 
+            | William Gollinger wins the Absolut Trials
+        tr
+          td(rowspan='2') W07
+          td PR: Scott Bathurst
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Tor Myklebust wins the Absolut Trials
+        tr
+          td(rowspan='2') S07
+          td PR: Jennifer Park
+            br
+            | PR: Sarah Sun
+            br
+            | VP PM: William Gollinger
+            br
+            | VP AM: Vince Chan
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Mohamed Omar wins the Absolut Trials
+        tr
+          td(rowspan='2') F07
+          td PR: Sarah Sun
+            br
+            | PR: Vince Chan
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Mike Sgambelluri wins the Absolut Trials
+            br
+            strong Note: 
+            | Earliest reference to the Over 9000 contest
+        tr
+          td(rowspan='2') W08
+          td PR: Vince Chan
+            br
+            | PR: William Gollinger
+        tr
+          td(colspan='2')
+            strong Note: 
+            | William Gollinger wins the Absolut Trials
+        tr
+          td(rowspan='2') S08
+          td PR: Sarah Sun
+            br
+            | PR: Sarah Pidcock
+        tr
+          td(colspan='2')
+            strong Note: 
+            | David Belanger wins the Absolut Trials
+        tr
+          td(rowspan='2') F08
+          td PR: Sarah Sun
+            br
+            | PR: Vince Chan
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Mike Sgambelluri wins the Absolut Trials
+        tr
+          td(rowspan='2') W09
+          td PR: Vince Chan
+        tr
+          td(colspan='2')
+            strong Note: 
+            | William Gollinger wins the Absolut Trials
+        tr
+          td S09
+          td PR: Vince Chan
+            br
+            | TR: Eeshan Wagh
+            br
+            | VP PM: Tom Price
+            br
+            | VP AM: Umar Aftab
+            br
+            | VP CO: Dylan Bennett
+        tr
+          td F09
+          td PR: Dylan Bennett
+            br
+            | PR: Sarah Sun
+        tr
+          td W10
+          td PR: Dylan Bennett
+            br
+            | PR: Sarah Sun
+        tr
+          td(rowspan='2') S10
+          td PR: Sarah Sun
+            br
+            | PR: Umar Aftab?
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC gets a new logo (rotated square/triangles)
+        tr
+          td F10
+          td PR: Sarah Sun
+            br
+            | PR: Yifan Li
+        tr
+          td W11
+          td PR: Sarah Sun
+            br
+            | PR: Yifan Li
+        tr
+          td S11
+          td PR: Sarah Sun
+            br
+            | PR: Yifan Li
+        tr
+          td F11
+          td PR: Yifan Li
+            br
+            | PR: Ifaz Kabir
+            br
+            | VPF: Olivier Gilbert
+            br
+            | SE: Jacqueline Sun
+            br
+            | VP PM: Joseph Horan
+            br
+            | VP AM: Umar Aftab
+            br
+            | VP CO: Gwen Weng
+        tr
+          td W12
+          td PR: Ifaz Kabir
+            br
+            | PR: ?
+        tr
+          td S12
+          td PR: David McLaughlin
+            br
+            | PR: Ifaz Kabir
+        tr
+          td F12
+          td PR: Kevin Matthews
+            br
+            | PR: Ifaz Kabir
+        tr
+          td W13
+          td PR: David McLaughlin
+            br
+            | PR: ?
+        tr
+          td S13
+          td PR: David McLaughlin
+            br
+            | PR: Ifaz Kabir
+        tr
+          td(rowspan='2') F13
+          td PR: Adam Venis
+        tr
+          td(colspan='2')
+            strong Note: 
+            | Adam was mostly elected president as a joke
+        tr
+          td W14
+          td PR: Kevin Matthews
+            br
+            | PR: Sam Yusim
+        tr
+          td S14
+          td PR: Ifaz Kabir
+        tr
+          td F14
+          td PR: Kevin Matthews
+            br
+            | PR: Sam Yusim
+        tr
+          td W15
+          td PR: Ilia Chtcherbakov
+            br
+            | PR: ?
+        tr
+          td(rowspan='2') S15
+          td PR: Kevin Matthews
+            br
+            | PR: Ilia Chtcherbakov
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC gets new couches
+        tr
+          td(rowspan='2') F15
+          td PR: Ilia Chtcherbakov
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC gets more new couches
+        tr
+          td W16
+          td PR: Kevin Matthews
+            br
+            | PR: Wilson Cheang
+        tr
+          td S16
+          td PR: Ilia Chtcherbakov
+            br
+            | PR: Wilson Cheang
+        tr
+          td F16
+          td PR: Ilia Chtcherbakov
+        tr
+          td W17
+          td PR: Wilson Cheang
+            br
+            | SE: Ilia Chtcherbakov
+        tr
+          td S17
+          td PR: Stephen Wen
+        tr
+          td F17
+          td PR: Shelley Wu
+            br
+            | SE: Stephen Wen
+        tr
+          td W18
+          td PR: Shelley Wu
+            br
+            | VPF: Bailey Gu
+        tr
+          td S18
+          td PR: Rana Saleh
+            br
+            | SE: Logan Grout
+        tr
+          td F18
+          td PR: Logan Grout
+            br
+            | VPF: Lily Wang
+            br
+            | SE: Esther Ahn
+            brsent
+            | VP PO: Jason Qu
+        tr
+          td W19
+          td PR: Zouhaier Ferchiou
+            br
+            | VPF: Lily Wang
+        tr
+          td S19
+          td PR: Louis Castricato
+            br
+            | VPF: Anna Kis
+        tr
+          td F19
+          td PR: Jason Qu
+            br
+            | VPF: Nikita Kapustin
+            br
+            | SE: ?
+            br
+            | VP PM: Spencer Wilson
+            br
+            | VP AM: Kassim Santone
+            br
+            | VP CO: Vincent Macri
+            br
+            | VP PO: ?
+        tr
+          td W20
+          td PR: Joey Yu
+            br
+            | VPF: Zoravur Singh
+            br
+            | SE: Vishnu Mugundan
+            br
+            | VP PM: Spencer Wilson
+            br
+            | VP AM: Jason Qu
+            br
+            | VP CO: Vincent Macri
+            br
+            | VP PO: Shannon Jeffries
+        tr
+          td S20
+          td PR: Joey Yu
+            br
+            | VPF: Zoravur Singh
+            br
+            | SE: ?
+            br
+            | VP PM: Spencer Wilson
+            br
+            | VP AM: ?
+            br
+            | VP CO: Vincent Macri
+            br
+            | VP PO: ?
+        tr
+          td F20
+          td PR: Joey Yu
+            br
+            | VPF: Gavin Orok
+            br
+            | SE: ?
+            br
+            | VP PM: Spencer Wilson
+            br
+            | VP AM: Spencer Wilson
+            br
+            | VP CO: Spencer Wilson
+            br
+            | VP PO: ?
+        tr
+          td W21
+          td PR: Joey Yu
+            br
+            | VPF: Gavin Orok
+            br
+            | SE: Joey Yu
+            br
+            | VP PM: Maya Gusak
+            br
+            | VP AM: Vishnu Mugundan
+            br
+            | VP CO: Spencer Wilson
+            br
+            | VP PO: Roger Fu
+        tr
+          td(rowspan='2') S21
+          td PR: Spencer Wilson
+            br
+            | VPF: Maya Gusak
+            br
+            | SE: Vishnu Mugundan
+            br
+            | VP PM: Stefan Frunza
+            br
+            | VP AM: Vishnu Mugundan
+            br
+            | VP CO: Maya Gusak
+            br
+            | VP PO: Evan Girardin
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC gets a new logo (redesigned square+triangles and square-only)
+        tr
+          td(rowspan='2') F21
+          td PR: Maya Gusak
+            br
+            | VPF: Tam An Le Quang
+            br
+            | SE: Evan Girardin
+            br
+            | VP PM: Nicky Priebe
+            br
+            | VP AM: Stefan Frunza
+            br
+            | VP CO: Jongwoo Kim
+            br
+            | VP PO: Laura Cao
+            br
+            | VP PR: Elijah Liu
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC gets a new office chair and desk
+        tr
+          td W22
+          td PR: Evan Girardin
+            br
+            | VPF: Tam An Le Quang
+            br
+            | SE: Maya Gusak
+            br
+            | VP PM: Nicky Priebe
+            br
+            | VP AM: Mustafa Raza Rizvi
+            br
+            | VP CO: Stefan Frunza
+            br
+            | VP PO: Laura Cao
+            br
+            | VP PR: Zev Friedman
+        tr
+          td(rowspan='2') S22
+          td PR: Evan Girardin
+            br
+            | VPF: Tam An Le Quang
+            br
+            | SE: Laura Cao
+            br
+            | VP PM: Nicky Priebe
+            br
+            | VP AM: Defne Tanyer
+            br
+            | VP CO: Parsa Salimi
+            br
+            | VP PO: Shannon Jeffries
+            br
+            | VP PR: Georgia Berg
+        tr
+          td(colspan='2')
+            strong Note: 
+            | PMC gets a new computer
+        tr
+          td F22
+          td PR: Nicky Priebe
+            br
+            | VPF: Tam An Le Quang
+            br
+            | SE: Adam Jelinsky
+            br
+            | VP PM: Stefan Frunza
+            br
+            | VP AM: Defne Tanyer
+            br
+            | VP CO: Rene Roy
+            br
+            | VP PO: Adam Jelinsky
+            br
+            | VP PR: Maya Gusak
+        tr
+          td W23
+          td PR: Evan Girardin
+            br
+            | VPF: Tam An Le Quang
+            br
+            | SE: Laura Cao
+            br
+            | VP PM: Kai Choi
+            br
+            | VP AM: Utkarsh Bajaj
+            br
+            | VP CO: Vincent Macri
+            br
+            | VP PO: Adam Jelinsky
+            br
+            | VP PR: Remington Zhi
+        tr
+          td S23
+          td PR: Evan Girardin
+            br
+            | VPF: Tam An Le Quang
+            br
+            | SE: Adam Jelinsky
+            br
+            | VP PM: Kareem Alfarra
+            br
+            | VP AM: Stefan Frunza
+            br
+            | VP CO: Parsa Salimi
+            br
+            | VP PO: Jenny Tai
+            br
+            | VP PR: Remington Zhi
+  include ../template/footer.pug

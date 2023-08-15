@@ -5,3 +5,5 @@ package-lock.json
 prepros.config
 .env
 *.xml
+*.css.map
+*.cssu.map

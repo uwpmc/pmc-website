@@ -40,7 +40,7 @@ To ensure that the Triumvirate contains two distinct signing authorities, the Pr
 All executive officers are required to uphold this constitution. Additionally, executive officers are expected to read and respond to emails (cf. 13) that concern their specific duties, which are outlined below.
 
 ### 4.1.1. Duties of the President
-The President has no duties other than upholding this constitution. It shall also be the duty of the President to support the Vice-President of Finances as a signing officer.
+The President has no duties other than upholding this constitution. It shall also be the duty of the President to support the Vice-President of Finance as a signing officer.
 
 ### 4.1.2. Duties of the Vice-Presidents of Pure Math, Applied Math, and Combinatorics and Optimization
 These executive officers are responsible for organizing a "prof talk" by a member of the department that they represent in each term that they hold office. They are also obligated to relay concerns from undergraduate students of their respective departments to the appropriate authority.

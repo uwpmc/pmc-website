@@ -12,6 +12,7 @@ body {
   min-width: min(860px, 100%);
   overflow-y: scroll;
   display: flex;
+  justify-content: flex-start;
   flex-direction: column; }
 
 * {
@@ -69,11 +70,12 @@ nav {
   height: 50px;
   position: relative;
   top: 0;
-  z-index: 7;
+  z-index: 9999;
   padding: 2rem 0;
   vertical-align: middle; }
 
 #menu {
+  z-index: 999;
   position: fixed;
   right: -16rem;
   top: 0;
@@ -88,6 +90,7 @@ nav {
       font-size: 16pt !important;
       font-weight: 600; }
       #menu ul li a {
+        font-family: "Inter", "Helvetica", sans-serif;
         color: #161616;
         display: block;
         padding: 1rem 4rem; }
@@ -258,7 +261,7 @@ a {
 
 .navItem {
   padding: 10px 15px 10px 15px;
-  font-family: "Inter", "Helvetica", sans-sans-serif;
+  font-family: "Inter", "Helvetica", sans-serif;
   font-weight: 500;
   text-decoration: none;
   font-size: 13pt;
@@ -304,7 +307,7 @@ a {
   .button {
     font-size: 20pt !important; }
 
-  .subText li {
+  li {
     font-size: 10pt; }
 
   #constitution li, #constitution ul, #courses li, #courses ul, form[action="/update_courses"] .EasyMDEContainer li, form[action="/update_courses"] .EasyMDEContainer ul, form[action="/update_const"] .EasyMDEContainer li, form[action="/update_const"] .EasyMDEContainer ul {
@@ -461,6 +464,8 @@ a {
       padding: 1rem;
       display: table-cell;
       vertical-align: inherit; }
+      .textArea table thead tr th.defunct, .textArea table tbody tr td.defunct {
+        background-color: #ddd; }
     .textArea table tbody tr td {
       background-color: #fff; }
   .textArea .subText table {
@@ -885,6 +890,56 @@ input:checked + .slider:before {
   transform: translate(-120%, 0);
   margin: 3em 0 0 0; }
 
+.bigbutton {
+  width: auto;
+  overflow: hidden;
+  flex-grow: 1; }
+
+.bigbutton .eventItem {
+  z-index: 25; }
+  .bigbutton .eventItem h1 {
+    z-index: 99;
+    font-weight: 600;
+    color: #161616;
+    padding-left: 0.5em;
+    text-align: left;
+    transition: color 0.15s ease-out; }
+  .bigbutton .eventItem img {
+    position: absolute;
+    width: 40%;
+    transform: rotate(-8deg);
+    right: 1rem;
+    top: 1rem;
+    opacity: 0.5;
+    transition: opacity 0.1s ease-out; }
+  .bigbutton .eventItem::before, .bigbutton .eventItem .active {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 240%;
+    background-color: #db2323;
+    transform: skew(0, 15deg) translateY(-135%);
+    transition: transform 0.2s ease-out;
+    z-index: -50; }
+  .bigbutton .eventItem:hover h1 {
+    color: #ffffff; }
+  .bigbutton .eventItem:hover img {
+    opacity: 1; }
+  .bigbutton .eventItem .active {
+    z-index: -25;
+    background-color: #db2323; }
+  .bigbutton .eventItem:hover::before {
+    transform: skew(0, 15deg) translateY(-25%);
+    z-index: -50; }
+
+@media screen and (max-width: 1000px) {
+  .bigbutton .eventItem img {
+    display: none; }
+
+  .bigbutton .eventItem h1 {
+    text-align: center; } }
 .dashMenu {
   width: auto;
   display: flex;
@@ -980,5 +1035,3 @@ input:checked + .slider:before {
 
 tr.good {
   background-color: #cde0fa; }
-
-/*# sourceMappingURL=style.css.map */

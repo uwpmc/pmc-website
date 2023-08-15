@@ -1,8 +1,11 @@
-// Written with love by Evan Girardin, W22/S22 PMC President 
-// Please direct all compliments and hate mail to evangirardin at gmail dot com 
+// Written with love by Evan Girardin, W22/S22/W23/S23 PMC president 
+// Please direct all hate mail to evangirardin at gmail dot com 
 
 doctype html
-include ../template/head.pug
+head
+  include ../template/head.pug
+  title Pure Math Club
+  meta(name='decription', content="The official website of the University of Waterloo's Pure Math, Applied Math, Combinatorics & Optimization Club, under the Mathematics Society.")
 -
   function readableDate(date) {
     // date given as yyyy-mm-dd
@@ -90,7 +93,7 @@ mixin event(id, type, title, desc, date, begintime, endtime, loc, imgpath)
   a.eventItemHoverBuffer(href='events/' + getTerm(date) + '#' + id)
     .eventItem
       p(style='font-weight: 600; color: #565965;') #{title}
-      p(style='font-size: 14pt;') #{readableDate(date)} | #{readableTime(begintime)} | #{loc}
+      p(style='font-size: 14pt;') #{readableDate(date)} &bull; #{readableTime(begintime)} &bull; #{loc}
 mixin potw(id, title, date, imgpath)
   a.potwItem(href='/potw#'+id)
     h1.number ##{id}
@@ -120,7 +123,7 @@ body
             //-a(href='https://facebook.com/groups/uwpmc', style='background-image: url(/static/img/facebook.png);', target='_blank')
             a(href='https://youtube.com/user/pmamcoclub', style='background-image: url(/static/img/youtube.svg); width: 2rem;', target='_blank')
 
-  .textArea(style='width: min(80rem,100%);')
+  .textArea(style='width: min(80rem,100%); margin-bottom: 0;')
     h1(style='padding-top: 0.3em;') Events
     .eventContainer
       - var n = posts.length - 1;
@@ -128,7 +131,25 @@ body
         +event(posts[n].id, posts[n].type, posts[n].title, posts[n].descr, posts[n].date.yyyymmdd(), posts[n].begin, posts[n].end, posts[n].loc, posts[n].imgpath)
         - n--
     a.button#pastEvents(href='./events') Browse all events
-  
+  .textArea(style='width: min(80rem,100%); padding-bottom: 1.5em;')
+    h1 Quick Links
+    .eventContainer
+      .bigbutton
+        a.eventItemHoverBuffer(href='files')
+          .eventItem
+            img(src='/static/img/archive.png', style='top: 2rem;')
+            h1 Archive
+      .bigbutton
+        a.eventItemHoverBuffer(href='history')
+          .eventItem
+            img(src='/static/img/history.png', style='top: 1.5rem;')
+            h1 History
+      .bigbutton
+        a.eventItemHoverBuffer(href='https://bit.ly/F23PMC')
+          .eventItem
+            img(src='/static/img/signup.png')
+            h1 Sign up
+    
   if isPOTW
     .textArea(style='width: min(80rem,100%);')
       h1 Problem of the Week
@@ -138,7 +159,6 @@ body
         while m >= 0
           +potw(potws.length-m, potws[m].title, potws[m].date.yyyymmdd(), potws[m].imgpath)
           - m--;
-      
   div(style='width: 100%; background-color: #e0e0e0;')
     .textArea(style='padding-top: 1em; padding-bottom: 1em;')
       div

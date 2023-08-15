@@ -1,10 +1,6 @@
-body {
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-image: url("/img/history/amclub/background_1985.png"); }
-
 .bg {
-  background-image: linear-gradient(#484d70ea, #303136ea);
+  background-size: 100% auto;
+  background-image: linear-gradient(#484d70ea, #303136ea), url("/static/img/history/amclub/background_1985.png");
   padding-bottom: 2rem;
   box-shadow: 0 0 20px; }
 
@@ -32,6 +28,7 @@ h1.header {
   font-weight: 400;
   text-align: center; }
 .f85 .article {
+  padding: auto;
   position: relative;
   display: flex;
   align-items: center;
@@ -101,16 +98,35 @@ table {
   margin: 2rem auto !important; }
 
 .splide {
-  margin: 2rem 0;
-  padding: 2rem 3rem;
-  background-image: linear-gradient(#666, #222);
-  box-shadow: 0 0 20px; }
+  margin: auto; }
 
-img {
+.pswp-gallery {
+  display: flex;
+  grid-gap: 10px;
+  padding: 10px;
+  flex-flow: row wrap;
+  justify-content: center;
+  width: 100%; }
+  .pswp-gallery a {
+    overflow: hidden;
+    width: 150px;
+    height: 150px; }
+    .pswp-gallery a img {
+      display: block;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      margin-left: 50%;
+      margin-top: 50%;
+      transform: translate(-50%, -50%);
+      white-space: pre; }
+
+.pswp__dynamic-caption {
+  font-family: 'Roboto', 'Arial', sans-serif; }
+
+.splide img {
   display: block;
   margin: auto;
   max-width: 100%;
   height: 30rem;
   object-fit: contain; }
-
-/*# sourceMappingURL=hist-style.css.map */

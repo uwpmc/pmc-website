@@ -1,6 +1,6 @@
 // THE PURE MATH, APPLIED MATH, COMBINATORICS & OPTIMIZATION CLUB WEBSITE
-// Written with love by Evan Girardin, W22/S22 PMC President
-// Please direct all compliments and hate mail to evangirardin at gmail dot com
+// Written with love by Evan Girardin, W22/S22/W23/S23 PMC president
+// Please direct all hate mail to evangirardin at gmail dot com
 
 const express = require('express')
 const app = express()
@@ -498,7 +498,7 @@ app.get('/sasms', async (req, res) => {
   });
 });
 */
-app.get('/history', checkAuthenticated, async (req, res) => {
+app.get('/history', async (req, res) => {
   res.render('history', { loginStatus: await getStatus(req), isPOTW: isPOTW });
 });
 
