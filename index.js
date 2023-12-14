@@ -112,10 +112,12 @@ const connection = mysql.createConnection({
   database: 'pmclub'
 })
 
+var signupLink = fs.readFileSync("./public/signuplink.txt", "utf-8");
+
 var isPOTW;
 fs.readFile("potw.json", "utf-8", (err, buf) => {
   isPOTW = JSON.parse(buf).potw;
-})
+});
 
 
 /* AUTHENTICATION */
@@ -388,6 +390,16 @@ app.post("/update_execs", checkAuthenticated, (req, res) => {
   res.redirect("/dashboard?res=execupd#update-execs")
 });
 
+app.post("/update_signup", checkAuthenticated, (req, res) => {
+  const date = Date.now();
+  fs.writeFile('./public/signuplink.txt', req.body.signup, (err) => {
+    if (err) throw err;
+    logger.info(req.user.nameID + ' updated the sign-up link to ' + req.body.signup);
+    signupLink = req.body.signup;
+  })
+  res.redirect("/dashboard?res=signupupd#update-signup")
+})
+
 app.post("/update_const", checkAuthenticated, (req, res) => {
   const date = Date.now();
   fs.copyFile('public/pmc.const.md', 'public/pmc-'+date+'.const.md', (err) => {
@@ -436,10 +448,10 @@ app.get('/', (req, res) => {
     if (isPOTW) {
       connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', async (err3, rows3, fields3) => {
         if (err3) throw err3;
-        res.render('index', { loginStatus: await getStatus(req), posts: rows, potws: rows3, isPOTW: isPOTW });
+        res.render('index', { loginStatus: await getStatus(req), posts: rows, potws: rows3, isPOTW: isPOTW, signupLink: signupLink });
       })
     } else {
-      res.render('index', { loginStatus: await getStatus(req), posts: rows, isPOTW: isPOTW });
+      res.render('index', { loginStatus: await getStatus(req), posts: rows, isPOTW: isPOTW, signupLink: signupLink });
     }
   });
 });

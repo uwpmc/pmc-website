@@ -4,7 +4,7 @@ meta(name="google-signin-client_id", content="407152582406-ad0u942n6550ctlh4852h
 script(src="https://apis.google.com/js/platform.js", async, defer)
 link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css")
 script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
-- var sections = ['create-event', 'create-potw', 'course-list', 'update-execs', 'update-const', 'help'];
+- var sections = ['update-signup', 'create-event', 'create-potw', 'course-list', 'update-execs', 'update-const', 'help'];
 each val in sections
   style(type='text/css').
     a[id="#{val}"]:target ~ .textArea ##{val}-body {
@@ -26,6 +26,8 @@ each val in sections
 -
   function resReason(res) {
     switch (res) {
+      case 'signupupd':
+        return ['Sign-up link successfully updated.', 'good'];
       case 'potwenabled':
         return ['POTW has been enabled.', 'good'];
       case 'potwdisabled':
@@ -89,6 +91,8 @@ body
   .textArea
     .dashMenuContainer
       .dashMenu
+        a.item#update-signup-btn(href='#update-signup') Sign-up Link
+          .active
         a.item#create-event-btn(href='#create-event') Manage Events
           .active
         a.item#create-potw-btn(href='#create-potw') Manage POTW
@@ -112,6 +116,24 @@ body
     .dashSwapper
       .dashSwapItem#frontmatter-body
         p Select an option on the left to get started.
+      .dashSwapItem#update-signup-body
+        h2 Sign-up Link
+        p Set the sign-up link here for the home page every term.
+        form(action='/update_signup', method='POST')
+          label(for='signup') Sign-up link:
+          input(id='signup-link', type='text', name='signup', required='')
+          script.
+            fetch('/static/signuplink.txt').then(function(res) {
+              if (res.status !== 200) {
+                document.getElementById('signup-link').value = 'WARNING: The file signuplink.txt could not be found.';
+                return;
+              }
+              res.text().then(function(data) {
+                document.getElementById('signup-link').value = data;
+              });
+            });
+          br
+          button.button.good(type='submit') Update Sign-up Link
       .dashSwapItem#create-event-body
         h2 Manage Events
         details
@@ -460,21 +482,13 @@ body
           | try to minimise the use of JavaScript, and make sure that all pages
           | look presentable with JavaScript disabled.
         h4 Server access
-        p The PMC website is currently hosted on the CSC's 
-          code caffeine
-          |  server, i.e., 
-          code caffeine.csclub.uwaterloo.ca
-          | . If you need to access files, make sure you're allowed to SSH into 
-          | the CSC's servers (pay the membership fee or talk to someone on CSC&rsquo;s 
-          | systems committee). You should also verify with the systems committee 
-          | that you have access to PMC's club account as a club executive.
-          br
-          br
-          | Once this is verified, you should be able to SSH in using your student 
-          | account username (your Quest ID). Once connected, you should run 
-          code become_club pmclub
-          |  to log in to PMC's club account. A rough map of the website's structure
-          | is given below to help you find your way around:
+        p The PMC website is currently hosted on the CSC Cloud as the virtual machine 
+          code sacred-shoe
+          | . If you need to access files, ask someone else with access to add your
+          | SSH public key. Once this is done, you should be able to SSH into 
+          code pmclub@172.19.134.46
+          |  (you will need to connect to the UW Cisco VPN if you aren&rsquo;t on campus). 
+          | A rough map of the website's structure is given below to help you find your way around:
         table#guide
           tbody
             tr
