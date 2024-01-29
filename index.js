@@ -106,7 +106,7 @@ const upload = multer({
 });
 
 const mysql = require('mysql2')
-const connection = mysql.createConnection({
+const connection = mysql.createPool({
   socketPath: '/run/mysqld/mysqld.sock',
   user: 'root',
   database: 'pmclub'
