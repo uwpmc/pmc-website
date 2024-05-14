@@ -400,6 +400,10 @@ app.post("/update_signup", checkAuthenticated, (req, res) => {
   res.redirect("/dashboard?res=signupupd#update-signup")
 })
 
+app.get("/signup", (req, res) => {
+  res.redirect(signupLink);
+})
+
 app.post("/update_const", checkAuthenticated, (req, res) => {
   const date = Date.now();
   fs.copyFile('public/pmc.const.md', 'public/pmc-'+date+'.const.md', (err) => {
@@ -448,13 +452,14 @@ app.get('/', (req, res) => {
     if (isPOTW) {
       connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', async (err3, rows3, fields3) => {
         if (err3) throw err3;
-        res.render('index', { loginStatus: await getStatus(req), posts: rows, potws: rows3, isPOTW: isPOTW, signupLink: signupLink });
+        res.render('index', { loginStatus: await getStatus(req), posts: rows, potws: rows3, isPOTW: isPOTW });
       })
     } else {
-      res.render('index', { loginStatus: await getStatus(req), posts: rows, isPOTW: isPOTW, signupLink: signupLink });
+      res.render('index', { loginStatus: await getStatus(req), posts: rows, isPOTW: isPOTW });
     }
   });
 });
+
 app.get('/about', async (req, res) => {
   res.render('about', { loginStatus: await getStatus(req), isPOTW: isPOTW });
 });
