@@ -15,7 +15,7 @@ To get access to the `pmclub` account as a club executive, ask someone else with
 ### Webserver Session
 The website is kept alive via a detached `tmux` session on the `pmclub` account. Once logged in, you can re-attach the session via `tmux attach -t web`, and detach with <kbd>Ctrl</kbd> + <kbd>B</kbd> followed by <kbd>D</kbd>. After attaching the session, you should see the web server logs. Inputting <kbd>Ctrl</kbd> + <kbd>C</kbd> will kill the server.
 
-If the session is dead, you can create a new one with `tmux new -s web`. Start the server while in the `~/www` directory by running `sudo node index.js` (`sudo` is needed since the application listens on port 80).
+If the session is dead, you can create a new one with `tmux new -s web`. Start the server while in the `~/www` directory by running `node index.js`. Note that the app listens on port 3000, but UFW has been set up to forward requests on port 80 to port 3000. If you need to modify the UFW rules, be *very* careful not to disallow connections to port 22, otherwise you will be unable to connect to the server via SSH.
 
 ### Updating
 The `~/www` directory contains this Git directory. Please push any changes you make to files, and make sure to pull changes and restart the Node instance if changes are made.
