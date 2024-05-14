@@ -119,8 +119,9 @@ body
       .dashSwapItem#update-signup-body
         h2 Sign-up Link
         p Set the sign-up link here for the home page every term.
+        br
         form(action='/update_signup', method='POST')
-          label(for='signup') Sign-up link:
+          label(for='signup') Sign-up link: 
           input(id='signup-link', type='text', name='signup', required='')
           script.
             fetch('/static/signuplink.txt').then(function(res) {
