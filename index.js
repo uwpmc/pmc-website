@@ -4,7 +4,7 @@
 
 const express = require('express')
 const app = express()
-const port = 80
+const port = 3000
 const multer = require('multer')
 const util = require('util')
 
@@ -108,7 +108,7 @@ const upload = multer({
 const mysql = require('mysql2')
 const connection = mysql.createPool({
   socketPath: '/run/mysqld/mysqld.sock',
-  user: 'root',
+  user: 'pmclub',
   database: 'pmclub'
 })
 
@@ -195,7 +195,7 @@ app.get(
 getStatus = async (req) => {
   if (req.user == undefined || req.user.nameID == undefined) { return 0; }
   const mysqlAwait = require('mysql2/promise');
-  const conn = await mysqlAwait.createConnection({ database: 'pmclub', user: 'root', socketPath: '/run/mysqld/mysqld.sock' });
+  const conn = await mysqlAwait.createConnection({ database: 'pmclub', user: 'pmclub', socketPath: '/run/mysqld/mysqld.sock' });
   let [rows, fields] = await conn.execute('SELECT * FROM pmclub.execs WHERE nameID=?', [req.user.nameID]);
   conn.end();
   if (rows.length > 0) { return 2; }
