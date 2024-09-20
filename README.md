@@ -1,5 +1,5 @@
 # pmc-website
-This is the website for The Pure Math, Applied Math, Combinatorics &amp; Optimization Club under the Mathematics Society of the Waterloo Undergraduate Student Association at the University of Waterloo (PMC for short)!
+This is the website for The Pure Math, Applied Math, Combinatorics &amp; Optimization Club under the Mathematics Society of the Waterloo Undergraduate Student Association at the University of Waterloo (PMC for short), hosted at [puremath.club](https://puremath.club).
 
 ## Stack
 The website runs a lightweight stack, with only a few packages on top of Express with Node.js (mostly for MySQL database connections and Markdown rendering). The client's experience is JavaScript-free, except for MathJax for rendering LaTeX.
