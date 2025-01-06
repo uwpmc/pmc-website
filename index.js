@@ -447,7 +447,7 @@ app.set('views', path.join(__dirname, '/views'))
 
 
 app.get('/', (req, res) => {
-  connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 3', async (err, rows, fields) => {
+  connection.query('SELECT * FROM pmclub.events WHERE date >= NOW() ORDER BY date DESC LIMIT 3', async (err, rows, fields) => {
     if (err) throw err;
     if (isPOTW) {
       connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', async (err3, rows3, fields3) => {
