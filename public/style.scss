@@ -573,7 +573,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  flex-flow: row-reverse wrap-reverse;
+  flex-flow: row wrap;
 }
 .potwContainer {
   @extend .eventContainer;
