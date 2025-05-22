@@ -17,6 +17,8 @@ var serveStatic = require('serve-static')
 var winston = require('winston')
 require('dotenv').config()
 
+var {ICalCalendar} = require('ical-generator');
+
 const options = {
   file: {
     level: 'info',
@@ -447,7 +449,7 @@ app.set('views', path.join(__dirname, '/views'))
 
 
 app.get('/', (req, res) => {
-  connection.query('SELECT * FROM pmclub.events WHERE date >= NOW() ORDER BY date DESC LIMIT 3', async (err, rows, fields) => {
+  connection.query('SELECT * FROM pmclub.events WHERE date >= CURDATE() ORDER BY date DESC LIMIT 3', async (err, rows, fields) => {
     if (err) throw err;
     if (isPOTW) {
       connection.query('SELECT * FROM pmclub.potw ORDER BY date DESC', async (err3, rows3, fields3) => {
@@ -478,6 +480,44 @@ function getTerm(date) {
   let month = parseInt(date.slice(4,6));
   return (month < 5 ? 'w' : (month < 9 ? 's' : 'f')) + date.slice(2,4);
 }
+app.get('/events/calendar', (req, res) => {
+  connection.query(
+    'SELECT * FROM pmclub.events WHERE date >= CURDATE()',
+    (err, rows, fields) => {
+      if (err) throw err;
+      res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="calendar.ics"');
+
+      const cal = new ICalCalendar({ name: 'PMC Events', prodId: '//PMC//puremath.club//EN' });
+
+      rows.forEach((event) => {
+	const eventStart = new Date(event.date);
+	const eventEnd = new Date(event.date);
+	
+	const startTime = event.begin.split(':');
+	eventStart.setHours(startTime[0]);
+	eventStart.setMinutes(startTime[1]);
+
+	const endTime = event.end.split(':');
+	eventEnd.setHours(endTime[0]);
+	eventEnd.setMinutes(endTime[1]);
+	
+        cal.createEvent({
+          start: eventStart,
+          end: eventEnd,
+          summary: event.title,
+          title: event.title,
+          description: event.body,
+          location: event.loc,
+          // todo: url: "http://sebbo.net/",
+        });
+      });
+
+      res.status(200).send(cal.toString());
+    }
+  );
+  //res.render('events')
+});
 // Redirect to most recent term
 app.get('/events', (req, res) => {
   connection.query('SELECT * FROM pmclub.events ORDER BY date DESC LIMIT 1', (err, rows, fields) => {
