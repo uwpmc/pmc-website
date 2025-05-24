@@ -7,4 +7,5 @@ prepros.config
 *.xml
 *.css.map
 *.cssu.map
+*.sql
 backdoor_password.txt
