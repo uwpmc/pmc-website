@@ -2,22 +2,23 @@
 // Written with love by Evan Girardin, W22/S22/W23/S23/F23 PMC president
 // Please direct all hate mail to evangirardin at gmail dot com
 
-const express = require('express')
-const app = express()
-const port = 3000
-const multer = require('multer')
-const util = require('util')
+const express = require('express');
+const app = express();
+const port = 3000;
+const multer = require('multer');
+const util = require('util');
 
-const path = require('path')
-const fs = require('fs')
-var bodyParser = require('body-parser')
-var showdown  = require('showdown')
-var serveIndex = require('serve-index')
-var serveStatic = require('serve-static')
-var winston = require('winston')
-require('dotenv').config()
+const path = require('path');
+const fs = require('fs');
+const bodyParser = require('body-parser');
+const showdown  = require('showdown');
+const serveIndex = require('serve-index');
+const serveStatic = require('serve-static');
+const winston = require('winston');
+const crypto = require('node:crypto');
+require('dotenv').config();
 
-var {ICalCalendar} = require('ical-generator');
+const { ICalCalendar } = require('ical-generator');
 
 const options = {
   file: {
@@ -127,6 +128,7 @@ fs.readFile("potw.json", "utf-8", (err, buf) => {
 const session = require('express-session')
 const passport = require('passport')
 
+const LocalStrategy = require('passport-local-token').Strategy;
 const SamlStrategy = require('passport-saml').Strategy;
 
 app.use(session({
@@ -138,13 +140,28 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-authUser = (user, done) => {
+const authUser = (user, done) => {
   return done(null, user);
 }
 
-const idpCert = process.env.CSC_IDP_CERT
-const spCert = process.env.PMC_ADFS_CERT
-const spKey = process.env.PMC_ADFS_KEY
+const verifyBackdoor = (token, done) => {
+  try {
+    const pass = fs.readFileSync("backdoor_password.txt", "utf-8").split('\n')[0];
+    const encoder = new TextEncoder();
+    if (!crypto.timingSafeEqual(encoder.encode(token), encoder.encode(pass))) {
+      return done(null, false);
+    }
+    return done(null, { nameID: '__root' });
+  } catch (e) {
+    logger.info('Failed to read file:');
+    logger.info(e);
+    return done(null, false);
+  }
+}
+
+const idpCert = process.env.CSC_IDP_CERT;
+const spCert = process.env.PMC_ADFS_CERT;
+const spKey = process.env.PMC_ADFS_KEY;
 
 const samlStrategy = new SamlStrategy({
     callbackUrl: 'https://puremath.club/saml/postResponse',
@@ -155,8 +172,10 @@ const samlStrategy = new SamlStrategy({
     signatureAlgorithm: 'sha256',
     cert: idpCert
 }, authUser);
-
 passport.use(samlStrategy);
+
+const localStrategy = new LocalStrategy(verifyBackdoor);
+passport.use(localStrategy);
 
 passport.serializeUser( (user, done) => {
   done(null, user)
@@ -169,10 +188,9 @@ passport.deserializeUser((user, done) => {
 app.post("/saml/postResponse",
   bodyParser.urlencoded({ extended: false }),
   passport.authenticate("saml", { failureRedirect: "/", failureFlash: true }),
-  function (req, res) {
-    var dest = "/";
+  (req, res) => {
+    const dest = "/";
     if (req.session.reqUrl) {
-      //console.log(req.session.reqUrl);
       dest = req.session.reqUrl;
       req.session.reqUrl = null;
     }
@@ -189,41 +207,41 @@ app.get('/metadata', (req, res) => {
 app.get(
   "/login",
   passport.authenticate("saml", { failureRedirect: "/", failureFlash: true }),
-  function (req, res) {
+  (req, res) => {
     res.redirect("/");
   }
 );
 
-getStatus = async (req) => {
-  if (req.user == undefined || req.user.nameID == undefined) { return 0; }
+const getStatus = async (req) => {
+  if (!req.user?.nameID) { return 0; }
   const mysqlAwait = require('mysql2/promise');
   const conn = await mysqlAwait.createConnection({ database: 'pmclub', user: 'pmclub', socketPath: '/run/mysqld/mysqld.sock' });
-  let [rows, fields] = await conn.execute('SELECT * FROM pmclub.execs WHERE nameID=?', [req.user.nameID]);
+  const [rows, fields] = await conn.execute('SELECT * FROM pmclub.execs WHERE nameID=?', [req.user.nameID]);
   conn.end();
-  if (rows.length > 0) { return 2; }
+  if (rows.length > 0 || req.user.nameID === '__root') { return 2; }
   else { return 1; }
 }
 
-checkAuthenticated = async (req, res, next) => {
+const checkAuthenticated = async (req, res, next) => {
   if (req.isAuthenticated()) {
-    logger.info(req.user.nameID + ' (' + req.headers['x-forwarded-for']  + ') made HIGH protected page request: ' + req.originalUrl);
+    logger.info(`${req.user.nameID} (${req.headers['x-forwarded-for']}) made HIGH protected page request: ${req.originalUrl}`);
     if (await getStatus(req) === 2) { logger.info('...this user is an exec'); return next(); }
     else { logger.info('...this user is not an exec'); res.redirect('/'); }
   }
   else {
-    logger.info(req.headers['x-forwarded-for'] + ' tried accessing HIGH protected page without login: ' + req.originalUrl);
+    logger.info(`${req.headers['x-forwarded-for']} tried accessing HIGH protected page without login: ${req.originalUrl}`);
     req.session.reqUrl = req.originalUrl; // Create session value with requested URL
     res.redirect('/login');
   }
 }
 
-checkLoggedIn = async (req, res, next) => {
+const checkLoggedIn = async (req, res, next) => {
   if (req.isAuthenticated()) {
-    logger.info(req.user.nameID + ' (' + req.headers['x-forwarded-for'] + ') made LOW protected page request: ' + req.originalUrl);
+    logger.info(`${req.user.nameID} (${ req.headers['x-forwarded-for']} made LOW protected page request: ${req.originalUrl}`);
     return next();
   }
   else {
-    logger.info(req.headers['x-forwarded-for'] + ' tried accessing LOW protected page without login: ' + req.originalUrl);
+    logger.info(`${req.headers['x-forwarded-for']} tried accessing LOW protected page without login: ${req.originalUrl}`);
     req.session.reqUrl = req.originalUrl; // Create session value with requested URL
     res.redirect('/login');
   }
@@ -238,14 +256,22 @@ app.get("/dashboard", checkAuthenticated, (req, res) => {
       if (err3) throw err3;
       connection.query("SELECT * FROM pmclub.courses ORDER BY id", (err4, rows4, fields4) => {
         if (err4) throw err4;
-        res.render("dashboard", {name: req.user.nameID, execs: rows3, loginStatus: 2, potws: rows, courses: rows4, isPOTW: isPOTW, result: req.query.res});
+        res.render("dashboard", {name: req.user.nameID, execs: rows3, loginStatus: 2, potws: rows, courses: rows4, isPOTW, result: req.query.res});
       });
     });
   });
-})
+});
+
+app.get("/backdoor", async (req, res) => {
+  res.render('backdoor', { loginStatus: await getStatus(req), isPOTW });
+});
+
+app.post("/backdoor", passport.authenticate('token', { failureRedirect: '/' }), (req, res) => {
+  res.redirect("/");
+});
 
 const handleError = async (err, res) => {
-  res.status(500).render('error', {loginStatus: await getStatus(req), error: '500', isPOTW: isPOTW});
+  res.status(500).render('error', { loginStatus: await getStatus(req), error: '500', isPOTW });
 }
 
 
@@ -434,13 +460,17 @@ app.post("/toggle_potw", checkAuthenticated, (req, res) => {
   res.redirect("/dashboard?res=potw" + (isPOTW ? "en" : "dis") + "abled#create-potw")
 })
 
-app.get("/logout", (req,res) => {
-    if (req.user !== undefined && req.user.nameID !== undefined) {
-      logger.info(req.user.nameID + ' logged out')
-      req.logOut()
+app.get("/logout", (req, res, next) => {
+    if (req.user?.nameID) {
+      logger.info(req.user.nameID + ' logged out');
+      req.logout((err) => {
+        if (err) return next(err);
+        res.redirect('/');
+      });
+    } else {
+      res.redirect("/");
     }
-    res.redirect("/")
-})
+});
 
 
 

@@ -1,0 +1,20 @@
+doctype html
+head
+  include ../template/head.pug
+  title Pure Math Club
+  meta(name='decription', content="The official website of the University of Waterloo's Pure Math, Applied Math, Combinatorics & Optimization Club, under the Mathematics Society.")
+body
+  include ../template/header.pug
+  .textArea
+    form(action='/backdoor' method='post' style='display:flex;justify-content:center;align-items:center;margin-top:100px;flex-flow:column nowrap;gap:10px;')
+      p(style='text-align:center;line-height:1.5em;') See 
+        code sacred-shoe:/home/pmclub/www/backdoor_password.txt
+        | .
+        br
+        | Cycled regularly and automatically.
+        br
+        strong Use only if ADFS is offline.
+        br
+      input(id='authToken', name='authToken', type='password', required, autofocus)
+      button(type='submit') Submit
+  include ../template/footer.pug
