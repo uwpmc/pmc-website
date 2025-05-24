@@ -54,7 +54,7 @@ const logger = winston.createLogger({
 });
 
 // Showdown extension to wrap images in containers
-const imgWrapper = function (converter) {
+const imgWrapper = (converter) => {
   return [
     {
       type: "output",
@@ -73,13 +73,13 @@ showdown.extension("imgWrapper", imgWrapper);
     (details -- this can span many lines)
     <:
 */
-const hidden = function (converter) {
+const hidden = (converter) => {
   return [
     {
       type: "lang",
-      filter: function (text, converter, options) {
+      filter: (text, converter, options) => {
         const mainRegex = new RegExp("(^:>(.*\n)*?(<:\n))", "gm");
-        text = text.replace(mainRegex, function (match, content) {
+        text = text.replace(mainRegex, (match, content) => {
           const summary = content
             .split("\n")[0]
             .replace(/^([ \t]*):>([ \t])?/gm, ""); // only first line
@@ -683,11 +683,11 @@ Date.prototype.yyyymmdd = function () {
     (dd > 9 ? "" : "0") + dd,
   ].join("");
 };
-function getTerm(date) {
+const getTerm = (date) => {
   // date given as yyyy-mm-dd
   const month = parseInt(date.slice(4, 6));
   return (month < 5 ? "w" : month < 9 ? "s" : "f") + date.slice(2, 4);
-}
+};
 app.get("/events/calendar", (req, res) => {
   connection.query(
     "SELECT * FROM pmclub.events WHERE date >= CURDATE()",
@@ -770,7 +770,7 @@ app.get("/courses", (req, res) => {
       res.render("courses", {
         loginStatus: await getStatus(req),
         isPOTW: isPOTW,
-        courses: rows.map((body) => converter.makeHtml(body)),
+        courses: rows.map((i) => ({ ...i, body: converter.makeHtml(i.body) })),
       });
     },
   );
@@ -786,7 +786,7 @@ app.get("/history", async (req, res) => {
   res.render("history", { loginStatus: await getStatus(req), isPOTW: isPOTW });
 });
 
-function getIneq(term) {
+const getIneq = (term) => {
   let str = "20" + term.slice(1, 3) + "-0";
   if (term[0] == "w") {
     str += "1";
@@ -808,7 +808,7 @@ function getIneq(term) {
     str += "12-31";
   }
   return str;
-}
+};
 
 app.get("/events/:term", async (req, res) => {
   const t = req.params.term;
@@ -833,7 +833,7 @@ app.get("/events/:term", async (req, res) => {
       const converter = new showdown.Converter();
       res.render("event", {
         loginStatus: await getStatus(req),
-        posts: rows.map((body) => converter.makeHtml(body)),
+        posts: rows.map((i) => ({ ...i, body: converter.makeHtml(i.body) })),
         reqTerm: req.params.term,
         isPOTW: isPOTW,
       });
@@ -858,7 +858,7 @@ app.get("/potw", async (req, res) => {
       const converter = new showdown.Converter();
       res.render("potw", {
         loginStatus: await getStatus(req),
-        potws: rows.map((body) => converter.makeHtml(body)),
+        potws: rows.map((i) => ({ ...i, body: converter.makeHtml(i.body) })),
         isPOTW: isPOTW,
       });
     },
@@ -879,7 +879,7 @@ app.get("/history", async (req, res) => {
   res.render("history", { loginStatus: await getStatus(req), isPOTW: isPOTW });
 });
 
-app.use(async function (req, res, next) {
+app.use(async (req, res, next) => {
   res.status(404);
   res.render("error", {
     loginStatus: await getStatus(req),
@@ -888,7 +888,7 @@ app.use(async function (req, res, next) {
   });
 });
 
-app.use(async function (err, req, res, next) {
+app.use(async (err, req, res, next) => {
   res.status(500);
   logger.info(err);
   res.render("error", {
@@ -908,13 +908,13 @@ const server = app.listen(port, () => {
   logger.info("");
 });
 
-function shutdown() {
+const shutdown = () => {
   logger.info("Kill signal received -- shutting down now");
   server.close(() => {
     connection.end();
     process.exit(0);
   });
-}
+};
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
