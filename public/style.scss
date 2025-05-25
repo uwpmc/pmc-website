@@ -1,7 +1,8 @@
 html {
   scroll-behavior: smooth;
 }
-html, body {
+html,
+body {
   min-height: 100vh;
 }
 body {
@@ -19,8 +20,14 @@ body {
   hyphens: auto;
   word-wrap: break-word;
 }
-p, li, ul, td, th, label, summary {
-  font-family: 'Roboto', 'Arial', sans-serif;
+p,
+li,
+ul,
+td,
+th,
+label,
+summary {
+  font-family: "Roboto", "Arial", sans-serif;
 }
 h1 {
   font-size: 24pt;
@@ -51,7 +58,7 @@ h4 {
 p {
   margin: 0;
   color: #161616;
-  font-family: 'Roboto', 'Arial', sans-serif;
+  font-family: "Roboto", "Arial", sans-serif;
   //padding: 0;
 }
 li {
@@ -155,9 +162,10 @@ nav {
   height: 2px;
   position: relative;
   width: 24px;
-  &::before, &::after {
+  &::before,
+  &::after {
     background-color: #161616;
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     transition: all 0.2s ease-out;
@@ -190,18 +198,23 @@ blockquote {
   background-color: #f9f9f9;
   padding: 1rem;
   border-left: 10px solid #ccc;
-  quotes: "\201C""\201D""\2018""\2019";
+  quotes: "\201C" "\201D" "\2018" "\2019";
 }
 pre {
   background-color: #f9f9f9;
   margin: 1rem;
   padding: 1rem;
 }
-code, pre {
-  font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+code,
+pre {
+  font-family:
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 }
 .CodeMirror pre * {
-  font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-family:
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 }
 summary {
   cursor: pointer;
@@ -212,7 +225,6 @@ details {
     padding-left: 0 !important;
   }
 }
-
 
 .navStuff {
   display: flex;
@@ -257,7 +269,8 @@ a {
   margin: 0 0.35rem;
   transition: transform 0.2s ease;
 }
-.socials a:hover, .socials a:focus-within {
+.socials a:hover,
+.socials a:focus-within {
   transform: rotate(-15deg);
 }
 .header {
@@ -275,7 +288,7 @@ a {
 }
 .headerAlt {
   margin: auto;
-  max-width: min(80rem,100%);
+  max-width: min(80rem, 100%);
   width: 100%;
   //background-blend-mode: normal;
   //background-size: cover;
@@ -307,7 +320,8 @@ a {
   font-size: 13pt;
   color: #161616;
   transition: color 0.15s ease;
-  &:hover, &:focus-within {
+  &:hover,
+  &:focus-within {
     color: #db2323;
   }
 }
@@ -325,7 +339,9 @@ a {
   h4 {
     font-size: 10pt !important;
   }
-  p, td, th {
+  p,
+  td,
+  th {
     font-size: 10pt !important;
   }
   .eventItem p {
@@ -353,8 +369,12 @@ a {
   li {
     font-size: 10pt;
   }
-  #constitution, #courses, form[action="/update_courses"] .EasyMDEContainer, form[action="/update_const"] .EasyMDEContainer {
-    & li, & ul {
+  #constitution,
+  #courses,
+  form[action="/update_courses"] .EasyMDEContainer,
+  form[action="/update_const"] .EasyMDEContainer {
+    & li,
+    & ul {
       font-size: 10pt !important;
     }
   }
@@ -383,7 +403,9 @@ a {
 
 #list {
   max-height: 999999px;
-  transition: max-height 0.2s ease, opacity 0.2s ease;
+  transition:
+    max-height 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .courseDesc {
@@ -396,7 +418,9 @@ a {
   overflow-y: clip; // hidden breaks things
   display: flow-root; // ! very important; starts a new formatting context
 
-  transition: max-height 0.2s ease, opacity 0.2s ease;
+  transition:
+    max-height 0.2s ease,
+    opacity 0.2s ease;
   max-height: 0;
   opacity: 0;
 }
@@ -425,7 +449,9 @@ a {
         overflow-y: clip; // hidden breaks things
         display: flow-root; // ! very important; starts a new formatting context
 
-        transition: max-height 0.2s ease, opacity 0.2s ease;
+        transition:
+          max-height 0.2s ease,
+          opacity 0.2s ease;
         max-height: 0;
         opacity: 0;
         & > .back {
@@ -436,7 +462,8 @@ a {
           & svg {
             //transition: transform 0.2s ease;
           }
-          &:hover svg, &:focus-within svg {
+          &:hover svg,
+          &:focus-within svg {
             //transform: translateX(-0.5rem);
           }
         }
@@ -450,7 +477,9 @@ a {
           background-size: cover;
           border-radius: 0 1rem 1rem 0;
           box-shadow: 0 0 10px #444;
-          & h1, & h2, & h3 {
+          & h1,
+          & h2,
+          & h3 {
             text-shadow: 0 0 20px #333;
             margin: 0.5rem !important;
           }
@@ -487,7 +516,7 @@ a {
         & p {
           font-size: 13pt;
           padding-left: 0;
-	        margin-bottom: 1rem;
+          margin-bottom: 1rem;
         }
         & summary {
           font-size: 13pt;
@@ -498,13 +527,16 @@ a {
         & table {
           margin: 1rem;
         }
-        & h1, & h2, & h3 {
+        & h1,
+        & h2,
+        & h3 {
           margin: 0 0 1rem 0;
         }
         & li {
           margin-bottom: 0.25rem;
         }
-        & ul, & ol {
+        & ul,
+        & ol {
           margin-bottom: 1rem;
         }
       }
@@ -516,7 +548,7 @@ a {
   //width: 60%;
   padding: 0 2rem;
   //max-width: 65rem;
-  width: min(65rem,100%);
+  width: min(65rem, 100%);
   margin: auto;
   margin-top: 0;
   position: relative;
@@ -528,7 +560,8 @@ a {
     //border-spacing: 2px;
     border-color: #ccc;
     margin: 1rem 0;
-    & thead, & tbody {
+    & thead,
+    & tbody {
       display: table-header-group;
       vertical-align: middle;
       border-color: inherit;
@@ -549,7 +582,8 @@ a {
         background-color: #dedede;
       }
     }
-    & thead tr th, & tbody tr td {
+    & thead tr th,
+    & tbody tr td {
       border: 1px solid #ccc;
       padding: 1rem;
       display: table-cell;
@@ -601,7 +635,8 @@ a {
   background-image: linear-gradient(#eb635eee, #ed925cce);
   transition: background-image 0.2s ease;
 
-  &:hover .potwImg, &:focus-within .potwImg {
+  &:hover .potwImg,
+  &:focus-within .potwImg {
     transform: scale(1.07);
   }
   & .potwImg {
@@ -652,10 +687,12 @@ a {
   //max-width: 650px;
   flex-grow: 1;
   // Prevents CSS jitter
-  &:hover, &:focus-within {
+  &:hover,
+  &:focus-within {
     padding: 0 0 -10px 0;
   }
-  &:hover .eventItem, &:focus-within .eventItem {
+  &:hover .eventItem,
+  &:focus-within .eventItem {
     top: -10px;
   }
 }
@@ -672,7 +709,9 @@ a {
   //box-shadow: 0 0 15px 0 rgba(0,0,0,0.5);
   top: 0;
   //min-height: 30em;
-  transition: top ease 0.2s, margin ease 0.2s;
+  transition:
+    top ease 0.2s,
+    margin ease 0.2s;
   background-size: cover;
   background-position: center;
   & h2 {
@@ -686,17 +725,21 @@ a {
   flex-flow: column nowrap;
 }
 
-.button, input[type="submit"], input[type="reset"] {
-	background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
+.button,
+input[type="submit"],
+input[type="reset"] {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 #edit_results_box-type {
-  & input:not([type='text']), & button, & select {
+  & input:not([type="text"]),
+  & button,
+  & select {
     display: block;
     margin: auto;
   }
@@ -734,11 +777,13 @@ input[type="text"] {
   margin: 1em 0;
   color: inherit;
   transition: filter 0.2s ease;
-  &:hover, &:focus-within {
+  &:hover,
+  &:focus-within {
     filter: brightness(0.8);
   }
   &#back {
-    &:hover, &:focus-within {
+    &:hover,
+    &:focus-within {
       filter: brightness(1.1);
     }
   }
@@ -766,7 +811,7 @@ input[type="text"] {
   & img {
     margin: 1.5em;
     object-fit: cover;
-    width: min(250px,30%);
+    width: min(250px, 30%);
     flex-grow: 1;
     height: 20em;
     border-radius: 0.5rem;
@@ -800,7 +845,8 @@ input[type="text"] {
     margin-left: auto;
   }
 }
-a.eventsTerm:posts, a.eventsTerm:focus-within {
+a.eventsTerm:posts,
+a.eventsTerm:focus-within {
   filter: brightness(1.5);
   text-decoration: underline;
 }
@@ -814,16 +860,21 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   padding-left: 2em;
   padding-right: 2em;
   background-color: #db2323;
-  &:hover, &:focus-within {
+  &:hover,
+  &:focus-within {
     filter: brightness(1.2);
   }
 }
-#constitution, #courses, form[action="/update_courses"] .EasyMDEContainer, form[action="/update_const"] .EasyMDEContainer {
+#constitution,
+#courses,
+form[action="/update_courses"] .EasyMDEContainer,
+form[action="/update_const"] .EasyMDEContainer {
   padding: 2rem 2rem;
   & li {
     margin-bottom: 0.25rem;
   }
-  & ul, & ol {
+  & ul,
+  & ol {
     margin-bottom: 1rem;
   }
   & h1 {
@@ -853,8 +904,10 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     margin: 1rem;
   }
 }
-#courses, form[action="/update_courses"] .EasyMDEContainer {
-  & h1, & h2 {
+#courses,
+form[action="/update_courses"] .EasyMDEContainer {
+  & h1,
+  & h2 {
     padding: 0.5rem;
     background-color: #db2323;
     color: #fff;
@@ -873,10 +926,11 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     white-space: nowrap;
     text-align: center;
     & a {
-      font-family: 'Roboto', 'Arial', sans-serif;
+      font-family: "Roboto", "Arial", sans-serif;
       font-size: 14pt;
       font-weight: 500;
-      &:hover, &:focus-within {
+      &:hover,
+      &:focus-within {
         text-decoration: underline;
       }
     }
@@ -886,7 +940,8 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
 .EasyMDEContainer {
   padding: 0 !important;
 }
-.longEventContainer, .longPotwContainer {
+.longEventContainer,
+.longPotwContainer {
   position: relative;
   width: 100%;
   display: flex;
@@ -899,7 +954,9 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     position: relative;
     max-height: auto;
     margin-bottom: 0;
-    transition: max-height 0.2s ease, margin-bottom 0.2s ease;
+    transition:
+      max-height 0.2s ease,
+      margin-bottom 0.2s ease;
     border-left: 3px solid #db2323;
     background-color: #f8f8f8;
     & .descBody {
@@ -925,18 +982,22 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     }
   }
 }
-.longEventItem, .longPotwItem {
+.longEventItem,
+.longPotwItem {
   position: relative;
   width: 100%;
-  display:block;
+  display: block;
   color: inherit;
   background-color: #f8f8f8;
-  transition: background-color 0.2s ease, border-left 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-left 0.2s ease;
   padding: 0.5em 1em;
   overflow: hidden;
   &.dead {
     border-left: 6px solid #444;
-    &:hover, &:focus-within {
+    &:hover,
+    &:focus-within {
       background-color: #ddd;
       border-left: 14px solid #444;
     }
@@ -946,7 +1007,8 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   }
   &.alive {
     border-left: 6px solid #db2323;
-    &:hover, &:focus-within {
+    &:hover,
+    &:focus-within {
       background-color: #ddd;
       border-left: 14px solid #db2323;
     }
@@ -975,7 +1037,9 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
     font-size: 13pt;
     margin: 0;
   }
-  & .description h1, & .description h2, & .description h3 {
+  & .description h1,
+  & .description h2,
+  & .description h3 {
     padding: 1em 0 0 0;
     margin: 0;
   }
@@ -1033,11 +1097,15 @@ input:checked + .slider:before {
     overflow: hidden;
     max-height: 0;
     opacity: 0;
-    transition: max-height 0.25s ease, opacity 0.25s ease;
+    transition:
+      max-height 0.25s ease,
+      opacity 0.25s ease;
     &#frontmatter-body {
       max-height: 99999px;
       opacity: 1;
-      transition: max-height 0.25s ease 0.25s, opacity 0.25s ease 0.25s;
+      transition:
+        max-height 0.25s ease 0.25s,
+        opacity 0.25s ease 0.25s;
     }
     & table {
       table-layout: fixed;
@@ -1072,7 +1140,8 @@ input:checked + .slider:before {
   margin: 0;
   padding-left: 6px;
   position: absolute;
-  transform: translate(-120%, 0); margin: 3em 0 0 0;
+  transform: translate(-120%, 0);
+  margin: 3em 0 0 0;
 }
 .bigbutton {
   width: auto;
@@ -1098,7 +1167,8 @@ input:checked + .slider:before {
     transition: opacity 0.1s ease-out;
   }
   z-index: 25;
-  &::before, & .active {
+  &::before,
+  & .active {
     content: "";
     position: absolute;
     top: 0;
@@ -1143,7 +1213,7 @@ input:checked + .slider:before {
   overflow: hidden;
   & .item {
     position: relative;
-    font-family: 'Roboto', 'Arial', sans-serif;
+    font-family: "Roboto", "Arial", sans-serif;
     font-weight: 600;
     font-size: 16pt;
     padding: 1rem;
@@ -1152,7 +1222,8 @@ input:checked + .slider:before {
     transition: color 0.3s ease;
     overflow: hidden;
     z-index: 25;
-    &::before, & .active {
+    &::before,
+    & .active {
       content: "";
       position: absolute;
       top: 0;
@@ -1181,9 +1252,9 @@ input:checked + .slider:before {
 
 @viewport {
   width: device-width;
-  zoom: 1.0;
+  zoom: 1;
 }
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1500px) {
   .dashMenuContainer {
     position: relative;
     transform: translate(0);

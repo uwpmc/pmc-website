@@ -3,7 +3,8 @@ html {
   scroll-behavior: smooth;
 }
 
-html, body {
+html,
+body {
   min-height: 100vh;
 }
 
@@ -24,7 +25,13 @@ body {
   word-wrap: break-word;
 }
 
-p, li, ul, td, th, label, summary {
+p,
+li,
+ul,
+td,
+th,
+label,
+summary {
   font-family: "Roboto", "Arial", sans-serif;
 }
 
@@ -169,7 +176,8 @@ nav {
   position: relative;
   width: 24px;
 }
-.hamb-line::before, .hamb-line::after {
+.hamb-line::before,
+.hamb-line::after {
   background-color: #161616;
   content: "";
   display: block;
@@ -212,12 +220,17 @@ pre {
   padding: 1rem;
 }
 
-code, pre {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+code,
+pre {
+  font-family:
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 }
 
 .CodeMirror pre * {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family:
+    SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
 }
 
 summary {
@@ -278,7 +291,8 @@ a {
   transition: transform 0.2s ease;
 }
 
-.socials a:hover, .socials a:focus-within {
+.socials a:hover,
+.socials a:focus-within {
   transform: rotate(-15deg);
 }
 
@@ -322,7 +336,8 @@ a {
   color: #161616;
   transition: color 0.15s ease;
 }
-.navItem:hover, .navItem:focus-within {
+.navItem:hover,
+.navItem:focus-within {
   color: #db2323;
 }
 
@@ -339,7 +354,9 @@ a {
   h4 {
     font-size: 10pt !important;
   }
-  p, td, th {
+  p,
+  td,
+  th {
     font-size: 10pt !important;
   }
   .eventItem p {
@@ -366,7 +383,14 @@ a {
   li {
     font-size: 10pt;
   }
-  #constitution li, #constitution ul, #courses li, #courses ul, form[action="/update_courses"] .EasyMDEContainer li, form[action="/update_courses"] .EasyMDEContainer ul, form[action="/update_const"] .EasyMDEContainer li, form[action="/update_const"] .EasyMDEContainer ul {
+  #constitution li,
+  #constitution ul,
+  #courses li,
+  #courses ul,
+  form[action="/update_courses"] .EasyMDEContainer li,
+  form[action="/update_courses"] .EasyMDEContainer ul,
+  form[action="/update_const"] .EasyMDEContainer li,
+  form[action="/update_const"] .EasyMDEContainer ul {
     font-size: 10pt !important;
   }
   .socials {
@@ -392,7 +416,9 @@ a {
 }
 #list {
   max-height: 999999px;
-  transition: max-height 0.2s ease, opacity 0.2s ease;
+  transition:
+    max-height 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .courseDesc {
@@ -404,7 +430,9 @@ a {
   padding: 0;
   overflow-y: clip;
   display: flow-root;
-  transition: max-height 0.2s ease, opacity 0.2s ease;
+  transition:
+    max-height 0.2s ease,
+    opacity 0.2s ease;
   max-height: 0;
   opacity: 0;
 }
@@ -435,7 +463,9 @@ a {
   padding: 0;
   overflow-y: clip;
   display: flow-root;
-  transition: max-height 0.2s ease, opacity 0.2s ease;
+  transition:
+    max-height 0.2s ease,
+    opacity 0.2s ease;
   max-height: 0;
   opacity: 0;
 }
@@ -455,7 +485,9 @@ a {
   border-radius: 0 1rem 1rem 0;
   box-shadow: 0 0 10px #444;
 }
-.switcheroo .table .row .textArea .subText .title h1, .switcheroo .table .row .textArea .subText .title h2, .switcheroo .table .row .textArea .subText .title h3 {
+.switcheroo .table .row .textArea .subText .title h1,
+.switcheroo .table .row .textArea .subText .title h2,
+.switcheroo .table .row .textArea .subText .title h3 {
   text-shadow: 0 0 20px #333;
   margin: 0.5rem !important;
 }
@@ -500,13 +532,16 @@ a {
 .switcheroo .table .row .textArea .subText table {
   margin: 1rem;
 }
-.switcheroo .table .row .textArea .subText h1, .switcheroo .table .row .textArea .subText h2, .switcheroo .table .row .textArea .subText h3 {
+.switcheroo .table .row .textArea .subText h1,
+.switcheroo .table .row .textArea .subText h2,
+.switcheroo .table .row .textArea .subText h3 {
   margin: 0 0 1rem 0;
 }
 .switcheroo .table .row .textArea .subText li {
   margin-bottom: 0.25rem;
 }
-.switcheroo .table .row .textArea .subText ul, .switcheroo .table .row .textArea .subText ol {
+.switcheroo .table .row .textArea .subText ul,
+.switcheroo .table .row .textArea .subText ol {
   margin-bottom: 1rem;
 }
 
@@ -525,7 +560,8 @@ a {
   border-color: #ccc;
   margin: 1rem 0;
 }
-.textArea table thead, .textArea table tbody {
+.textArea table thead,
+.textArea table tbody {
   display: table-header-group;
   vertical-align: middle;
   border-color: inherit;
@@ -546,13 +582,15 @@ a {
   text-align: center;
   background-color: #dedede;
 }
-.textArea table thead tr th, .textArea table tbody tr td {
+.textArea table thead tr th,
+.textArea table tbody tr td {
   border: 1px solid #ccc;
   padding: 1rem;
   display: table-cell;
   vertical-align: inherit;
 }
-.textArea table thead tr th.defunct, .textArea table tbody tr td.defunct {
+.textArea table thead tr th.defunct,
+.textArea table tbody tr td.defunct {
   background-color: #ddd;
 }
 .textArea table tbody tr td {
@@ -562,7 +600,8 @@ a {
   padding: 1rem 0;
 }
 
-.eventContainer, .potwContainer {
+.eventContainer,
+.potwContainer {
   width: 100%;
   position: relative;
   display: flex;
@@ -588,10 +627,14 @@ a {
   flex-shrink: 3;
   overflow: hidden;
   background-size: cover;
-  background-image: linear-gradient(rgba(235, 99, 94, 0.9333333333), rgba(237, 146, 92, 0.8078431373));
+  background-image: linear-gradient(
+    rgba(235, 99, 94, 0.9333333333),
+    rgba(237, 146, 92, 0.8078431373)
+  );
   transition: background-image 0.2s ease;
 }
-.potwItem:hover .potwImg, .potwItem:focus-within .potwImg {
+.potwItem:hover .potwImg,
+.potwItem:focus-within .potwImg {
   transform: scale(1.07);
 }
 .potwItem .potwImg {
@@ -639,10 +682,12 @@ a {
 .eventItemHoverBuffer {
   flex-grow: 1;
 }
-.eventItemHoverBuffer:hover, .eventItemHoverBuffer:focus-within {
+.eventItemHoverBuffer:hover,
+.eventItemHoverBuffer:focus-within {
   padding: 0 0 -10px 0;
 }
-.eventItemHoverBuffer:hover .eventItem, .eventItemHoverBuffer:focus-within .eventItem {
+.eventItemHoverBuffer:hover .eventItem,
+.eventItemHoverBuffer:focus-within .eventItem {
   top: -10px;
 }
 
@@ -654,7 +699,9 @@ a {
   border-radius: 0.5rem;
   overflow: hidden;
   top: 0;
-  transition: top ease 0.2s, margin ease 0.2s;
+  transition:
+    top ease 0.2s,
+    margin ease 0.2s;
   background-size: cover;
   background-position: center;
   display: flex;
@@ -668,7 +715,9 @@ a {
   font-size: 15pt;
 }
 
-.button, input[type=submit], input[type=reset] {
+.button,
+input[type="submit"],
+input[type="reset"] {
   background: none;
   color: inherit;
   border: none;
@@ -678,12 +727,14 @@ a {
   outline: inherit;
 }
 
-#edit_results_box-type input:not([type=text]), #edit_results_box-type button, #edit_results_box-type select {
+#edit_results_box-type input:not([type="text"]),
+#edit_results_box-type button,
+#edit_results_box-type select {
   display: block;
   margin: auto;
 }
 
-input[type=text] {
+input[type="text"] {
   padding: 1px 2px;
   background-color: #fff;
   border: inset 1px #aaa;
@@ -716,10 +767,12 @@ input[type=text] {
   color: inherit;
   transition: filter 0.2s ease;
 }
-.button:hover, .button:focus-within {
+.button:hover,
+.button:focus-within {
   filter: brightness(0.8);
 }
-.button#back:hover, .button#back:focus-within {
+.button#back:hover,
+.button#back:focus-within {
   filter: brightness(1.1);
 }
 
@@ -784,7 +837,8 @@ input[type=text] {
   margin-left: auto;
 }
 
-a.eventsTerm:posts, a.eventsTerm:focus-within {
+a.eventsTerm:posts,
+a.eventsTerm:focus-within {
   filter: brightness(1.5);
   text-decoration: underline;
 }
@@ -801,47 +855,85 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   padding-right: 2em;
   background-color: #db2323;
 }
-#subscribe:hover, #subscribe:focus-within {
+#subscribe:hover,
+#subscribe:focus-within {
   filter: brightness(1.2);
 }
 
-#constitution, #courses, form[action="/update_courses"] .EasyMDEContainer, form[action="/update_const"] .EasyMDEContainer {
+#constitution,
+#courses,
+form[action="/update_courses"] .EasyMDEContainer,
+form[action="/update_const"] .EasyMDEContainer {
   padding: 2rem 2rem;
 }
-#constitution li, #courses li, form[action="/update_courses"] .EasyMDEContainer li, form[action="/update_const"] .EasyMDEContainer li {
+#constitution li,
+#courses li,
+form[action="/update_courses"] .EasyMDEContainer li,
+form[action="/update_const"] .EasyMDEContainer li {
   margin-bottom: 0.25rem;
 }
-#constitution ul, #constitution ol, #courses ul, #courses ol, form[action="/update_courses"] .EasyMDEContainer ul, form[action="/update_courses"] .EasyMDEContainer ol, form[action="/update_const"] .EasyMDEContainer ul, form[action="/update_const"] .EasyMDEContainer ol {
+#constitution ul,
+#constitution ol,
+#courses ul,
+#courses ol,
+form[action="/update_courses"] .EasyMDEContainer ul,
+form[action="/update_courses"] .EasyMDEContainer ol,
+form[action="/update_const"] .EasyMDEContainer ul,
+form[action="/update_const"] .EasyMDEContainer ol {
   margin-bottom: 1rem;
 }
-#constitution h1, #courses h1, form[action="/update_courses"] .EasyMDEContainer h1, form[action="/update_const"] .EasyMDEContainer h1 {
+#constitution h1,
+#courses h1,
+form[action="/update_courses"] .EasyMDEContainer h1,
+form[action="/update_const"] .EasyMDEContainer h1 {
   color: #db2323;
   margin: 0 0 1rem 0;
 }
-#constitution h2, #courses h2, form[action="/update_courses"] .EasyMDEContainer h2, form[action="/update_const"] .EasyMDEContainer h2 {
+#constitution h2,
+#courses h2,
+form[action="/update_courses"] .EasyMDEContainer h2,
+form[action="/update_const"] .EasyMDEContainer h2 {
   font-weight: 600;
   font-size: 20pt;
   color: #db2323;
 }
-#constitution h3, #courses h3, form[action="/update_courses"] .EasyMDEContainer h3, form[action="/update_const"] .EasyMDEContainer h3 {
+#constitution h3,
+#courses h3,
+form[action="/update_courses"] .EasyMDEContainer h3,
+form[action="/update_const"] .EasyMDEContainer h3 {
   color: #db2323;
 }
-#constitution p, #courses p, form[action="/update_courses"] .EasyMDEContainer p, form[action="/update_const"] .EasyMDEContainer p {
+#constitution p,
+#courses p,
+form[action="/update_courses"] .EasyMDEContainer p,
+form[action="/update_const"] .EasyMDEContainer p {
   font-size: 13pt;
   padding-left: 1rem;
   margin-bottom: 1rem;
 }
-#constitution li, #courses li, form[action="/update_courses"] .EasyMDEContainer li, form[action="/update_const"] .EasyMDEContainer li {
+#constitution li,
+#courses li,
+form[action="/update_courses"] .EasyMDEContainer li,
+form[action="/update_const"] .EasyMDEContainer li {
   font-size: 13pt;
 }
-#constitution summary, #courses summary, form[action="/update_courses"] .EasyMDEContainer summary, form[action="/update_const"] .EasyMDEContainer summary {
+#constitution summary,
+#courses summary,
+form[action="/update_courses"] .EasyMDEContainer summary,
+form[action="/update_const"] .EasyMDEContainer summary {
   font-size: 13pt;
 }
-#constitution table, #courses table, form[action="/update_courses"] .EasyMDEContainer table, form[action="/update_const"] .EasyMDEContainer table {
+#constitution table,
+#courses table,
+form[action="/update_courses"] .EasyMDEContainer table,
+form[action="/update_const"] .EasyMDEContainer table {
   margin: 1rem;
 }
 
-#courses h1, #courses h2, form[action="/update_courses"] .EasyMDEContainer h1, form[action="/update_courses"] .EasyMDEContainer h2 {
+#courses h1,
+#courses h2,
+form[action="/update_courses"] .EasyMDEContainer h1,
+form[action="/update_courses"] .EasyMDEContainer h2 {
   padding: 0.5rem;
   background-color: #db2323;
   color: #fff;
@@ -866,7 +958,8 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   font-size: 14pt;
   font-weight: 500;
 }
-.coursesNav .item a:hover, .coursesNav .item a:focus-within {
+.coursesNav .item a:hover,
+.coursesNav .item a:focus-within {
   text-decoration: underline;
 }
 
@@ -874,7 +967,8 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   padding: 0 !important;
 }
 
-.longEventContainer, .longPotwContainer {
+.longEventContainer,
+.longPotwContainer {
   position: relative;
   width: 100%;
   display: flex;
@@ -883,24 +977,30 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   align-items: stretch;
   overflow: hidden;
 }
-.longEventContainer .description, .longPotwContainer .description {
+.longEventContainer .description,
+.longPotwContainer .description {
   display: block;
   position: relative;
   max-height: auto;
   margin-bottom: 0;
-  transition: max-height 0.2s ease, margin-bottom 0.2s ease;
+  transition:
+    max-height 0.2s ease,
+    margin-bottom 0.2s ease;
   border-left: 3px solid #db2323;
   background-color: #f8f8f8;
 }
-.longEventContainer .description .descBody, .longPotwContainer .description .descBody {
+.longEventContainer .description .descBody,
+.longPotwContainer .description .descBody {
   padding-left: 2em;
   padding-right: 2em;
   padding-bottom: 2em;
 }
-.longEventContainer .description .descBody img, .longPotwContainer .description .descBody img {
+.longEventContainer .description .descBody img,
+.longPotwContainer .description .descBody img {
   width: 100%;
 }
-.longEventContainer .description .descImgHolder, .longPotwContainer .description .descImgHolder {
+.longEventContainer .description .descImgHolder,
+.longPotwContainer .description .descImgHolder {
   content: "";
   display: block;
   position: relative;
@@ -913,58 +1013,81 @@ a.eventsTerm:posts, a.eventsTerm:focus-within {
   width: 100%;
 }
 
-.longEventItem, .longPotwItem {
+.longEventItem,
+.longPotwItem {
   position: relative;
   width: 100%;
   display: block;
   color: inherit;
   background-color: #f8f8f8;
-  transition: background-color 0.2s ease, border-left 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-left 0.2s ease;
   padding: 0.5em 1em;
   overflow: hidden;
 }
-.longEventItem.dead, .longPotwItem.dead {
+.longEventItem.dead,
+.longPotwItem.dead {
   border-left: 6px solid #444;
 }
-.longEventItem.dead:hover, .longEventItem.dead:focus-within, .longPotwItem.dead:hover, .longPotwItem.dead:focus-within {
+.longEventItem.dead:hover,
+.longEventItem.dead:focus-within,
+.longPotwItem.dead:hover,
+.longPotwItem.dead:focus-within {
   background-color: #ddd;
   border-left: 14px solid #444;
 }
-.longEventItem.dead h2, .longPotwItem.dead h2 {
+.longEventItem.dead h2,
+.longPotwItem.dead h2 {
   color: #444;
 }
-.longEventItem.alive, .longPotwItem.alive {
+.longEventItem.alive,
+.longPotwItem.alive {
   border-left: 6px solid #db2323;
 }
-.longEventItem.alive:hover, .longEventItem.alive:focus-within, .longPotwItem.alive:hover, .longPotwItem.alive:focus-within {
+.longEventItem.alive:hover,
+.longEventItem.alive:focus-within,
+.longPotwItem.alive:hover,
+.longPotwItem.alive:focus-within {
   background-color: #ddd;
   border-left: 14px solid #db2323;
 }
-.longEventItem.alive h2, .longPotwItem.alive h2 {
+.longEventItem.alive h2,
+.longPotwItem.alive h2 {
   color: #db2323;
 }
-.longEventItem h2, .longPotwItem h2 {
+.longEventItem h2,
+.longPotwItem h2 {
   font-weight: 600;
   font-size: 20pt;
   margin: 0.25rem 0;
 }
-.longEventItem .description h2, .longPotwItem .description h2 {
+.longEventItem .description h2,
+.longPotwItem .description h2 {
   color: #000;
 }
-.longEventItem h3, .longPotwItem h3 {
+.longEventItem h3,
+.longPotwItem h3 {
   margin: 0.25rem 0;
   color: #000;
   font-size: 14pt;
 }
-.longEventItem .description h3, .longPotwItem .description h3 {
+.longEventItem .description h3,
+.longPotwItem .description h3 {
   color: #000;
 }
-.longEventItem .description p, .longPotwItem .description p {
+.longEventItem .description p,
+.longPotwItem .description p {
   padding: 1em 0 0 0;
   font-size: 13pt;
   margin: 0;
 }
-.longEventItem .description h1, .longEventItem .description h2, .longEventItem .description h3, .longPotwItem .description h1, .longPotwItem .description h2, .longPotwItem .description h3 {
+.longEventItem .description h1,
+.longEventItem .description h2,
+.longEventItem .description h3,
+.longPotwItem .description h1,
+.longPotwItem .description h2,
+.longPotwItem .description h3 {
   padding: 1em 0 0 0;
   margin: 0;
 }
@@ -1026,12 +1149,16 @@ input:checked + .slider:before {
   overflow: hidden;
   max-height: 0;
   opacity: 0;
-  transition: max-height 0.25s ease, opacity 0.25s ease;
+  transition:
+    max-height 0.25s ease,
+    opacity 0.25s ease;
 }
 .dashSwapper .dashSwapItem#frontmatter-body {
   max-height: 99999px;
   opacity: 1;
-  transition: max-height 0.25s ease 0.25s, opacity 0.25s ease 0.25s;
+  transition:
+    max-height 0.25s ease 0.25s,
+    opacity 0.25s ease 0.25s;
 }
 .dashSwapper .dashSwapItem table {
   table-layout: fixed;
@@ -1094,7 +1221,8 @@ input:checked + .slider:before {
   opacity: 0.5;
   transition: opacity 0.1s ease-out;
 }
-.bigbutton .eventItem::before, .bigbutton .eventItem .active {
+.bigbutton .eventItem::before,
+.bigbutton .eventItem .active {
   content: "";
   position: absolute;
   top: 0;
@@ -1149,7 +1277,8 @@ input:checked + .slider:before {
   overflow: hidden;
   z-index: 25;
 }
-.dashMenu .item::before, .dashMenu .item .active {
+.dashMenu .item::before,
+.dashMenu .item .active {
   content: "";
   position: absolute;
   top: 0;
@@ -1178,7 +1307,7 @@ input:checked + .slider:before {
   width: device-width;
   zoom: 1;
 }
-@media screen and (max-width: 1100px) {
+@media screen and (max-width: 1500px) {
   .dashMenuContainer {
     position: relative;
     transform: translate(0);
@@ -1248,5 +1377,3 @@ input:checked + .slider:before {
 tr.good {
   background-color: #cde0fa;
 }
-
-/*# sourceMappingURL=style.css.map */
