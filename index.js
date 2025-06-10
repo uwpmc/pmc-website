@@ -786,6 +786,10 @@ app.get("/history", async (req, res) => {
   res.render("history", { loginStatus: await getStatus(req), isPOTW: isPOTW });
 });
 
+app.get("/library", async (req, res) => {
+  res.render("library", { loginStatus: await getStatus(req), isPOTW: isPOTW });
+});
+
 const getIneq = (term) => {
   let str = "20" + term.slice(1, 3) + "-0";
   if (term[0] == "w") {
