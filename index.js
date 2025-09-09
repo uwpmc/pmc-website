@@ -786,8 +786,44 @@ app.get("/history", async (req, res) => {
   res.render("history", { loginStatus: await getStatus(req), isPOTW: isPOTW });
 });
 
+// Library
+app.get("/library/browse", async (req, res) => {
+  const converter = new showdown.Converter();
+  connection.query(
+    "SELECT books.*, COALESCE(sum(power(2, (book_topics.id - 1))), 0) AS book_topics FROM books JOIN book_topic_links ON book_topic_links.book_id = books.id JOIN book_topics ON book_topics.id = book_topic_links.topic_id GROUP BY books.id",
+    async (err, rows, fields) => {
+      if (err) {
+        throw err;
+      }
+      connection.query(
+        "SELECT * FROM pmclub.book_topics ORDER BY id",
+        async (err2, rows2, fields2) => {
+          if (err2) {
+            throw err2;
+          }
+          res.render("library-browse", {
+            loginStatus: await getStatus(req),
+            isPOTW: isPOTW,
+            books: rows.map((i) => ({
+              ...i,
+              body: converter.makeHtml(i.body),
+            })),
+            topics: rows2.map((i) => ({
+              ...i,
+              body: converter.makeHtml(i.body),
+            })),
+          });
+        },
+      );
+    },
+  );
+});
+
 app.get("/library", async (req, res) => {
-  res.render("library", { loginStatus: await getStatus(req), isPOTW: isPOTW });
+  res.render("library-about", {
+    loginStatus: await getStatus(req),
+    isPOTW: isPOTW,
+  });
 });
 
 const getIneq = (term) => {

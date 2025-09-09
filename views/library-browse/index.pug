@@ -1,0 +1,44 @@
+// In development - for questions contact dnovikov at uwaterloo dot ca 
+
+doctype html
+head
+  include ../template/head.pug
+  title Library - Pure Math Club
+  meta(name='decription', content="The official website of the University of Waterloo's Pure Math, Applied Math, Combinatorics & Optimization Club, under the Mathematics Society.")
+  link(rel='stylesheet', href='/static/lib-style.css', type='text/css')  
+
+body 
+  include ../template/header.pug
+  .header
+    .textArea
+      h1 Browse our library!
+
+  main.textArea
+    .container-h#search
+      // Search Bar
+      input(type="text" onkeyup="filter_books()" placeholder="Search books...")#searchbar
+      // Filter Button
+      div(onmouseenter="filter_visible()" onmouseleave="filter_hidden()")#filter-icon
+        img(src="/static/img/library/filter_icon.png" style="width: 100%; height: auto;")
+  
+    .container-h(onmouseenter="filter_visible()" onmouseleave="filter_hidden()")#filter-box
+      ul#topic-list
+        each topic in topics 
+          li
+            div.topic
+              input(type="checkbox" id=topic.id name="checkbox" value=topic.name)
+              label(for=topic.name) #{topic.name}
+    
+    .container-h#books
+      each val in books 
+        .book-container(id=val.author+'_'+val.title name=val.book_topics)
+          .book-cover-container
+            img(src='/static/img/library/book_covers/'+val.cover_filename, alt=val.title, class="book-cover")
+          .textArea 
+            h3 #{val.title}
+            p #{val.author}
+      p#no-results No results
+
+  // Page script
+  script(src='/static/scripts/library.js')
+  include ../template/footer.pug
