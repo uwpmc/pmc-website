@@ -7,7 +7,7 @@ The website runs a lightweight stack, with only a few packages on top of Express
 Pug (formerly Jade) is used as the templating engine for all pages. Events, POTWs (problem of the week), and more are stored in a MySQL database. The website provides a simple CMS for club executives to manage content and configure some aspects of the website.
 
 ## Accessing the website
-The website is served via a Node server hosted on a virtual machine named `pmc` on CSC's servers (`172.19.134.156`), and auto-starts via the `pm2` daemon on the `pmclub` account. The MySQL database should also be accessed from this machine (it can be accessed passwordless from the `pmclub` and `root` accounts).
+The website is served via a Node server hosted on a virtual machine named `pmc` on CSC's servers (`172.19.134.156`; campus-only IP, if off-campus then use VPN or tunnel through a general-use CSC machine), and auto-starts via the `pm2` daemon on the `pmclub` account. The MySQL database should also be accessed from this machine (it can be accessed passwordless from the `pmclub` and `root` accounts).
 
 ### Logging In
 To get access to the `pmclub` account as a club executive, ask someone else with access to add your SSH public key. Once this is done, SSH in, and the website files are in `~/www`).
