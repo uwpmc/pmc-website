@@ -14,6 +14,7 @@
     "passport": "^0.7.0",
     "passport-local-token": "^1.0.1",
     "passport-saml": "^3.2.4",
+    "pm2": "^6.0.11",
     "pug": "3.0.3",
     "pug-cli": "^1.0.0-alpha6",
     "serve-index": "^1.9.1",
